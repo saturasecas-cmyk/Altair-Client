@@ -2,6 +2,7 @@ package com.altairclient.client;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public final class AltairScreen extends Screen {
         mods.add(new ModuleEntry("Clock", "Reloj del cliente"));
         mods.add(new ModuleEntry("Armor HUD", "Estado de tu armadura"));
 
-        // Entradas de demostración para pruebas locales.
+        // Opciones de demostración para pruebas locales.
         hacks.add(new ModuleEntry("Practice Mode", "Opciones para pruebas locales"));
         hacks.add(new ModuleEntry("Debug Overlay", "Panel de depuración visual"));
         hacks.add(new ModuleEntry("Test Module", "Módulo de demostración"));
@@ -121,7 +122,7 @@ public final class AltairScreen extends Screen {
                 MUTED, false
         );
 
-        // Navegación.
+        // Navegación lateral.
         drawSection(
                 graphics, "MODS",
                 panelX + 12, panelY + 82,
@@ -136,7 +137,7 @@ public final class AltairScreen extends Screen {
 
         graphics.fill(
                 panelX + 12, panelY + panelHeight - 35,
-                panelX + sidebarWidth - 12, panelY + panelHeight - 34,
+                panelX + 138 - 12, panelY + panelHeight - 34,
                 0xFF303957
         );
 
@@ -146,8 +147,8 @@ public final class AltairScreen extends Screen {
                 MUTED, false
         );
 
-        // Área de contenido.
-        int contentX = panelX + sidebarWidth + 18;
+        // Contenido.
+        int contentX = panelX + 138 + 18;
         int contentY = panelY + 19;
 
         graphics.text(
@@ -169,7 +170,7 @@ public final class AltairScreen extends Screen {
         List<ModuleEntry> entries =
                 selectedSection == Section.MODS ? mods : hacks;
 
-        int cardWidth = panelWidth - sidebarWidth - 35;
+        int cardWidth = panelWidth - 138 - 35;
         int cardY = contentY + 35;
 
         for (int i = 0; i < entries.size(); i++) {
@@ -244,13 +245,15 @@ public final class AltairScreen extends Screen {
 
     @Override
     public boolean mouseClicked(
-            double mouseX,
-            double mouseY,
-            int button
+            MouseButtonEvent event,
+            boolean doubleClick
     ) {
-        if (button != 0) {
-            return super.mouseClicked(mouseX, mouseY, button);
+        if (event.button() != 0) {
+            return super.mouseClicked(event, doubleClick);
         }
+
+        double mouseX = event.x();
+        double mouseY = event.y();
 
         int sidebarWidth = 138;
         int sidebarX = panelX + 12;
@@ -286,7 +289,7 @@ public final class AltairScreen extends Screen {
             }
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
