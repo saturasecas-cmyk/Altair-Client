@@ -1,0 +1,12 @@
+modLoader="javafml"
+loaderVersion="[65,)"
+license="MIT"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+description='''
+Altair Client: a star-themed client-side utility mod inspired by deep space,
+constellations, and blue-violet nebulae.
+'''
