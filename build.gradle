@@ -1,46 +1,81 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'java'
+    id 'idea'
     id 'eclipse'
+    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
     id 'maven-publish'
 }
 
 group = 'com.altairclient'
 version = '0.1.0'
-base { archivesName = 'AltairClient' }
 
+base {
+    archivesName = 'AltairClient'
+}
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
 
 minecraft {
-    mappings channel: 'official', version: minecraft_version
-    copyIdeResources = true
     runs {
         configureEach {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'info'
-            mods { altairclient { source sourceSets.main } }
+            workingDir = layout.projectDirectory.dir('run')
+
+            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
+            systemProperty 'forge.enabledGameTestNamespaces', 'altairclient'
+
+            mods {
+                altairclient {
+                    source sourceSets.main
+                }
+            }
         }
-        client { }
-        server { }
+
+        register('client')
+
+        register('server') {
+            args '--nogui'
+        }
+
+        register('gameTestServer')
+
+        register('data') {
+            workingDir = layout.projectDirectory.dir('run-data')
+            args '--mod', 'altairclient', '--all',
+                 '--output', layout.projectDirectory.dir('src/generated/resources'),
+                 '--existing', layout.projectDirectory.dir('src/main/resources')
+        }
     }
 }
 
-repositories { }
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    implementation minecraft.dependency('net.minecraftforge:forge:26.2-65.1.5')
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.5'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
 }
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
-        minecraft_version: minecraft_version,
-        forge_version: forge_version,
-        mod_id: mod_id,
-        mod_name: mod_name,
+        mod_id: 'altairclient',
+        mod_name: 'Altair Client',
         mod_version: version
     ]
+
     inputs.properties replaceProperties
+
     filesMatching(['META-INF/mods.toml']) {
         expand replaceProperties
     }
