@@ -10,3 +10,17 @@ description='''
 Altair Client: a star-themed client-side utility mod inspired by deep space,
 constellations, and blue-violet nebulae.
 '''
+
+[[dependencies.altairclient]]
+modId="forge"
+mandatory=true
+versionRange="[65,)"
+ordering="NONE"
+side="CLIENT"
+
+[[dependencies.altairclient]]
+modId="minecraft"
+mandatory=true
+versionRange="[26.2,26.3)"
+ordering="NONE"
+side="CLIENT"
