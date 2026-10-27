@@ -1,7 +1,6 @@
-
 package com.altairclient.client;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -53,7 +52,7 @@ public final class AltairScreen extends Screen {
         mods.add(new ModuleEntry("Clock", "Reloj del cliente"));
         mods.add(new ModuleEntry("Armor HUD", "Estado de tu armadura"));
 
-        // Entradas de demostración: no implementan funciones de trampas.
+        // Entradas de demostración para pruebas locales.
         hacks.add(new ModuleEntry("Practice Mode", "Opciones para pruebas locales"));
         hacks.add(new ModuleEntry("Debug Overlay", "Panel de depuración visual"));
         hacks.add(new ModuleEntry("Test Module", "Módulo de demostración"));
@@ -70,13 +69,13 @@ public final class AltairScreen extends Screen {
     }
 
     @Override
-    public void render(
-            GuiGraphics graphics,
+    public void extractRenderState(
+            GuiGraphicsExtractor graphics,
             int mouseX,
             int mouseY,
             float partialTick
     ) {
-        renderBackground(graphics, mouseX, mouseY, partialTick);
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
         // Fondo oscuro.
         graphics.fill(0, 0, width, height, 0xB9080B18);
@@ -103,26 +102,26 @@ public final class AltairScreen extends Screen {
                 PANEL
         );
 
-        // Nombre del cliente.
-        graphics.drawString(
+        // Identidad del cliente.
+        graphics.text(
                 font, "ALTAIR",
                 panelX + 17, panelY + 18,
                 WHITE, false
         );
 
-        graphics.drawString(
+        graphics.text(
                 font, "CLIENT",
                 panelX + 17, panelY + 32,
                 PURPLE, false
         );
 
-        graphics.drawString(
+        graphics.text(
                 font, "COSMIC EDITION",
                 panelX + 17, panelY + 52,
                 MUTED, false
         );
 
-        // Opciones de la barra lateral.
+        // Navegación.
         drawSection(
                 graphics, "MODS",
                 panelX + 12, panelY + 82,
@@ -141,7 +140,7 @@ public final class AltairScreen extends Screen {
                 0xFF303957
         );
 
-        graphics.drawString(
+        graphics.text(
                 font, "Right Shift",
                 panelX + 17, panelY + panelHeight - 24,
                 MUTED, false
@@ -151,7 +150,7 @@ public final class AltairScreen extends Screen {
         int contentX = panelX + sidebarWidth + 18;
         int contentY = panelY + 19;
 
-        graphics.drawString(
+        graphics.text(
                 font,
                 selectedSection == Section.MODS
                         ? "MODS / CLIENT"
@@ -160,7 +159,7 @@ public final class AltairScreen extends Screen {
                 BLUE, false
         );
 
-        graphics.drawString(
+        graphics.text(
                 font,
                 "Selecciona un modulo para activarlo",
                 contentX, contentY + 16,
@@ -183,13 +182,13 @@ public final class AltairScreen extends Screen {
                     PANEL_LIGHT
             );
 
-            graphics.drawString(
+            graphics.text(
                     font, entry.name,
                     contentX + 5, y + 1,
                     WHITE, false
             );
 
-            graphics.drawString(
+            graphics.text(
                     font, entry.description,
                     contentX + 5, y + 14,
                     MUTED, false
@@ -212,12 +211,10 @@ public final class AltairScreen extends Screen {
                     WHITE
             );
         }
-
-        super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     private void drawSection(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             String label,
             int x,
             int y,
@@ -237,7 +234,7 @@ public final class AltairScreen extends Screen {
             );
         }
 
-        graphics.drawString(
+        graphics.text(
                 font, label,
                 x + 10, y + 3,
                 selected ? WHITE : MUTED,
