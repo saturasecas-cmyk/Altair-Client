@@ -2,7 +2,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class FPSDisplay {
@@ -25,22 +25,19 @@ public class FPSDisplay {
         this.enabled = enabled;
     }
 
-    public void render(GuiGraphics guiGraphics) {
+    public void render(GuiGraphicsExtractor graphics) {
         if (!enabled) {
             return;
         }
 
         Minecraft minecraft = Minecraft.getInstance();
 
-        int fps = minecraft.getFps();
-
-        guiGraphics.drawString(
+        graphics.drawString(
             minecraft.font,
-            Component.literal("FPS: " + fps),
+            Component.literal("FPS: " + minecraft.getFps()),
             8,
             8,
-            0xFFFFFF,
-            true
+            0xFFFFFF
         );
     }
 }
