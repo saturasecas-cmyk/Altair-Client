@@ -15,11 +15,14 @@ public final class ZoomHandler {
 
     private static final float ZOOM_FACTOR = 0.25F;
 
+    private static final KeyMapping.Category ALTAIR_CATEGORY =
+            KeyMapping.Category.register("key.categories.altairclient");
+
     private static final KeyMapping ZOOM_KEY = new KeyMapping(
             "key.altairclient.zoom",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_C,
-            "key.categories.altairclient"
+            ALTAIR_CATEGORY
     );
 
     private ZoomHandler() {
