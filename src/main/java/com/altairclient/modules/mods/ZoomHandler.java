@@ -3,6 +3,8 @@ package com.altairclient.modules.mods;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -16,7 +18,12 @@ public final class ZoomHandler {
     private static final float ZOOM_FACTOR = 0.25F;
 
     private static final KeyMapping.Category ALTAIR_CATEGORY =
-            KeyMapping.Category.register("key.categories.altairclient");
+            KeyMapping.Category.register(
+                    Identifier.fromNamespaceAndPath(
+                            "altairclient",
+                            "altair_client"
+                    )
+            );
 
     private static final KeyMapping ZOOM_KEY = new KeyMapping(
             "key.altairclient.zoom",
