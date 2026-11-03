@@ -3,7 +3,6 @@ package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.network.chat.Component;
 
 public class FPSDisplay {
 
@@ -34,7 +33,7 @@ public class FPSDisplay {
 
         graphics.drawString(
             minecraft.font,
-            Component.literal("FPS: " + minecraft.getFps()),
+            "FPS: " + minecraft.getFps(),
             8,
             8,
             0xFFFFFF
