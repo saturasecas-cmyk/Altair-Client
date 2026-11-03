@@ -1,6 +1,4 @@
-package com.altairclient.client;
-
-import com.altairclient.AltairClient;
+package com.altairclient.modules.mods;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
@@ -8,7 +6,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import org.lwjgl.glfw.GLFW;
@@ -27,9 +25,8 @@ public final class ZoomHandler {
     private ZoomHandler() {
     }
 
-    // Registro de la tecla en Minecraft.
     @Mod.EventBusSubscriber(
-            modid = AltairClient.MOD_ID,
+            modid = "altairclient",
             bus = Mod.EventBusSubscriber.Bus.MOD,
             value = Dist.CLIENT
     )
@@ -41,16 +38,15 @@ public final class ZoomHandler {
         }
     }
 
-    // Aplicación del zoom.
     @Mod.EventBusSubscriber(
-            modid = AltairClient.MOD_ID,
+            modid = "altairclient",
             bus = Mod.EventBusSubscriber.Bus.FORGE,
             value = Dist.CLIENT
     )
     public static class ForgeEvents {
 
         @SubscribeEvent
-        public static void onComputeFov(ComputeFovModifierEvent event) {
+        public static void onFov(ComputeFovModifierEvent event) {
             if (ZOOM_KEY.isDown()) {
                 event.setNewFovModifier(
                         event.getNewFovModifier() * ZOOM_FACTOR
