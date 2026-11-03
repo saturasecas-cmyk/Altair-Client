@@ -44,10 +44,10 @@ public class KillAura {
 
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player != null) {
-            minecraft.player.displayClientMessage(
-                Component.literal("Kill Aura: " + (enabled ? "ON" : "OFF")),
-                true
-            );
+          minecraft.player.displayClientMessage(
+    Component.literal("Kill Aura: " + (enabled ? "ON" : "OFF")),
+    true
+);
         }
     }
 
@@ -100,7 +100,7 @@ public class KillAura {
         if (player == null || minecraft.level == null || minecraft.gameMode == null) {
             return;
         }
-        if (!player.isAlive() || minecraft.screen != null) {
+if (!player.isAlive() || minecraft.screen != null) {
             return;
         }
 
