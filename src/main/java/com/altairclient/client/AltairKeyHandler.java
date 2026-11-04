@@ -61,10 +61,10 @@ public final class AltairKeyHandler {
             Minecraft minecraft = Minecraft.getInstance();
 
             while (MENU_KEY.consumeClick()) {
-                if (minecraft.screen instanceof AltairScreen) {
-                    minecraft.setScreen(null);
-                } else if (minecraft.screen == null) {
-                    minecraft.setScreen(new AltairScreen());
+                if (minecraft.gui.screen() instanceof AltairScreen) {
+                    minecraft.gui.setScreen(null);
+                } else if (minecraft.gui.screen() == null) {
+                    minecraft.gui.setScreen(new AltairScreen());
                 }
             }
         }
