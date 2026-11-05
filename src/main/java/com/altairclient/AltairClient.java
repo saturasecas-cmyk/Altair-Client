@@ -9,13 +9,16 @@ public final class AltairClient {
     public static final String MOD_ID = "altairclient";
 
     public AltairClient() {
-        FMLJavaModLoadingContext.get().getModEventBus()
-            .addListener(this::clientSetup);
+        this(FMLJavaModLoadingContext.get());
+    }
+
+    public AltairClient(final FMLJavaModLoadingContext context) {
+        if (context != null && context.getModEventBus() != null) {
+            context.getModEventBus().addListener(this::clientSetup);
+        }
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-        // Altair Client entry point.
-        // Future additions: star-themed menu, client settings, and benign
-        // visual/debug utilities after verifying the target Forge API.
+        // Punto de entrada de Altair Client
     }
 }
