@@ -1,5 +1,7 @@
 package com.altairclient.client;
 
+import com.altairclient.modules.mods.FPSDisplay;
+
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -49,7 +51,12 @@ public final class AltairScreen extends Screen {
 
         mods.add(new ModuleEntry("Keystrokes", "Visualiza las teclas"));
         mods.add(new ModuleEntry("Coordinates", "Muestra tus coordenadas"));
-        mods.add(new ModuleEntry("FPS Display", "Muestra los FPS"));
+
+        // Módulo FPS conectado al estado real del HUD
+        ModuleEntry fpsEntry = new ModuleEntry("FPS Display", "Muestra los FPS");
+        fpsEntry.enabled = FPSDisplay.getInstance().isEnabled();
+        mods.add(fpsEntry);
+
         mods.add(new ModuleEntry("Clock", "Reloj del cliente"));
         mods.add(new ModuleEntry("Armor HUD", "Estado de tu armadura"));
 
@@ -78,7 +85,7 @@ public final class AltairScreen extends Screen {
     ) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
-        // Fondo oscuro.
+        // Fondo oscuro exterior.
         graphics.fill(0, 0, width, height, 0xB9080B18);
 
         // Panel principal.
@@ -88,7 +95,7 @@ public final class AltairScreen extends Screen {
                 BACKGROUND
         );
 
-        // Barra superior.
+        // Barra superior decorativa.
         graphics.fill(
                 panelX, panelY,
                 panelX + panelWidth, panelY + 3,
@@ -103,7 +110,7 @@ public final class AltairScreen extends Screen {
                 PANEL
         );
 
-        // Identidad del cliente.
+        // Identidad visual del cliente.
         graphics.text(
                 font, "ALTAIR",
                 panelX + 17, panelY + 18,
@@ -122,7 +129,7 @@ public final class AltairScreen extends Screen {
                 MUTED, false
         );
 
-        // Navegación lateral.
+        // Pestañas de navegación lateral.
         drawSection(
                 graphics, "MODS",
                 panelX + 12, panelY + 82,
@@ -147,7 +154,7 @@ public final class AltairScreen extends Screen {
                 MUTED, false
         );
 
-        // Contenido.
+        // Cabecera de contenido.
         int contentX = panelX + 138 + 18;
         int contentY = panelY + 19;
 
@@ -173,16 +180,19 @@ public final class AltairScreen extends Screen {
         int cardWidth = panelWidth - 138 - 35;
         int cardY = contentY + 35;
 
+        // Renderizado de las tarjetas de módulos.
         for (int i = 0; i < entries.size(); i++) {
             ModuleEntry entry = entries.get(i);
             int y = cardY + i * 43;
 
+            // Fondo de la tarjeta.
             graphics.fill(
                     contentX - 5, y - 5,
                     contentX + cardWidth, y + 31,
                     PANEL_LIGHT
             );
 
+            // Nombre y descripción.
             graphics.text(
                     font, entry.name,
                     contentX + 5, y + 1,
@@ -195,6 +205,7 @@ public final class AltairScreen extends Screen {
                     MUTED, false
             );
 
+            // Interruptor (Toggle).
             int toggleColor = entry.enabled ? PURPLE : 0xFF424B68;
             int toggleX = contentX + cardWidth - 35;
 
@@ -258,6 +269,7 @@ public final class AltairScreen extends Screen {
         int sidebarWidth = 138;
         int sidebarX = panelX + 12;
 
+        // Clic en secciones de la barra lateral.
         if (mouseX >= sidebarX && mouseX <= panelX + sidebarWidth) {
             if (mouseY >= panelY + 77 && mouseY <= panelY + 105) {
                 selectedSection = Section.MODS;
@@ -277,6 +289,7 @@ public final class AltairScreen extends Screen {
         List<ModuleEntry> entries =
                 selectedSection == Section.MODS ? mods : hacks;
 
+        // Clic en los módulos.
         for (int i = 0; i < entries.size(); i++) {
             int y = cardY + i * 43;
 
@@ -284,7 +297,14 @@ public final class AltairScreen extends Screen {
                     && mouseX <= contentX + cardWidth
                     && mouseY >= y - 5
                     && mouseY <= y + 31) {
-                entries.get(i).enabled = !entries.get(i).enabled;
+                ModuleEntry entry = entries.get(i);
+                entry.enabled = !entry.enabled;
+
+                // Si se hace clic en "FPS Display", sincronizar con el HUD
+                if ("FPS Display".equals(entry.name)) {
+                    FPSDisplay.getInstance().setEnabled(entry.enabled);
+                }
+
                 return true;
             }
         }
