@@ -3,11 +3,6 @@ package com.altairclient.modules.mods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-
 public class FPSDisplay {
 
     private static final FPSDisplay INSTANCE = new FPSDisplay();
@@ -20,7 +15,6 @@ public class FPSDisplay {
     private static final int BACKGROUND = 0xAA10152A;
     private static final int PURPLE = 0xFF9B7BFF;
 
-    // Viene activado por defecto (true) para que se vea nada más entrar al juego
     private boolean enabled = true;
 
     public void toggle() {
@@ -42,8 +36,7 @@ public class FPSDisplay {
 
         Minecraft minecraft = Minecraft.getInstance();
 
-        // No dibuja si no hay mundo cargado o si el jugador ocultó el HUD con F1
-        if (minecraft == null || minecraft.player == null || minecraft.options.hideGui) {
+        if (minecraft == null || minecraft.player == null) {
             return;
         }
 
@@ -55,7 +48,7 @@ public class FPSDisplay {
 
         int textWidth = minecraft.font.width(text);
 
-        // 1. Fondo oscuro translúcido
+        // Fondo del indicador
         graphics.fill(
                 x - 5,
                 y - 4,
@@ -64,7 +57,7 @@ public class FPSDisplay {
                 BACKGROUND
         );
 
-        // 2. Línea decorativa violeta neón (estilo Altair)
+        // Línea decorativa violeta (estilo Altair)
         graphics.fill(
                 x - 5,
                 y - 4,
@@ -73,7 +66,7 @@ public class FPSDisplay {
                 PURPLE
         );
 
-        // 3. Texto de FPS en blanco
+        // Texto FPS
         graphics.text(
                 minecraft.font,
                 text,
@@ -82,21 +75,5 @@ public class FPSDisplay {
                 WHITE,
                 false
         );
-    }
-
-    /**
-     * Suscripción al bus de eventos de Forge para pintar el HUD en cada fotograma.
-     */
-    @Mod.EventBusSubscriber(
-            modid = "altairclient",
-            bus = Mod.EventBusSubscriber.Bus.FORGE,
-            value = Dist.CLIENT
-    )
-    public static class ForgeEvents {
-
-        @SubscribeEvent
-        public static void onRenderGui(RenderGuiEvent.Post event) {
-            INSTANCE.render(event.getGuiGraphics());
-        }
     }
 }
