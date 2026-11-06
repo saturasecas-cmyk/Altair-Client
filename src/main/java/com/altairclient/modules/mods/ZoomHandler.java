@@ -37,23 +37,15 @@ public final class ZoomHandler {
 
     @Mod.EventBusSubscriber(
             modid = "altairclient",
-            bus = Mod.EventBusSubscriber.Bus.MOD,
+            bus = Mod.EventBusSubscriber.Bus.FORGE,
             value = Dist.CLIENT
     )
-    public static class ModEvents {
+    public static class ForgeEvents {
 
         @SubscribeEvent
         public static void registerKeys(RegisterKeyMappingsEvent event) {
             event.register(ZOOM_KEY);
         }
-    }
-
-    @Mod.EventBusSubscriber(
-            modid = "altairclient",
-            bus = Mod.EventBusSubscriber.Bus.FORGE,
-            value = Dist.CLIENT
-    )
-    public static class ForgeEvents {
 
         @SubscribeEvent
         public static void onFov(ComputeFovModifierEvent event) {
