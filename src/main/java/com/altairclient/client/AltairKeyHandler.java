@@ -1,4 +1,3 @@
-
 package com.altairclient.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -36,23 +35,15 @@ public final class AltairKeyHandler {
 
     @Mod.EventBusSubscriber(
             modid = "altairclient",
-            bus = Mod.EventBusSubscriber.Bus.MOD,
+            bus = Mod.EventBusSubscriber.Bus.FORGE,
             value = Dist.CLIENT
     )
-    public static class ModEvents {
+    public static class ClientEvents {
 
         @SubscribeEvent
         public static void registerKeys(RegisterKeyMappingsEvent event) {
             event.register(MENU_KEY);
         }
-    }
-
-    @Mod.EventBusSubscriber(
-            modid = "altairclient",
-            bus = Mod.EventBusSubscriber.Bus.FORGE,
-            value = Dist.CLIENT
-    )
-    public static class ClientEvents {
 
         @SubscribeEvent
         public static void onClientTick(
