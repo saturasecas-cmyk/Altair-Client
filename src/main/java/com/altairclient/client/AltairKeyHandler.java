@@ -33,8 +33,11 @@ public final class AltairKeyHandler {
                 return;
             }
 
-            long window = minecraft.getWindow().getWindow();
-            boolean isPressed = InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
+            // Pasa directamente minecraft.getWindow()
+            boolean isPressed = InputConstants.isKeyDown(
+                    minecraft.getWindow(),
+                    GLFW.GLFW_KEY_RIGHT_SHIFT
+            );
 
             // Al pulsar Right Shift, abre o cierra el menú de Altair
             if (isPressed && !wasPressed) {
