@@ -12,34 +12,31 @@ import java.util.List;
 
 public final class AltairScreen extends Screen {
 
-    private static final int BACKGROUND = 0xF20A0D20;
-    private static final int PANEL = 0xFF11172F;
-    private static final int PANEL_LIGHT = 0xFF1A2242;
-    private static final int PURPLE = 0xFF9B7BFF;
-    private static final int BLUE = 0xFF62C8FF;
-    private static final int WHITE = 0xFFF2F3FF;
-    private static final int MUTED = 0xFF929DBD;
-
-    private enum Section {
-        MODS,
-        HACKS
-    }
+    // Paleta de colores cósmica y refinada
+    private static final int PANEL = 0xFF0E1326;            // Fondo del panel
+    private static final int CARD_BG = 0xFF161C36;          // Fondo de tarjetas
+    private static final int CARD_BORDER = 0xFF242E54;      // Borde sutil
+    private static final int VIOLET_ACCENT = 0xFFA580FF;    // Violeta nebulosa brillante
+    private static final int CYAN_ACCENT = 0xFF5CE1E6;      // Azul eléctrico estelar
+    private static final int TEXT_WHITE = 0xFFF5F7FD;       // Blanco elegante
+    private static final int TEXT_MUTED = 0xFF8C98B8;       // Gris lavanda suave
+    private static final int TOGGLE_OFF = 0xFF28304D;       // Interruptor apagado
 
     private static final class ModuleEntry {
         final String name;
         final String description;
+        final String shortcut;
         boolean enabled;
 
-        ModuleEntry(String name, String description) {
+        ModuleEntry(String name, String description, String shortcut, boolean enabled) {
             this.name = name;
             this.description = description;
+            this.shortcut = shortcut;
+            this.enabled = enabled;
         }
     }
 
     private final List<ModuleEntry> mods = new ArrayList<>();
-    private final List<ModuleEntry> hacks = new ArrayList<>();
-
-    private Section selectedSection = Section.MODS;
 
     private int panelX;
     private int panelY;
@@ -49,29 +46,28 @@ public final class AltairScreen extends Screen {
     public AltairScreen() {
         super(Component.literal("Altair Client"));
 
-        mods.add(new ModuleEntry("Keystrokes", "Visualiza las teclas"));
-        mods.add(new ModuleEntry("Coordinates", "Muestra tus coordenadas"));
+        // Solo módulos reales que existen en el código
+        mods.add(new ModuleEntry(
+                "FPS Display",
+                "Muestra los fotogramas en tiempo real en la pantalla",
+                "HUD",
+                FPSDisplay.getInstance().isEnabled()
+        ));
 
-        // Módulo FPS conectado al estado real del HUD
-        ModuleEntry fpsEntry = new ModuleEntry("FPS Display", "Muestra los FPS");
-        fpsEntry.enabled = FPSDisplay.getInstance().isEnabled();
-        mods.add(fpsEntry);
-
-        mods.add(new ModuleEntry("Clock", "Reloj del cliente"));
-        mods.add(new ModuleEntry("Armor HUD", "Estado de tu armadura"));
-
-        // Opciones de demostración para pruebas locales.
-        hacks.add(new ModuleEntry("Practice Mode", "Opciones para pruebas locales"));
-        hacks.add(new ModuleEntry("Debug Overlay", "Panel de depuración visual"));
-        hacks.add(new ModuleEntry("Test Module", "Módulo de demostración"));
+        mods.add(new ModuleEntry(
+                "Smooth Zoom",
+                "Acercamiento dinámico cinemático de cámara",
+                "Tecla [ C ]",
+                true
+        ));
     }
 
     @Override
     protected void init() {
         super.init();
 
-        panelWidth = Math.min(520, width - 24);
-        panelHeight = Math.min(330, height - 24);
+        panelWidth = Math.min(460, width - 24);
+        panelHeight = Math.min(270, height - 24);
         panelX = (width - panelWidth) / 2;
         panelY = (height - panelHeight) / 2;
     }
@@ -85,173 +81,69 @@ public final class AltairScreen extends Screen {
     ) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
-        // Fondo oscuro exterior.
-        graphics.fill(0, 0, width, height, 0xB9080B18);
+        // 1. Fondo sombreado cinemático
+        graphics.fill(0, 0, width, height, 0xB004060E);
 
-        // Panel principal.
-        graphics.fill(
-                panelX, panelY,
-                panelX + panelWidth, panelY + panelHeight,
-                BACKGROUND
-        );
+        // 2. Panel con contorno elegante
+        graphics.fill(panelX - 1, panelY - 1, panelX + panelWidth + 1, panelY + panelHeight + 1, CARD_BORDER);
+        graphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, PANEL);
 
-        // Barra superior decorativa.
-        graphics.fill(
-                panelX, panelY,
-                panelX + panelWidth, panelY + 3,
-                PURPLE
-        );
+        // 3. Barra superior violeta neón
+        graphics.fill(panelX, panelY, panelX + panelWidth, panelY + 2, VIOLET_ACCENT);
 
-        // Barra lateral.
-        int sidebarWidth = 138;
-        graphics.fill(
-                panelX, panelY + 3,
-                panelX + sidebarWidth, panelY + panelHeight,
-                PANEL
-        );
+        // 4. Cabecera con tipografía estilizada
+        graphics.text(font, "✦  A L T A I R  ✦", panelX + 24, panelY + 16, VIOLET_ACCENT, false);
+        graphics.text(font, "C O S M I C   C L I E N T", panelX + 24, panelY + 29, TEXT_MUTED, false);
 
-        // Identidad visual del cliente.
-        graphics.text(
-                font, "ALTAIR",
-                panelX + 17, panelY + 18,
-                WHITE, false
-        );
+        // Línea divisoria elegante
+        graphics.fill(panelX + 24, panelY + 44, panelX + panelWidth - 24, panelY + 45, 0xFF1C2442);
 
-        graphics.text(
-                font, "CLIENT",
-                panelX + 17, panelY + 32,
-                PURPLE, false
-        );
+        // 5. Título de sección
+        graphics.text(font, "M Ó D U L O S   D E L   C L I E N T E", panelX + 24, panelY + 54, CYAN_ACCENT, false);
 
-        graphics.text(
-                font, "COSMIC EDITION",
-                panelX + 17, panelY + 52,
-                MUTED, false
-        );
+        // 6. Tarjetas de módulos reales
+        int startY = panelY + 70;
+        int cardHeight = 44;
+        int cardWidth = panelWidth - 48;
 
-        // Pestañas de navegación lateral.
-        drawSection(
-                graphics, "MODS",
-                panelX + 12, panelY + 82,
-                selectedSection == Section.MODS
-        );
+        for (int i = 0; i < mods.size(); i++) {
+            ModuleEntry entry = mods.get(i);
+            int y = startY + (i * (cardHeight + 8));
 
-        drawSection(
-                graphics, "HACKS",
-                panelX + 12, panelY + 113,
-                selectedSection == Section.HACKS
-        );
+            // Borde y fondo de la tarjeta
+            graphics.fill(panelX + 23, y - 1, panelX + 24 + cardWidth + 1, y + cardHeight + 1, CARD_BORDER);
+            graphics.fill(panelX + 24, y, panelX + 24 + cardWidth, y + cardHeight, CARD_BG);
 
-        graphics.fill(
-                panelX + 12, panelY + panelHeight - 35,
-                panelX + 138 - 12, panelY + panelHeight - 34,
-                0xFF303957
-        );
+            // Indicador activo en el lateral izquierdo
+            int indicatorColor = entry.enabled ? VIOLET_ACCENT : 0xFF353E61;
+            graphics.fill(panelX + 24, y, panelX + 27, y + cardHeight, indicatorColor);
 
-        graphics.text(
-                font, "Right Shift",
-                panelX + 17, panelY + panelHeight - 24,
-                MUTED, false
-        );
+            // Título del módulo y badge de atajo
+            graphics.text(font, entry.name, panelX + 36, y + 8, TEXT_WHITE, false);
+            graphics.text(font, entry.shortcut, panelX + 38 + font.width(entry.name) + 8, y + 8, CYAN_ACCENT, false);
 
-        // Cabecera de contenido.
-        int contentX = panelX + 138 + 18;
-        int contentY = panelY + 19;
+            // Descripción elegante
+            graphics.text(font, entry.description, panelX + 36, y + 24, TEXT_MUTED, false);
 
-        graphics.text(
-                font,
-                selectedSection == Section.MODS
-                        ? "MODS / CLIENT"
-                        : "HACKS / LAB",
-                contentX, contentY,
-                BLUE, false
-        );
+            // Interruptor (Toggle en pastilla)
+            int toggleWidth = 32;
+            int toggleHeight = 16;
+            int toggleX = panelX + 24 + cardWidth - toggleWidth - 14;
+            int toggleY = y + (cardHeight - toggleHeight) / 2;
 
-        graphics.text(
-                font,
-                "Selecciona un modulo para activarlo",
-                contentX, contentY + 16,
-                MUTED, false
-        );
+            int toggleColor = entry.enabled ? VIOLET_ACCENT : TOGGLE_OFF;
+            graphics.fill(toggleX, toggleY, toggleX + toggleWidth, toggleY + toggleHeight, toggleColor);
 
-        List<ModuleEntry> entries =
-                selectedSection == Section.MODS ? mods : hacks;
-
-        int cardWidth = panelWidth - 138 - 35;
-        int cardY = contentY + 35;
-
-        // Renderizado de las tarjetas de módulos.
-        for (int i = 0; i < entries.size(); i++) {
-            ModuleEntry entry = entries.get(i);
-            int y = cardY + i * 43;
-
-            // Fondo de la tarjeta.
-            graphics.fill(
-                    contentX - 5, y - 5,
-                    contentX + cardWidth, y + 31,
-                    PANEL_LIGHT
-            );
-
-            // Nombre y descripción.
-            graphics.text(
-                    font, entry.name,
-                    contentX + 5, y + 1,
-                    WHITE, false
-            );
-
-            graphics.text(
-                    font, entry.description,
-                    contentX + 5, y + 14,
-                    MUTED, false
-            );
-
-            // Interruptor (Toggle).
-            int toggleColor = entry.enabled ? PURPLE : 0xFF424B68;
-            int toggleX = contentX + cardWidth - 35;
-
-            graphics.fill(
-                    toggleX, y + 5,
-                    toggleX + 25, y + 17,
-                    toggleColor
-            );
-
-            int knobX = entry.enabled ? toggleX + 14 : toggleX + 2;
-
-            graphics.fill(
-                    knobX, y + 7,
-                    knobX + 9, y + 15,
-                    WHITE
-            );
-        }
-    }
-
-    private void drawSection(
-            GuiGraphicsExtractor graphics,
-            String label,
-            int x,
-            int y,
-            boolean selected
-    ) {
-        if (selected) {
-            graphics.fill(
-                    x, y - 5,
-                    x + 112, y + 18,
-                    0xFF29264F
-            );
-
-            graphics.fill(
-                    x, y - 5,
-                    x + 3, y + 18,
-                    PURPLE
-            );
+            int knobX = entry.enabled ? toggleX + toggleWidth - 13 : toggleX + 3;
+            graphics.fill(knobX, toggleY + 3, knobX + 10, toggleY + toggleHeight - 3, TEXT_WHITE);
         }
 
-        graphics.text(
-                font, label,
-                x + 10, y + 3,
-                selected ? WHITE : MUTED,
-                false
-        );
+        // 7. Pie con atajo para salir
+        String closeText = "✦ Pulsa [ Right Shift ] o [ Esc ] para cerrar ✦";
+        graphics.text(font, closeText, panelX + (panelWidth / 2) - (font.width(closeText) / 2), panelY + panelHeight - 16, TEXT_MUTED, false);
+
+        // Dibuja también el indicador de FPS si está activo mientras tienes el menú abierto
+        FPSDisplay.getInstance().render(graphics);
     }
 
     @Override
@@ -266,41 +158,20 @@ public final class AltairScreen extends Screen {
         double mouseX = event.x();
         double mouseY = event.y();
 
-        int sidebarWidth = 138;
-        int sidebarX = panelX + 12;
+        int startY = panelY + 70;
+        int cardHeight = 44;
+        int cardWidth = panelWidth - 48;
 
-        // Clic en secciones de la barra lateral.
-        if (mouseX >= sidebarX && mouseX <= panelX + sidebarWidth) {
-            if (mouseY >= panelY + 77 && mouseY <= panelY + 105) {
-                selectedSection = Section.MODS;
-                return true;
-            }
+        for (int i = 0; i < mods.size(); i++) {
+            int y = startY + (i * (cardHeight + 8));
 
-            if (mouseY >= panelY + 108 && mouseY <= panelY + 136) {
-                selectedSection = Section.HACKS;
-                return true;
-            }
-        }
-
-        int contentX = panelX + sidebarWidth + 18;
-        int cardY = panelY + 19 + 16 + 35;
-        int cardWidth = panelWidth - sidebarWidth - 35;
-
-        List<ModuleEntry> entries =
-                selectedSection == Section.MODS ? mods : hacks;
-
-        // Clic en los módulos.
-        for (int i = 0; i < entries.size(); i++) {
-            int y = cardY + i * 43;
-
-            if (mouseX >= contentX - 5
-                    && mouseX <= contentX + cardWidth
-                    && mouseY >= y - 5
-                    && mouseY <= y + 31) {
-                ModuleEntry entry = entries.get(i);
+            if (mouseX >= panelX + 24
+                    && mouseX <= panelX + 24 + cardWidth
+                    && mouseY >= y
+                    && mouseY <= y + cardHeight) {
+                ModuleEntry entry = mods.get(i);
                 entry.enabled = !entry.enabled;
 
-                // Si se hace clic en "FPS Display", sincronizar con el HUD
                 if ("FPS Display".equals(entry.name)) {
                     FPSDisplay.getInstance().setEnabled(entry.enabled);
                 }
