@@ -25,7 +25,7 @@ public final class ZoomHandler {
                     )
             );
 
-    private static final KeyMapping ZOOM_KEY = new KeyMapping(
+    public static final KeyMapping ZOOM_KEY = new KeyMapping(
             "key.altairclient.zoom",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_C,
