@@ -34,8 +34,8 @@ public final class ZoomHandler {
 
             // Solo hace zoom mientras juegas (sin ningún menú abierto)
             if (minecraft.gui.screen() == null) {
-                long window = minecraft.getWindow().getWindow();
-                if (InputConstants.isKeyDown(window, GLFW.GLFW_KEY_C)) {
+                // Pasa directamente minecraft.getWindow()
+                if (InputConstants.isKeyDown(minecraft.getWindow(), GLFW.GLFW_KEY_C)) {
                     event.setNewFovModifier(
                             event.getNewFovModifier() * ZOOM_FACTOR
                     );
