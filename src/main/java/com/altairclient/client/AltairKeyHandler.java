@@ -1,53 +1,48 @@
-package com.altairclient.client;
-
-import com.mojang.blaze3d.platform.InputConstants;
-
-import net.minecraft.client.Minecraft;
-
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-
-import org.lwjgl.glfw.GLFW;
-
 public final class AltairKeyHandler {
-
-    private static boolean wasPressed = false;
-
+    public static final KeyMapping.Category ALTAIR_CATEGORY =
+            KeyMapping.Category.register(
+                    Identifier.fromNamespaceAndPath(
+                            "altairclient",
+                            "altair_client"
+                    )
+            );
+    public static final KeyMapping MENU_KEY = new KeyMapping(
+            "key.altairclient.menu",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_RIGHT_SHIFT,
+            ALTAIR_CATEGORY
+    );
     private AltairKeyHandler() {
     }
-
+    @Mod.EventBusSubscriber(
+            modid = "altairclient",
+            bus = Mod.EventBusSubscriber.Bus.MOD,
+            value = Dist.CLIENT
+    )
+    public static class ModEvents {
+        @SubscribeEvent
+        public static void registerKeys(RegisterKeyMappingsEvent event) {
+            event.register(MENU_KEY);
+        }
+    }
     @Mod.EventBusSubscriber(
             modid = "altairclient",
             bus = Mod.EventBusSubscriber.Bus.FORGE,
             value = Dist.CLIENT
     )
     public static class ClientEvents {
-
         @SubscribeEvent
         public static void onClientTick(
                 net.minecraftforge.event.TickEvent.ClientTickEvent.Post event
         ) {
             Minecraft minecraft = Minecraft.getInstance();
-            if (minecraft == null || minecraft.getWindow() == null) {
-                return;
-            }
-
-            // Pasa directamente minecraft.getWindow()
-            boolean isPressed = InputConstants.isKeyDown(
-                    minecraft.getWindow(),
-                    GLFW.GLFW_KEY_RIGHT_SHIFT
-            );
-
-            // Al pulsar Right Shift, abre o cierra el menú de Altair
-            if (isPressed && !wasPressed) {
+            while (MENU_KEY.consumeClick()) {
                 if (minecraft.gui.screen() instanceof AltairScreen) {
                     minecraft.gui.setScreen(null);
                 } else if (minecraft.gui.screen() == null) {
                     minecraft.gui.setScreen(new AltairScreen());
                 }
             }
-            wasPressed = isPressed;
         }
     }
 }
