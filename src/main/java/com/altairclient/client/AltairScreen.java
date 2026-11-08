@@ -1,5 +1,7 @@
 package com.altairclient.client;
 
+import com.altairclient.modules.mods.ArmorHUD;
+import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.FPSDisplay;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -44,6 +46,7 @@ public final class AltairScreen extends Screen {
     public AltairScreen() {
         super(Component.literal("Altair Client"));
 
+        // FPS Display
         ModuleEntry fpsEntry = new ModuleEntry(
                 "FPS Display",
                 "Muestra los FPS en pantalla",
@@ -52,6 +55,25 @@ public final class AltairScreen extends Screen {
         fpsEntry.enabled = FPSDisplay.getInstance().isEnabled();
         modules.add(fpsEntry);
 
+        // CPS Counter
+        ModuleEntry cpsEntry = new ModuleEntry(
+                "CPS Counter",
+                "Contador de clics por segundo",
+                () -> CPSCounter.getInstance().toggle()
+        );
+        cpsEntry.enabled = CPSCounter.getInstance().isEnabled();
+        modules.add(cpsEntry);
+
+        // Armor HUD
+        ModuleEntry armorEntry = new ModuleEntry(
+                "Armor HUD",
+                "Muestra tu armadura y durabilidad",
+                () -> ArmorHUD.getInstance().toggle()
+        );
+        armorEntry.enabled = ArmorHUD.getInstance().isEnabled();
+        modules.add(armorEntry);
+
+        // Smooth Zoom
         ModuleEntry zoomEntry = new ModuleEntry(
                 "Smooth Zoom",
                 "Zoom suave con la tecla C",
@@ -66,7 +88,7 @@ public final class AltairScreen extends Screen {
         super.init();
 
         panelWidth = Math.min(520, width - 24);
-        panelHeight = Math.min(330, height - 24);
+        panelHeight = Math.min(340, height - 24);
         panelX = (width - panelWidth) / 2;
         panelY = (height - panelHeight) / 2;
     }
@@ -80,20 +102,24 @@ public final class AltairScreen extends Screen {
     ) {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
+        // Fondo oscuro semi-transparente
         graphics.fill(0, 0, width, height, 0xB9080B18);
 
+        // Panel principal
         graphics.fill(
                 panelX, panelY,
                 panelX + panelWidth, panelY + panelHeight,
                 BACKGROUND
         );
 
+        // Barra superior degradada
         graphics.fill(
                 panelX, panelY,
                 panelX + panelWidth, panelY + 3,
                 PURPLE
         );
 
+        // Barra lateral
         int sidebarWidth = 138;
         graphics.fill(
                 panelX, panelY + 3,
@@ -101,6 +127,7 @@ public final class AltairScreen extends Screen {
                 PANEL
         );
 
+        // Identidad del cliente
         graphics.text(
                 font, "\u2726 A L T A I R \u2726",
                 panelX + 14, panelY + 18,
@@ -119,12 +146,14 @@ public final class AltairScreen extends Screen {
                 MUTED, false
         );
 
+        // Separador
         graphics.fill(
                 panelX + 14, panelY + 62,
                 panelX + sidebarWidth - 14, panelY + 63,
                 0xFF303957
         );
 
+        // Sección MODULES
         graphics.fill(
                 panelX + 12, panelY + 72,
                 panelX + 12 + 112, panelY + 95,
@@ -141,6 +170,7 @@ public final class AltairScreen extends Screen {
                 WHITE, false
         );
 
+        // Keybind hint
         graphics.fill(
                 panelX + 12, panelY + panelHeight - 35,
                 panelX + sidebarWidth - 12, panelY + panelHeight - 34,
@@ -152,8 +182,9 @@ public final class AltairScreen extends Screen {
                 MUTED, false
         );
 
+        // Contenido principal
         int contentX = panelX + sidebarWidth + 18;
-        int contentY = panelY + 19;
+        int contentY = panelY + 16;
 
         graphics.text(
                 font, "M O D U L E S",
@@ -163,60 +194,68 @@ public final class AltairScreen extends Screen {
 
         graphics.text(
                 font, "Activa o desactiva los m\u00f3dulos",
-                contentX, contentY + 16,
+                contentX, contentY + 14,
                 MUTED, false
         );
 
         int cardWidth = panelWidth - sidebarWidth - 35;
-        int cardY = contentY + 40;
+        int cardY = contentY + 32;
 
         for (int i = 0; i < modules.size(); i++) {
             ModuleEntry entry = modules.get(i);
-            int y = cardY + i * 50;
+            int y = cardY + i * 44;
 
+            // Fondo de la tarjeta
             graphics.fill(
-                    contentX - 5, y - 5,
-                    contentX + cardWidth, y + 36,
+                    contentX - 5, y - 4,
+                    contentX + cardWidth, y + 33,
                     PANEL_LIGHT
             );
 
+            // Borde izquierdo coloreado
             int accentColor = entry.enabled ? GREEN : 0xFF424B68;
             graphics.fill(
-                    contentX - 5, y - 5,
-                    contentX - 2, y + 36,
+                    contentX - 5, y - 4,
+                    contentX - 2, y + 33,
                     accentColor
             );
 
+            // Nombre
             graphics.text(
                     font, entry.name,
-                    contentX + 5, y + 2,
+                    contentX + 5, y + 1,
                     WHITE, false
             );
 
+            // Descripción
             graphics.text(
                     font, entry.description,
-                    contentX + 5, y + 16,
+                    contentX + 5, y + 14,
                     MUTED, false
             );
 
+            // Toggle switch
             int toggleColor = entry.enabled ? PURPLE : 0xFF424B68;
             int toggleX = contentX + cardWidth - 35;
 
             graphics.fill(
-                    toggleX, y + 7,
-                    toggleX + 25, y + 19,
+                    toggleX, y + 5,
+                    toggleX + 25, y + 17,
                     toggleColor
             );
 
             int knobX = entry.enabled ? toggleX + 14 : toggleX + 2;
             graphics.fill(
-                    knobX, y + 9,
-                    knobX + 9, y + 17,
+                    knobX, y + 7,
+                    knobX + 9, y + 15,
                     WHITE
             );
         }
 
+        // Previsualizar overlays en el menú si están activos
         FPSDisplay.getInstance().render(graphics);
+        CPSCounter.getInstance().render(graphics);
+        ArmorHUD.getInstance().render(graphics);
     }
 
     @Override
@@ -233,16 +272,16 @@ public final class AltairScreen extends Screen {
 
         int sidebarWidth = 138;
         int contentX = panelX + sidebarWidth + 18;
-        int contentY = panelY + 19 + 16 + 40;
+        int contentY = panelY + 16 + 14 + 32;
         int cardWidth = panelWidth - sidebarWidth - 35;
 
         for (int i = 0; i < modules.size(); i++) {
-            int y = contentY + i * 50;
+            int y = contentY + i * 44;
 
             if (mouseX >= contentX - 5
                     && mouseX <= contentX + cardWidth
-                    && mouseY >= y - 5
-                    && mouseY <= y + 36) {
+                    && mouseY >= y - 4
+                    && mouseY <= y + 33) {
                 ModuleEntry entry = modules.get(i);
                 entry.enabled = !entry.enabled;
 
