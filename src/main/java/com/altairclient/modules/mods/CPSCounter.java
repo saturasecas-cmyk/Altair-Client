@@ -31,6 +31,8 @@ public class CPSCounter {
     private static final int PURPLE = 0xFF9B7BFF;
 
     private boolean enabled = false;
+    private int x = 10;
+    private int y = 30;
 
     private final List<Long> leftClicks = new ArrayList<>();
     private final List<Long> rightClicks = new ArrayList<>();
@@ -52,6 +54,34 @@ public class CPSCounter {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft != null && minecraft.font != null) {
+            return minecraft.font.width("CPS: 00 | 00") + 13;
+        }
+        return 75;
+    }
+
+    public int getHeight() {
+        return 18;
     }
 
     public void addLeftClick() {
@@ -88,9 +118,6 @@ public class CPSCounter {
         int rCps = getRightCPS();
 
         String text = "CPS: " + lCps + " | " + rCps;
-
-        int x = 10;
-        int y = 30;
 
         int textWidth = minecraft.font.width(text);
 
