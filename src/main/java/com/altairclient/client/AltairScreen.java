@@ -3,6 +3,9 @@ package com.altairclient.client;
 import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.Keystrokes;
+import com.altairclient.modules.mods.PotionStatus;
+import com.altairclient.modules.mods.WorldInfo;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
@@ -43,38 +46,66 @@ public final class AltairScreen extends Screen {
     private int panelY;
     private int panelWidth;
     private int panelHeight;
+    private int scrollOffset = 0;
 
     public AltairScreen() {
         super(Component.literal("Altair Client"));
 
-        // FPS Display
+        // 1. FPS Display
         ModuleEntry fpsEntry = new ModuleEntry(
                 "FPS Display",
-                "Muestra los FPS en pantalla",
+                "Muestra los FPS actuales en pantalla",
                 () -> FPSDisplay.getInstance().toggle()
         );
         fpsEntry.enabled = FPSDisplay.getInstance().isEnabled();
         modules.add(fpsEntry);
 
-        // CPS Counter
+        // 2. CPS Counter
         ModuleEntry cpsEntry = new ModuleEntry(
                 "CPS Counter",
-                "Contador de clics por segundo",
+                "Contador de clics por segundo (LMB | RMB)",
                 () -> CPSCounter.getInstance().toggle()
         );
         cpsEntry.enabled = CPSCounter.getInstance().isEnabled();
         modules.add(cpsEntry);
 
-        // Armor HUD
+        // 3. Armor HUD
         ModuleEntry armorEntry = new ModuleEntry(
                 "Armor HUD",
-                "Muestra tu armadura y durabilidad",
+                "Estado de piezas de armadura y durabilidad",
                 () -> ArmorHUD.getInstance().toggle()
         );
         armorEntry.enabled = ArmorHUD.getInstance().isEnabled();
         modules.add(armorEntry);
 
-        // Smooth Zoom
+        // 4. Keystrokes
+        ModuleEntry keyEntry = new ModuleEntry(
+                "Keystrokes",
+                "Muestra teclas WASD, clics y espacio en vivo",
+                () -> Keystrokes.getInstance().toggle()
+        );
+        keyEntry.enabled = Keystrokes.getInstance().isEnabled();
+        modules.add(keyEntry);
+
+        // 5. Potion Status
+        ModuleEntry potionEntry = new ModuleEntry(
+                "Potion Status",
+                "Efectos de pociones activos y tiempo restante",
+                () -> PotionStatus.getInstance().toggle()
+        );
+        potionEntry.enabled = PotionStatus.getInstance().isEnabled();
+        modules.add(potionEntry);
+
+        // 6. World Info
+        ModuleEntry worldEntry = new ModuleEntry(
+                "World Info",
+                "Coordenadas XYZ, direcci\u00f3n, ping y hora",
+                () -> WorldInfo.getInstance().toggle()
+        );
+        worldEntry.enabled = WorldInfo.getInstance().isEnabled();
+        modules.add(worldEntry);
+
+        // 7. Smooth Zoom
         ModuleEntry zoomEntry = new ModuleEntry(
                 "Smooth Zoom",
                 "Zoom suave con la tecla C",
@@ -88,8 +119,8 @@ public final class AltairScreen extends Screen {
     protected void init() {
         super.init();
 
-        panelWidth = Math.min(520, width - 24);
-        panelHeight = Math.min(350, height - 24);
+        panelWidth = Math.min(540, width - 24);
+        panelHeight = Math.min(360, height - 24);
         panelX = (width - panelWidth) / 2;
         panelY = (height - panelHeight) / 2;
     }
@@ -222,16 +253,24 @@ public final class AltairScreen extends Screen {
         );
 
         int cardWidth = panelWidth - sidebarWidth - 35;
-        int cardY = contentY + 32;
+        int cardY = contentY + 30;
+        int cardStep = 40;
+        int visibleBottom = panelY + panelHeight - 12;
 
+        // Renderizado de tarjetas con scroll suave
         for (int i = 0; i < modules.size(); i++) {
             ModuleEntry entry = modules.get(i);
-            int y = cardY + i * 44;
+            int y = cardY + i * cardStep - scrollOffset;
+
+            // Descartar si está fuera del área visible
+            if (y + 32 < cardY || y > visibleBottom) {
+                continue;
+            }
 
             // Fondo de la tarjeta
             graphics.fill(
                     contentX - 5, y - 4,
-                    contentX + cardWidth, y + 33,
+                    contentX + cardWidth, y + 31,
                     PANEL_LIGHT
             );
 
@@ -239,21 +278,21 @@ public final class AltairScreen extends Screen {
             int accentColor = entry.enabled ? GREEN : 0xFF424B68;
             graphics.fill(
                     contentX - 5, y - 4,
-                    contentX - 2, y + 33,
+                    contentX - 2, y + 31,
                     accentColor
             );
 
             // Nombre
             graphics.text(
                     font, entry.name,
-                    contentX + 5, y + 1,
+                    contentX + 5, y,
                     WHITE, false
             );
 
             // Descripción
             graphics.text(
                     font, entry.description,
-                    contentX + 5, y + 14,
+                    contentX + 5, y + 13,
                     MUTED, false
             );
 
@@ -262,23 +301,38 @@ public final class AltairScreen extends Screen {
             int toggleX = contentX + cardWidth - 35;
 
             graphics.fill(
-                    toggleX, y + 5,
-                    toggleX + 25, y + 17,
+                    toggleX, y + 4,
+                    toggleX + 25, y + 16,
                     toggleColor
             );
 
             int knobX = entry.enabled ? toggleX + 14 : toggleX + 2;
             graphics.fill(
-                    knobX, y + 7,
-                    knobX + 9, y + 15,
+                    knobX, y + 6,
+                    knobX + 9, y + 14,
                     WHITE
             );
         }
 
-        // Previsualizar overlays en el menú si están activos
+        // Previsualizar overlays en pantalla si están activos
         FPSDisplay.getInstance().render(graphics);
         CPSCounter.getInstance().render(graphics);
         ArmorHUD.getInstance().render(graphics);
+        Keystrokes.getInstance().render(graphics);
+        PotionStatus.getInstance().render(graphics);
+        WorldInfo.getInstance().render(graphics);
+    }
+
+    @Override
+    public boolean mouseScrolled(
+            double mouseX,
+            double mouseY,
+            double scrollX,
+            double scrollY
+    ) {
+        int maxScroll = Math.max(0, modules.size() * 40 - (panelHeight - 65));
+        scrollOffset = Math.max(0, Math.min(maxScroll, scrollOffset - (int) (scrollY * 20)));
+        return true;
     }
 
     @Override
@@ -307,16 +361,17 @@ public final class AltairScreen extends Screen {
 
         int sidebarWidth = 138;
         int contentX = panelX + sidebarWidth + 18;
-        int contentY = panelY + 16 + 14 + 32;
+        int cardY = panelY + 16 + 14 + 30;
         int cardWidth = panelWidth - sidebarWidth - 35;
+        int cardStep = 40;
 
         for (int i = 0; i < modules.size(); i++) {
-            int y = contentY + i * 44;
+            int y = cardY + i * cardStep - scrollOffset;
 
             if (mouseX >= contentX - 5
                     && mouseX <= contentX + cardWidth
                     && mouseY >= y - 4
-                    && mouseY <= y + 33) {
+                    && mouseY <= y + 31) {
                 ModuleEntry entry = modules.get(i);
                 entry.enabled = !entry.enabled;
 
