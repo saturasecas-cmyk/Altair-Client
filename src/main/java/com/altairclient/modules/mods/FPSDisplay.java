@@ -25,6 +25,8 @@ public class FPSDisplay {
     private static final int PURPLE = 0xFF9B7BFF;
 
     private boolean enabled = false;
+    private int x = 10;
+    private int y = 10;
 
     private FPSDisplay() {
     }
@@ -45,23 +47,46 @@ public class FPSDisplay {
         return enabled;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft != null && minecraft.font != null) {
+            return minecraft.font.width("FPS: " + minecraft.getFps()) + 13;
+        }
+        return 60;
+    }
+
+    public int getHeight() {
+        return 18;
+    }
+
     public void render(GuiGraphicsExtractor graphics) {
         if (!enabled) {
             return;
         }
 
         Minecraft minecraft = Minecraft.getInstance();
-
         if (minecraft == null || minecraft.player == null) {
             return;
         }
 
         int fps = minecraft.getFps();
-
         String text = "FPS: " + fps;
-
-        int x = 10;
-        int y = 10;
 
         int textWidth = minecraft.font.width(text);
 
