@@ -19,6 +19,7 @@ public final class AltairScreen extends Screen {
     private static final int PANEL_LIGHT = 0xFF1A2242;
     private static final int PURPLE = 0xFF9B7BFF;
     private static final int BLUE = 0xFF62C8FF;
+    private static final int CYAN = 0xFF8BE9FD;
     private static final int WHITE = 0xFFF2F3FF;
     private static final int MUTED = 0xFF929DBD;
     private static final int GREEN = 0xFF6BFFB8;
@@ -88,7 +89,7 @@ public final class AltairScreen extends Screen {
         super.init();
 
         panelWidth = Math.min(520, width - 24);
-        panelHeight = Math.min(340, height - 24);
+        panelHeight = Math.min(350, height - 24);
         panelX = (width - panelWidth) / 2;
         panelY = (height - panelHeight) / 2;
     }
@@ -156,7 +157,7 @@ public final class AltairScreen extends Screen {
         // Sección MODULES
         graphics.fill(
                 panelX + 12, panelY + 72,
-                panelX + 12 + 112, panelY + 95,
+                panelX + 12 + 114, panelY + 95,
                 0xFF29264F
         );
         graphics.fill(
@@ -169,6 +170,28 @@ public final class AltairScreen extends Screen {
                 panelX + 22, panelY + 80,
                 WHITE, false
         );
+
+        // Botón EDITAR HUD en la barra lateral
+        int btnY = panelY + panelHeight - 65;
+        int btnX = panelX + 12;
+        int btnW = 114;
+        int btnH = 22;
+
+        boolean isBtnHovered = mouseX >= btnX && mouseX <= btnX + btnW
+                && mouseY >= btnY && mouseY <= btnY + btnH;
+
+        int btnBg = isBtnHovered ? 0xFF352B66 : 0xFF201B40;
+        int btnBorder = isBtnHovered ? CYAN : PURPLE;
+
+        graphics.fill(btnX, btnY, btnX + btnW, btnY + btnH, btnBg);
+        graphics.fill(btnX, btnY, btnX + btnW, btnY + 1, btnBorder);
+        graphics.fill(btnX, btnY + btnH - 1, btnX + btnW, btnY + btnH, btnBorder);
+        graphics.fill(btnX, btnY + 1, btnX + 1, btnY + btnH, btnBorder);
+        graphics.fill(btnX + btnW - 1, btnY, btnX + btnW, btnY + btnH, btnBorder);
+
+        String btnText = "\u2726 EDITAR HUD";
+        int btw = font.width(btnText);
+        graphics.text(font, btnText, btnX + (btnW - btw) / 2, btnY + 7, WHITE, false);
 
         // Keybind hint
         graphics.fill(
@@ -269,6 +292,18 @@ public final class AltairScreen extends Screen {
 
         double mouseX = event.x();
         double mouseY = event.y();
+
+        // Clic en botón EDITAR HUD
+        int btnY = panelY + panelHeight - 65;
+        int btnX = panelX + 12;
+        int btnW = 114;
+        int btnH = 22;
+        if (mouseX >= btnX && mouseX <= btnX + btnW && mouseY >= btnY && mouseY <= btnY + btnH) {
+            if (minecraft != null) {
+                minecraft.gui.setScreen(new AltairHudEditorScreen(this));
+                return true;
+            }
+        }
 
         int sidebarWidth = 138;
         int contentX = panelX + sidebarWidth + 18;
