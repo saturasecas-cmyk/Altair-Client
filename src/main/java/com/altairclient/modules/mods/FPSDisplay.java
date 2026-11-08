@@ -97,7 +97,7 @@ public class FPSDisplay {
     @SubscribeEvent
     public static void onRenderChatOverlay(CustomizeGuiOverlayEvent.Chat event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.screen == null) {
+        if (mc.gui.screen() == null) {
             INSTANCE.render(event.getGuiGraphics());
         }
     }
