@@ -38,6 +38,8 @@ public class ArmorHUD {
     };
 
     private boolean enabled = false;
+    private int x = 10;
+    private int y = 52;
 
     private ArmorHUD() {
     }
@@ -56,6 +58,42 @@ public class ArmorHUD {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return 77;
+    }
+
+    public int getHeight() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft != null && minecraft.player != null) {
+            int count = 0;
+            for (EquipmentSlot slot : SLOTS) {
+                if (!minecraft.player.getItemBySlot(slot).isEmpty()) {
+                    count++;
+                }
+            }
+            if (count > 0) {
+                return count * 18 + 6;
+            }
+        }
+        return 78;
     }
 
     public void render(GuiGraphicsExtractor graphics) {
@@ -83,8 +121,6 @@ public class ArmorHUD {
             return;
         }
 
-        int x = 10;
-        int y = 52;
         int rowHeight = 18;
         int boxWidth = 72;
         int count = 0;
