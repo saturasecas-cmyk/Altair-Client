@@ -1,8 +1,21 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.AltairScreen;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod.EventBusSubscriber(
+        modid = "altairclient",
+        bus = Mod.EventBusSubscriber.Bus.FORGE,
+        value = Dist.CLIENT
+)
 public class FPSDisplay {
 
     private static final FPSDisplay INSTANCE = new FPSDisplay();
@@ -52,6 +65,7 @@ public class FPSDisplay {
 
         int textWidth = minecraft.font.width(text);
 
+        // Fondo del indicador
         graphics.fill(
                 x - 5,
                 y - 4,
@@ -60,6 +74,7 @@ public class FPSDisplay {
                 BACKGROUND
         );
 
+        // Línea decorativa morada
         graphics.fill(
                 x - 5,
                 y - 4,
@@ -68,6 +83,7 @@ public class FPSDisplay {
                 PURPLE
         );
 
+        // Texto FPS
         graphics.text(
                 minecraft.font,
                 text,
@@ -76,5 +92,20 @@ public class FPSDisplay {
                 WHITE,
                 false
         );
+    }
+
+    @SubscribeEvent
+    public static void onRenderChatOverlay(CustomizeGuiOverlayEvent.Chat event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.screen == null) {
+            INSTANCE.render(event.getGuiGraphics());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
+        if (!(event.getScreen() instanceof AltairScreen)) {
+            INSTANCE.render(event.getGuiGraphics());
+        }
     }
 }
