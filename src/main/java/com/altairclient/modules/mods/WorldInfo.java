@@ -1,3 +1,4 @@
+
 package com.altairclient.modules.mods;
 
 import com.altairclient.client.AltairScreen;
@@ -117,7 +118,10 @@ public class WorldInfo {
         String pingText = (ping >= 0) ? (ping + " ms") : "0 ms";
 
         // Hora del mundo
-        long dayTime = (mc.level != null) ? mc.level.getDayTime() % 24000 : 0;
+        long dayTime = (mc.level != null)
+                ? mc.level.getDefaultClockTime() % 24000
+                : 0;
+
         long hours = (dayTime / 1000 + 6) % 24;
         long minutes = (dayTime % 1000) * 60 / 1000;
         String timeText = String.format("%02d:%02d", hours, minutes);
