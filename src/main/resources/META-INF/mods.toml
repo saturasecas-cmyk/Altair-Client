@@ -7,8 +7,12 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 description='''
-Altair Client: a star-themed client-side utility mod inspired by deep space,
-constellations, and blue-violet nebulae.
+description='''
+Altair Client es un mod de utilidades client-side diseñado para mejorar
+tu experiencia en Minecraft. Incluye herramientas prácticas como Zoom
+suave configurable, HUD personalizable, indicadores de rendimiento
+y accesos rápidos. Personaliza tu interfaz, configura tus controles
+y disfruta de una experiencia más cómoda con el estilo espacial de Altair.
 '''
 
 [[dependencies.altairclient]]
