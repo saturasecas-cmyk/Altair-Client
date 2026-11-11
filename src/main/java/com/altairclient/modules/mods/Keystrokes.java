@@ -145,7 +145,7 @@ public class Keystrokes {
         // Borde fino
         graphics.fill(kx, ky, kx + kw, ky + 1, border);
         graphics.fill(kx, ky + kh - 1, kx + kw, ky + kh, border);
-        graphics.fill(kx, ky + 1, ky + kh, border);
+        graphics.fill(kx, ky + 1, kx + 1, ky + kh, border);   // ← CORREGIDO: borde izquierdo
         graphics.fill(kx + kw - 1, ky, kx + kw, ky + kh, border);
 
         // Texto centrado
