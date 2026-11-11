@@ -7,7 +7,6 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 description='''
-description='''
 Altair Client es un mod de utilidades client-side diseñado para mejorar
 tu experiencia en Minecraft. Incluye herramientas prácticas como Zoom
 suave configurable, HUD personalizable, indicadores de rendimiento
