@@ -1,48 +1,74 @@
+
 package com.altairclient.client;
 
+import com.altairclient.AltairClient;
+import com.altairclient.modules.mods.ZoomHandler;
 import com.mojang.blaze3d.platform.InputConstants;
-
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
 import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(
-        modid = "altairclient",
-        bus = Mod.EventBusSubscriber.Bus.FORGE,
-        value = Dist.CLIENT
+        modid = AltairClient.MOD_ID,
+        bus = Mod.EventBusSubscriber.Bus.MOD,
+        value = net.minecraftforge.api.distmarker.Dist.CLIENT
 )
-public final class AltairKeyHandler {
+public class AltairKeyHandler {
 
-    private static boolean wasMenuKeyDown = false;
+    public static final String CATEGORY =
+            "key.category.altairclient.altair_client";
 
-    private AltairKeyHandler() {
+    public static final KeyMapping ZOOM_KEY = new KeyMapping(
+            "key.altairclient.zoom",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_C,
+            CATEGORY
+    );
+
+    public static final KeyMapping MENU_KEY = new KeyMapping(
+            "key.altairclient.menu",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_RIGHT_SHIFT,
+            CATEGORY
+    );
+
+    private static boolean registered = false;
+
+    public static void register() {
+        registered = true;
     }
 
     @SubscribeEvent
-    public static void onClientTick(
-            net.minecraftforge.event.TickEvent.ClientTickEvent.Post event
-    ) {
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft == null || minecraft.getWindow() == null) {
-            return;
-        }
+    public static void registerKeys(RegisterKeyMappingsEvent event) {
+        event.register(ZOOM_KEY);
+        event.register(MENU_KEY);
+    }
 
-        boolean isDown = InputConstants.isKeyDown(
-                minecraft.getWindow(),
-                GLFW.GLFW_KEY_RIGHT_SHIFT
-        );
+    @Mod.EventBusSubscriber(
+            modid = AltairClient.MOD_ID,
+            bus = Mod.EventBusSubscriber.Bus.FORGE,
+            value = net.minecraftforge.api.distmarker.Dist.CLIENT
+    )
+    public static class ClientEvents {
 
-        if (isDown && !wasMenuKeyDown) {
-            if (minecraft.gui.screen() instanceof AltairScreen) {
-                minecraft.gui.setScreen(null);
-            } else if (minecraft.gui.screen() == null) {
-                minecraft.gui.setScreen(new AltairScreen());
+        @SubscribeEvent
+        public static void onClientTick(TickEvent.ClientTickEvent.Post event) {
+            Minecraft minecraft = Minecraft.getInstance();
+
+            if (minecraft.player == null || minecraft.screen != null) {
+                ZoomHandler.setZoomKeyDown(false);
+                return;
             }
+
+            while (MENU_KEY.consumeClick()) {
+                minecraft.setScreen(new AltairScreen());
+            }
+
+            ZoomHandler.setZoomKeyDown(ZOOM_KEY.isDown());
         }
-        wasMenuKeyDown = isDown;
     }
 }
