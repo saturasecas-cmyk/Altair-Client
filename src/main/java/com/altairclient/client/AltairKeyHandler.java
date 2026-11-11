@@ -7,6 +7,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
+
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
@@ -21,8 +23,13 @@ import org.lwjgl.glfw.GLFW;
 )
 public class AltairKeyHandler {
 
-    public static final String CATEGORY =
-            "key.category.altairclient.altair_client";
+    public static final KeyMapping.Category CATEGORY =
+            new KeyMapping.Category(
+                    Identifier.fromNamespaceAndPath(
+                            AltairClient.MOD_ID,
+                            "altair_client"
+                    )
+            );
 
     public static final KeyMapping ZOOM_KEY = new KeyMapping(
             "key.altairclient.zoom",
@@ -38,12 +45,13 @@ public class AltairKeyHandler {
             CATEGORY
     );
 
-    // Se conserva para compatibilidad con AltairClient.java
+    // Se conserva para no romper AltairClient.java.
     public static void register() {
     }
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
+        event.registerCategory(CATEGORY);
         event.register(ZOOM_KEY);
         event.register(MENU_KEY);
     }
@@ -60,18 +68,20 @@ public class AltairKeyHandler {
 
             Minecraft minecraft = Minecraft.getInstance();
 
-            // No procesar teclas mientras hay una pantalla abierta.
-            if (minecraft.player == null || minecraft.screen != null) {
+            // No activar controles mientras hay una pantalla abierta.
+            // Esto evita que C active el Zoom al escribir en el buscador
+            // del inventario creativo.
+            if (minecraft.player == null || minecraft.gui.screen() != null) {
                 ZoomHandler.setZoomKeyDown(false);
                 return;
             }
 
-            // Abrir menú de Altair.
+            // Abrir el menú de Altair.
             while (MENU_KEY.consumeClick()) {
-                minecraft.setScreen(new AltairScreen());
+                minecraft.gui.setScreen(new AltairScreen());
             }
 
-            // Activar Zoom mientras se mantiene pulsada la tecla.
+            // Zoom mientras se mantiene pulsada la tecla asignada.
             ZoomHandler.setZoomKeyDown(ZOOM_KEY.isDown());
         }
     }
