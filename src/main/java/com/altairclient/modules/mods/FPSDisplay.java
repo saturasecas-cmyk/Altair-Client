@@ -1,21 +1,7 @@
 package com.altairclient.modules.mods;
 
-import com.altairclient.client.AltairScreen;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-
-@Mod.EventBusSubscriber(
-        modid = "altairclient",
-        bus = Mod.EventBusSubscriber.Bus.FORGE,
-        value = Dist.CLIENT
-)
 public class FPSDisplay {
 
     private static final FPSDisplay INSTANCE = new FPSDisplay();
@@ -119,18 +105,4 @@ public class FPSDisplay {
         );
     }
 
-    @SubscribeEvent
-    public static void onRenderChatOverlay(CustomizeGuiOverlayEvent.Chat event) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.gui.screen() == null) {
-            INSTANCE.render(event.getGuiGraphics());
-        }
-    }
-
-    @SubscribeEvent
-    public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
-        if (!(event.getScreen() instanceof AltairScreen)) {
-            INSTANCE.render(event.getGuiGraphics());
-        }
-    }
 }

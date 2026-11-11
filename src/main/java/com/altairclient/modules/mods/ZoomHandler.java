@@ -1,17 +1,6 @@
 
 package com.altairclient.modules.mods;
 
-import net.minecraft.client.Minecraft;
-
-import net.minecraftforge.client.event.ComputeFovModifierEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-
-@Mod.EventBusSubscriber(
-        modid = "altairclient",
-        bus = Mod.EventBusSubscriber.Bus.FORGE,
-        value = net.minecraftforge.api.distmarker.Dist.CLIENT
-)
 public class ZoomHandler {
 
     private static final float ZOOM_FACTOR = 0.25F;
@@ -35,21 +24,11 @@ public class ZoomHandler {
         zoomKeyDown = value;
     }
 
-    @SubscribeEvent
-    public static void onComputeFov(ComputeFovModifierEvent event) {
+    public static boolean isZoomKeyDown() {
+        return zoomKeyDown;
+    }
 
-        Minecraft minecraft = Minecraft.getInstance();
-
-        // No aplicar Zoom si está desactivado,
-        // si la tecla no está pulsada o si hay una pantalla abierta.
-        if (!enabled
-                || !zoomKeyDown
-                || minecraft.gui.screen() != null) {
-            return;
-        }
-
-        event.setNewFovModifier(
-                event.getFovModifier() * ZOOM_FACTOR
-        );
+    public static float applyZoom(float fov) {
+        return enabled && zoomKeyDown ? fov * ZOOM_FACTOR : fov;
     }
 }
