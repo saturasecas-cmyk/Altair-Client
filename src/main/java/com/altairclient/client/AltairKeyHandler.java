@@ -4,12 +4,14 @@ package com.altairclient.client;
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.ZoomHandler;
 import com.mojang.blaze3d.platform.InputConstants;
+
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
 import org.lwjgl.glfw.GLFW;
 
 @Mod.EventBusSubscriber(
@@ -36,10 +38,8 @@ public class AltairKeyHandler {
             CATEGORY
     );
 
-    private static boolean registered = false;
-
+    // Se conserva para compatibilidad con AltairClient.java
     public static void register() {
-        registered = true;
     }
 
     @SubscribeEvent
@@ -57,17 +57,21 @@ public class AltairKeyHandler {
 
         @SubscribeEvent
         public static void onClientTick(TickEvent.ClientTickEvent.Post event) {
+
             Minecraft minecraft = Minecraft.getInstance();
 
+            // No procesar teclas mientras hay una pantalla abierta.
             if (minecraft.player == null || minecraft.screen != null) {
                 ZoomHandler.setZoomKeyDown(false);
                 return;
             }
 
+            // Abrir menú de Altair.
             while (MENU_KEY.consumeClick()) {
                 minecraft.setScreen(new AltairScreen());
             }
 
+            // Activar Zoom mientras se mantiene pulsada la tecla.
             ZoomHandler.setZoomKeyDown(ZOOM_KEY.isDown());
         }
     }
