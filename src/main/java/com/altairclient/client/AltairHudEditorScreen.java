@@ -1,3 +1,4 @@
+
 package com.altairclient.client;
 
 import com.altairclient.modules.mods.ArmorHUD;
@@ -145,7 +146,7 @@ public final class AltairHudEditorScreen extends Screen {
         int titleWidth = font.width(title);
         graphics.text(font, title, (width - titleWidth) / 2, 6, WHITE, false);
 
-        String hint = "Arrastra los m\u00f3dulos para posicionarlos \u2022 ESC para volver";
+        String hint = "Arrastra los módulos para posicionarlos • ESC para volver";
         int hintWidth = font.width(hint);
         graphics.text(font, hint, (width - hintWidth) / 2, 17, MUTED, false);
 
@@ -176,7 +177,7 @@ public final class AltairHudEditorScreen extends Screen {
 
             graphics.fill(bx, by, bx + bw, by + 1, borderColor);
             graphics.fill(bx, by + bh - 1, bx + bw, by + bh, borderColor);
-            graphics.fill(bx, by + 1, by + bh, borderColor);
+            graphics.fill(bx, by + 1, bx + 1, by + bh, borderColor);
             graphics.fill(bx + bw - 1, by, bx + bw, by + bh, borderColor);
 
             // Etiqueta del nombre del módulo arriba del recuadro
@@ -187,7 +188,7 @@ public final class AltairHudEditorScreen extends Screen {
         }
 
         if (!anyEnabled) {
-            String emptyMsg = "No hay m\u00f3dulos activados. Activa alguno en el men\u00fa primero.";
+            String emptyMsg = "No hay módulos activados. Activa alguno en el menú primero.";
             int ew = font.width(emptyMsg);
             graphics.text(font, emptyMsg, (width - ew) / 2, height / 2, MUTED, false);
         }
