@@ -1,21 +1,22 @@
 package com.altairclient.client;
 
+import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.ZoomHandler;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import org.lwjgl.glfw.GLFW;
 
-@Mod.EventBusSubscriber(modid = "altairclient", value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class AltairKeyHandler {
 
-    public static final String CATEGORY = "key.categories.altairclient";
+    // Se traduce con la clave "key.category.altairclient.altair_client" del archivo de idioma.
+    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
+            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "altair_client")
+    );
 
     public static final KeyMapping ZOOM_KEY = new KeyMapping(
             "key.altairclient.zoom",
@@ -34,23 +35,22 @@ public final class AltairKeyHandler {
     private AltairKeyHandler() {
     }
 
-    public static void init() {
-        // Registrar la clase en el bus de eventos global de Forge para escuchar los Ticks del juego
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(AltairKeyHandler.class);
+    /** Registra el evento de teclas en el bus de mods. */
+    public static void registerModEvents(BusGroup modBus) {
+        RegisterKeyMappingsEvent.getBus(modBus).addListener(AltairKeyHandler::registerKeys);
     }
 
-    @SubscribeEvent
-    public static void registerKeys(RegisterKeyMappingsEvent event) {
+    /** Registra el tick del cliente en el bus de eventos del juego. */
+    public static void registerGameEvents() {
+        TickEvent.ClientTickEvent.Post.BUS.addListener(AltairKeyHandler::onClientTick);
+    }
+
+    private static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(ZOOM_KEY);
         event.register(MENU_KEY);
     }
 
-    @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
-
+    private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null || minecraft.screen != null) {
             ZoomHandler.setZoomKeyDown(false);

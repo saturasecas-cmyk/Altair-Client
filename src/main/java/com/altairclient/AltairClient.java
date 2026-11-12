@@ -1,31 +1,34 @@
 package com.altairclient;
 
+import com.altairclient.client.AltairHud;
 import com.altairclient.client.AltairKeyHandler;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("altairclient")
+@Mod(AltairClient.MOD_ID)
 public class AltairClient {
+    public static final String MOD_ID = "altairclient";
     public static final Logger LOGGER = LogManager.getLogger("AltairClient");
 
-    public AltairClient() {
+    public AltairClient(FMLJavaModLoadingContext context) {
         LOGGER.info("Inicializando Altair Client para Forge...");
 
-        // Registrar configuración del cliente en el bus de mod de Forge
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+        BusGroup modBus = context.getModBusGroup();
 
-        // Registrar en el bus de eventos de Forge para ticks, HUD, etc.
-        MinecraftForge.EVENT_BUS.register(this);
+        // Eventos del bus de mods: arranque del cliente y registro de teclas.
+        FMLClientSetupEvent.getBus(modBus).addListener(this::onClientSetup);
+        AltairKeyHandler.registerModEvents(modBus);
     }
 
     private void onClientSetup(final FMLClientSetupEvent event) {
         LOGGER.info("Configuración de cliente de Altair Client completada.");
-        
-        // Inicializar las teclas y eventos de cliente propios de Forge
-        AltairKeyHandler.init();
+
+        // Eventos del juego (ticks y HUD), que solo existen en el cliente.
+        AltairKeyHandler.registerGameEvents();
+        AltairHud.register();
     }
 }
