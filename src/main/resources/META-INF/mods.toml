@@ -1,26 +1,26 @@
-modLoader="javafml"
-loaderVersion="[65,)"
-license="MIT"
+name: Build Forge Mod
 
-[[mods]]
-modId="altairclient"
-version="1.0.0"
-displayName="Altair Client"
-authors="Altair Team"
-description='''
-Altair Client adaptado para Forge 26.2.
-'''
+on: [push, pull_request]
 
-[[dependencies.altairclient]]
-modId="forge"
-mandatory=true
-versionRange="[65,)"
-ordering="NONE"
-side="CLIENT"
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-[[dependencies.altairclient]]
-modId="minecraft"
-mandatory=true
-versionRange="[26.2,)"
-ordering="NONE"
-side="CLIENT"
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: '8.13'
+
+    - name: Build with Gradle
+      run: gradle build --no-daemon
+      
