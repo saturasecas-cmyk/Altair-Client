@@ -7,6 +7,7 @@ import com.altairclient.modules.mods.FPSDisplay;
 import com.altairclient.modules.mods.Keystrokes;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.WorldInfo;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -25,9 +26,11 @@ public final class AltairHud {
     }
 
     private static void onAddLayers(AddGuiOverlayLayersEvent event) {
-        event.getLayeredDraw().add(
+        // La capa se oculta con F1, igual que el HUD de vanilla.
+        event.getLayeredDraw().addWithCondition(
                 LAYER_ID,
-                (graphics, deltaTracker) -> renderAll(graphics)
+                (graphics, deltaTracker) -> renderAll(graphics),
+                () -> !Minecraft.getInstance().gui.hud.isHidden()
         );
     }
 

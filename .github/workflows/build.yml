@@ -22,6 +22,15 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build --no-daemon --stacktrace
 
+    - name: Verify JAR contents
+      run: |
+        jar=$(ls build/libs/*.jar | head -n1)
+        echo "JAR: $jar"
+        unzip -l "$jar" | tee /tmp/jar.txt
+        grep -q "META-INF/mods.toml" /tmp/jar.txt
+        grep -q "altairclient.mixins.json" /tmp/jar.txt
+        grep -q "com/altairclient/AltairClient.class" /tmp/jar.txt
+
     - name: Upload mod JAR
       uses: actions/upload-artifact@v4
       with:

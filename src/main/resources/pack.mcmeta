@@ -1,6 +1,10 @@
 {
   "pack": {
     "description": "Altair Client Resources",
-    "pack_format": 46
+    "max_format": 107,
+    "min_format": [
+      107,
+      1
+    ]
   }
 }
