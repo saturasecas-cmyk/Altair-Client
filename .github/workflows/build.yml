@@ -10,11 +10,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up JDK 21
+    - name: Set up JDK 21 for Gradle Runtime
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '21'
+
+    - name: Set up JDK 25 for Compilation Toolchain
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '25'
+        java-package: jdk
 
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
