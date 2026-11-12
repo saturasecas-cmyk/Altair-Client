@@ -1,36 +1,53 @@
 plugins {
-    id 'java'
-    id 'net.fabricmc.fabric-loom' version '1.20.0-alpha.28'
-    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 group = 'com.altairclient'
-version = '0.1.9'
+version = '0.1.10'
 
-base {
-    archivesName = 'AltairClient'
+java {
+    archivesBaseName = 'altairclient'
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+minecraft {
+    mappings channel: 'official', version: '1.20.4' // Ajusta según la versión de tu MDK
+    
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'DEBUG'
+            mods {
+                altairclient {
+                    source sourceSets.main
+                }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'DEBUG'
+            mods {
+                altairclient {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
 
-repositories {
-    maven { url = 'https://maven.fabricmc.net/' }
-    mavenCentral()
+mixin {
+    add sourceSets.main, "altairclient.refmap.json"
+    config "altairclient.mixins.json"
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
+    minecraft 'net.minecraftforge:forge:1.20.4-49.0.3' // Cambia por tu versión exacta de Forge
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-}
-
-tasks.named('processResources', ProcessResources).configure {
-    inputs.property 'version', project.version
-    filesMatching('fabric.mod.json') {
-        expand 'version': project.version
-    }
 }
