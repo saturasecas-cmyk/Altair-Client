@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.bus.BusGroup;
 import org.lwjgl.glfw.GLFW;
 
 public final class AltairKeyHandler {
@@ -35,13 +34,9 @@ public final class AltairKeyHandler {
     private AltairKeyHandler() {
     }
 
-    /** Registra el evento de teclas en el bus de mods. */
-    public static void registerModEvents(BusGroup modBus) {
+    /** Registra el evento de teclas y el tick del cliente. */
+    public static void register() {
         RegisterKeyMappingsEvent.BUS.addListener(AltairKeyHandler::registerKeys);
-    }
-
-    /** Registra el tick del cliente en el bus de eventos del juego. */
-    public static void registerGameEvents() {
         TickEvent.ClientTickEvent.Post.BUS.addListener(AltairKeyHandler::onClientTick);
     }
 
