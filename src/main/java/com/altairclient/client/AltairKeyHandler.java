@@ -37,7 +37,7 @@ public final class AltairKeyHandler {
 
     /** Registra el evento de teclas en el bus de mods. */
     public static void registerModEvents(BusGroup modBus) {
-        RegisterKeyMappingsEvent.getBus(modBus).addListener(AltairKeyHandler::registerKeys);
+        RegisterKeyMappingsEvent.BUS.addListener(AltairKeyHandler::registerKeys);
     }
 
     /** Registra el tick del cliente en el bus de eventos del juego. */
@@ -52,13 +52,13 @@ public final class AltairKeyHandler {
 
     private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || minecraft.screen != null) {
+        if (minecraft.player == null || minecraft.gui.screen() != null) {
             ZoomHandler.setZoomKeyDown(false);
             return;
         }
 
         while (MENU_KEY.consumeClick()) {
-            minecraft.setScreen(new AltairScreen());
+            minecraft.gui.setScreen(new AltairScreen());
         }
 
         ZoomHandler.setZoomKeyDown(ZOOM_KEY.isDown());

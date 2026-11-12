@@ -7,7 +7,6 @@ import com.altairclient.modules.mods.Keystrokes;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.WorldInfo;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraftforge.client.event.RenderGuiEvent;
 
 /** Dibuja los módulos del HUD encima del juego. */
 public final class AltairHud {
@@ -16,12 +15,10 @@ public final class AltairHud {
     }
 
     public static void register() {
-        RenderGuiEvent.Post.BUS.addListener(AltairHud::onRenderGui);
+        // TODO: enganchar renderAll a la capa de HUD de Forge 26.2.
     }
 
-    private static void onRenderGui(RenderGuiEvent.Post event) {
-        GuiGraphicsExtractor graphics = event.getGuiGraphics();
-
+    public static void renderAll(GuiGraphicsExtractor graphics) {
         FPSDisplay.getInstance().render(graphics);
         CPSCounter.getInstance().render(graphics);
         ArmorHUD.getInstance().render(graphics);

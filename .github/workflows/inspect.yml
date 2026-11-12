@@ -39,24 +39,25 @@ jobs:
     - name: Inspect APIs
       run: |
         CP=$(paste -sd: /tmp/cp.txt)
-        echo "=== Forge client event classes ==="
-        for j in $(cat /tmp/cp.txt); do
-          unzip -l "$j" 2>/dev/null | awk '{print $4}' | grep -E 'net/minecraftforge/client/event/' | sed 's/\.class$//' | sort | head -150
+        for c in \
+          net.minecraftforge.client.event.AddGuiOverlayLayersEvent \
+          net.minecraftforge.client.gui.overlay.ForgeLayer \
+          net.minecraftforge.client.gui.overlay.ForgeLayeredDraw \
+          net.minecraftforge.client.gui.overlay.ForgeLayerInstance \
+          'net.minecraftforge.client.gui.overlay.ForgeLayeredDraw$LayerOffset' \
+          'net.minecraftforge.client.event.ViewportEvent$ComputeFov' \
+          'net.minecraftforge.client.event.InputEvent$MouseButton$Pre' \
+          net.minecraft.client.MouseHandler \
+          net.minecraft.client.input.MouseButtonInfo \
+          net.minecraft.client.gui.GuiGraphicsExtractor ; do
+          echo "=== $c ==="
+          javap -p -cp "$CP" "$c" 2>&1 | head -80
         done
-        echo "=== Gui/overlay/layer/RenderGui classes in forge ==="
-        for j in $(cat /tmp/cp.txt); do
-          unzip -l "$j" 2>/dev/null | awk '{print $4}' | grep -iE 'net/minecraftforge/.*(Layer|Overlay|RenderGui|Hud)' | sed 's/\.class$//' | sort | head -60
-        done
-        echo "=== RegisterKeyMappingsEvent ==="
-        javap -p -cp "$CP" net.minecraftforge.client.event.RegisterKeyMappingsEvent || true
-        echo "=== TickEvent (nested) ==="
-        javap -p -cp "$CP" 'net.minecraftforge.event.TickEvent$ClientTickEvent' || true
-        javap -p -cp "$CP" 'net.minecraftforge.event.TickEvent$ClientTickEvent$Post' || true
-        echo "=== Minecraft (screen/gui) ==="
-        javap -p -cp "$CP" net.minecraft.client.Minecraft | grep -iE "screen|Gui |gui;|getInstance|getFps" || true
-        echo "=== Gui ==="
-        javap -p -cp "$CP" net.minecraft.client.gui.Gui | grep -iE "screen|extract|render|setScreen" || true
-        echo "=== FMLJavaModLoadingContext ==="
-        javap -p -cp "$CP" net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext || true
-        echo "=== FMLClientSetupEvent ==="
-        javap -p -cp "$CP" net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent || true
+        echo "=== Camera (fov) ==="
+        javap -p -cp "$CP" net.minecraft.client.Camera | grep -iE "fov|class" || true
+        echo "=== GameRenderer (fov) ==="
+        javap -p -cp "$CP" net.minecraft.client.renderer.GameRenderer | grep -iE "fov" || true
+        echo "=== Hud (public methods) ==="
+        javap -p -cp "$CP" net.minecraft.client.gui.Hud | grep -E "public|class" | head -40 || true
+        echo "=== LayeredDraw ==="
+        javap -p -cp "$CP" net.minecraft.client.gui.LayeredDraw 2>&1 | head -30 || true
