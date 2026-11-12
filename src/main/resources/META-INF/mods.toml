@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="[65,)"
 license="MIT"
 
 [[mods]]
@@ -8,19 +8,19 @@ version="1.0.0"
 displayName="Altair Client"
 authors="Altair Team"
 description='''
-Cliente modular adaptado de Fabric a Forge.
+Altair Client adaptado para Forge 26.2.
 '''
 
 [[dependencies.altairclient]]
 modId="forge"
 mandatory=true
-versionRange="[47,)"
+versionRange="[65,)"
 ordering="NONE"
 side="CLIENT"
 
 [[dependencies.altairclient]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.20.4,1.21)"
+versionRange="[26.2,)"
 ordering="NONE"
 side="CLIENT"
