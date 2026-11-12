@@ -1,8 +1,6 @@
 plugins {
     id 'java'
-    id 'idea'
-    id 'eclipse'
-    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
+    id 'net.fabricmc.fabric-loom' version '1.20.0-alpha.28'
     id 'maven-publish'
 }
 
@@ -15,52 +13,15 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
-
-minecraft {
-    runs {
-        configureEach {
-            workingDir = layout.projectDirectory.dir('run')
-
-            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
-            systemProperty 'forge.enabledGameTestNamespaces', 'altairclient'
-
-            mods {
-                altairclient {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        register('client')
-
-        register('server') {
-            args '--nogui'
-        }
-
-        register('gameTestServer')
-
-        register('data') {
-            workingDir = layout.projectDirectory.dir('run-data')
-            args '--mod', 'altairclient', '--all',
-                 '--output', layout.projectDirectory.dir('src/generated/resources'),
-                 '--existing', layout.projectDirectory.dir('src/main/resources')
-        }
-    }
-}
-
 repositories {
-    minecraft.mavenizer(it)
-    maven fg.forgeMaven
-    maven fg.minecraftLibsMaven
+    maven { url = 'https://maven.fabricmc.net/' }
     mavenCentral()
 }
 
 dependencies {
-    implementation minecraft.dependency('net.minecraftforge:forge:26.2-65.1.5')
-    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.5'
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -68,15 +29,8 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [
-        mod_id: 'altairclient',
-        mod_name: 'Altair Client',
-        mod_version: version
-    ]
-
-    inputs.properties replaceProperties
-
-    filesMatching(['META-INF/mods.toml']) {
-        expand replaceProperties
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
     }
 }
