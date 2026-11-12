@@ -39,9 +39,16 @@ jobs:
     - name: Inspect APIs
       run: |
         CP=$(paste -sd: /tmp/cp.txt)
-        echo "=== Options (hide) ==="
-        javap -p -cp "$CP" net.minecraft.client.Options | grep -iE "hide|gui" || true
-        echo "=== Hud (hide/visible) ==="
-        javap -p -cp "$CP" net.minecraft.client.gui.Hud | grep -iE "hide|visible|isHidden" || true
-        echo "=== Minecraft (hide) ==="
-        javap -p -cp "$CP" net.minecraft.client.Minecraft | grep -iE "hide|hudHidden" || true
+        echo "=== Gui (hud) ==="
+        javap -p -cp "$CP" net.minecraft.client.gui.Gui | grep -iE "hud" || true
+        echo "=== Minecraft (hud) ==="
+        javap -p -cp "$CP" net.minecraft.client.Minecraft | grep -iE "hud" || true
+        echo "=== Hud public API ==="
+        javap -p -cp "$CP" net.minecraft.client.gui.Hud | grep -E "^  public" | head -40 || true
+        echo "=== pack.mcmeta in jars ==="
+        for j in $(cat /tmp/cp.txt); do
+          if unzip -l "$j" 2>/dev/null | grep -q "pack.mcmeta"; then
+            echo "--- $j"
+            unzip -p "$j" pack.mcmeta | head -30
+          fi
+        done
