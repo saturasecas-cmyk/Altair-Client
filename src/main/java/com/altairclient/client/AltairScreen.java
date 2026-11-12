@@ -167,15 +167,9 @@ public final class AltairScreen extends Screen {
         );
 
         graphics.text(
-                font, "C O S M I C",
-                panelX + 21, panelY + 33,
-                PURPLE, false
-        );
-
-        graphics.text(
                 font, "C L I E N T",
-                panelX + 24, panelY + 46,
-                MUTED, false
+                panelX + 24, panelY + 33,
+                PURPLE, false
         );
 
         // Separador
