@@ -8,7 +8,7 @@ version = '1.0.0'
 
 java {
     archivesBaseName = 'altairclient'
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 repositories {
