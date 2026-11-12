@@ -8,7 +8,7 @@ version="1.0.0"
 displayName="Altair Client"
 authors="Altair Team"
 description='''
-Altair Client para Minecraft 26.2 y Forge.
+Altair Client adaptado para Forge 26.2.
 '''
 
 [[dependencies.altairclient]]
