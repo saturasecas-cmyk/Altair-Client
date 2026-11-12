@@ -8,7 +8,7 @@ version = '0.1.10'
 
 java {
     archivesBaseName = 'altairclient'
-    toolchain.languageVersion = JavaLanguageVersion.of(21) // Minecraft 26.2 requiere Java 21 o 25
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 repositories {
@@ -42,7 +42,6 @@ dependencies {
     minecraft 'net.minecraftforge:forge:26.2-65.1.6'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     
-    // Necesario para @ModifyReturnValue en CameraMixin
     implementation 'io.github.llamalad7:mixinextras-forge:0.4.1'
     annotationProcessor 'io.github.llamalad7:mixinextras-forge:0.4.1'
 }
