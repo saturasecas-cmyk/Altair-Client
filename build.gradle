@@ -4,11 +4,11 @@ plugins {
 }
 
 group = 'com.altairclient'
-version = '0.1.10'
+version = '1.0.0'
 
 java {
     archivesBaseName = 'altairclient'
-    toolchain.languageVersion = JavaLanguageVersion.of(25)
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 repositories {
