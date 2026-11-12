@@ -39,25 +39,9 @@ jobs:
     - name: Inspect APIs
       run: |
         CP=$(paste -sd: /tmp/cp.txt)
-        for c in \
-          net.minecraftforge.client.event.AddGuiOverlayLayersEvent \
-          net.minecraftforge.client.gui.overlay.ForgeLayer \
-          net.minecraftforge.client.gui.overlay.ForgeLayeredDraw \
-          net.minecraftforge.client.gui.overlay.ForgeLayerInstance \
-          'net.minecraftforge.client.gui.overlay.ForgeLayeredDraw$LayerOffset' \
-          'net.minecraftforge.client.event.ViewportEvent$ComputeFov' \
-          'net.minecraftforge.client.event.InputEvent$MouseButton$Pre' \
-          net.minecraft.client.MouseHandler \
-          net.minecraft.client.input.MouseButtonInfo \
-          net.minecraft.client.gui.GuiGraphicsExtractor ; do
-          echo "=== $c ==="
-          javap -p -cp "$CP" "$c" 2>&1 | head -80
-        done
-        echo "=== Camera (fov) ==="
-        javap -p -cp "$CP" net.minecraft.client.Camera | grep -iE "fov|class" || true
-        echo "=== GameRenderer (fov) ==="
-        javap -p -cp "$CP" net.minecraft.client.renderer.GameRenderer | grep -iE "fov" || true
-        echo "=== Hud (public methods) ==="
-        javap -p -cp "$CP" net.minecraft.client.gui.Hud | grep -E "public|class" | head -40 || true
-        echo "=== LayeredDraw ==="
-        javap -p -cp "$CP" net.minecraft.client.gui.LayeredDraw 2>&1 | head -30 || true
+        echo "=== Options (hide) ==="
+        javap -p -cp "$CP" net.minecraft.client.Options | grep -iE "hide|gui" || true
+        echo "=== Hud (hide/visible) ==="
+        javap -p -cp "$CP" net.minecraft.client.gui.Hud | grep -iE "hide|visible|isHidden" || true
+        echo "=== Minecraft (hide) ==="
+        javap -p -cp "$CP" net.minecraft.client.Minecraft | grep -iE "hide|hudHidden" || true

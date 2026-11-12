@@ -7,7 +7,6 @@ import com.altairclient.modules.mods.FPSDisplay;
 import com.altairclient.modules.mods.Keystrokes;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.WorldInfo;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -26,10 +25,9 @@ public final class AltairHud {
     }
 
     private static void onAddLayers(AddGuiOverlayLayersEvent event) {
-        event.getLayeredDraw().addWithCondition(
+        event.getLayeredDraw().add(
                 LAYER_ID,
-                (graphics, deltaTracker) -> renderAll(graphics),
-                () -> !Minecraft.getInstance().options.hideGui
+                (graphics, deltaTracker) -> renderAll(graphics)
         );
     }
 
