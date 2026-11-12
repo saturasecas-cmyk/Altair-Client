@@ -1,0 +1,62 @@
+name: Inspect Forge API (temporal)
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/inspect.yml'
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '25'
+
+    - uses: gradle/actions/setup-gradle@v4
+
+    - name: Print compile classpath
+      run: |
+        cat > /tmp/cp.init.gradle <<'EOF'
+        allprojects {
+          afterEvaluate {
+            tasks.register('printCp') {
+              doLast {
+                configurations.compileClasspath.files.each { println "CP:" + it }
+              }
+            }
+          }
+        }
+        EOF
+        ./gradlew --init-script /tmp/cp.init.gradle printCp -q --no-daemon 2>&1 | grep '^CP:' | sed 's/^CP://' > /tmp/cp.txt || true
+        wc -l /tmp/cp.txt
+        cat /tmp/cp.txt
+
+    - name: Inspect APIs
+      run: |
+        CP=$(paste -sd: /tmp/cp.txt)
+        echo "=== Forge client event classes ==="
+        for j in $(cat /tmp/cp.txt); do
+          unzip -l "$j" 2>/dev/null | awk '{print $4}' | grep -E 'net/minecraftforge/client/event/' | sed 's/\.class$//' | sort | head -150
+        done
+        echo "=== Gui/overlay/layer/RenderGui classes in forge ==="
+        for j in $(cat /tmp/cp.txt); do
+          unzip -l "$j" 2>/dev/null | awk '{print $4}' | grep -iE 'net/minecraftforge/.*(Layer|Overlay|RenderGui|Hud)' | sed 's/\.class$//' | sort | head -60
+        done
+        echo "=== RegisterKeyMappingsEvent ==="
+        javap -p -cp "$CP" net.minecraftforge.client.event.RegisterKeyMappingsEvent || true
+        echo "=== TickEvent (nested) ==="
+        javap -p -cp "$CP" 'net.minecraftforge.event.TickEvent$ClientTickEvent' || true
+        javap -p -cp "$CP" 'net.minecraftforge.event.TickEvent$ClientTickEvent$Post' || true
+        echo "=== Minecraft (screen/gui) ==="
+        javap -p -cp "$CP" net.minecraft.client.Minecraft | grep -iE "screen|Gui |gui;|getInstance|getFps" || true
+        echo "=== Gui ==="
+        javap -p -cp "$CP" net.minecraft.client.gui.Gui | grep -iE "screen|extract|render|setScreen" || true
+        echo "=== FMLJavaModLoadingContext ==="
+        javap -p -cp "$CP" net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext || true
+        echo "=== FMLClientSetupEvent ==="
+        javap -p -cp "$CP" net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent || true
