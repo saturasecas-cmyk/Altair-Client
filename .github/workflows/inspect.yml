@@ -18,21 +18,23 @@ jobs:
       run: ./gradlew compileJava --no-daemon || true
     - name: Dump
       run: |
-        JAR=./.gradle/mavenizer/repo/net/minecraftforge/forge/26.2-65.1.6/forge-26.2-65.1.6.jar
+        JAR=$GITHUB_WORKSPACE/.gradle/mavenizer/repo/net/minecraftforge/forge/26.2-65.1.6/forge-26.2-65.1.6.jar
         dump() { echo "::group::$1"; javap -p -cp "$JAR" "$1" 2>&1 | head -${2:-200}; echo "::endgroup::"; }
         dumpc() { echo "::group::CODE $1"; javap -p -c -constants -cp "$JAR" "$1" 2>&1 | head -${2:-400}; echo "::endgroup::"; }
-        echo "::group::gizmo classes"; unzip -l "$JAR" | grep -E 'net/minecraft/gizmos/' | awk '{print $4}'; echo "::endgroup::"
-        dump net.minecraft.client.renderer.debug.DebugRenderer 150
-        dump 'net.minecraft.client.renderer.debug.DebugRenderer$SimpleDebugRenderer' 20
-        dumpc net.minecraft.client.renderer.debug.DebugRenderer 450
-        dump net.minecraft.gizmos.Gizmos 80
-        dump net.minecraft.gizmos.GizmoStyle 40
-        dump net.minecraft.gizmos.GizmoProperties 40
-        dump net.minecraft.gizmos.GizmoCollector 40
-        echo "::group::KeyboardHandler ENTITY_HITBOXES ctx"
-        javap -p -c -constants -cp "$JAR" net.minecraft.client.KeyboardHandler | grep -n -B8 -A10 'ENTITY_HITBOXES' | head -60
+        dumpc net.minecraft.gizmos.Gizmos 140
+        dumpc 'net.minecraft.gizmos.Gizmos$TemporaryCollection' 80
+        dump net.minecraft.gizmos.SimpleGizmoCollector 40
+        mkdir -p /tmp/x && cd /tmp/x && unzip -q -o "$JAR" 'net/minecraft/client/*' || true
+        echo "::group::callers collectPerFrameRenderThreadGizmos"
+        for f in $(grep -rl 'collectPerFrameRenderThreadGizmos' /tmp/x); do
+          c=$(echo "$f" | sed 's#/tmp/x/##; s#\.class$##; s#/#.#g')
+          echo "== $c"
+          javap -p -c -cp "$JAR" "$c" | grep -n -B25 -A25 'collectPerFrameRenderThreadGizmos' | head -120
+        done
         echo "::endgroup::"
-        echo "::group::LevelRenderer gizmo/debug refs"
-        javap -p -c -constants -cp "$JAR" net.minecraft.client.renderer.LevelRenderer | grep -n -E 'emitGizmos|withCollector|Gizmo|DebugRenderer|^  [a-z].*\(' | grep -n -i -E 'emitGizmos|withCollector|Gizmo|DebugRenderer' | head -40
+        echo "::group::callers DebugRenderer.emitGizmos"
+        for f in $(grep -rl 'DebugRenderer.emitGizmos\|emitGizmos' /tmp/x | head -6); do echo "$f"; done
         echo "::endgroup::"
-        dump net.minecraft.client.renderer.LevelRenderer 120
+        echo "::group::ClientLevel entities"; javap -p -cp "$JAR" net.minecraft.client.multiplayer.ClientLevel | grep -i -E 'entit|partial'; echo "::endgroup::"
+        echo "::group::DeltaTracker"; javap -p -cp "$JAR" net.minecraft.client.DeltaTracker; echo "::endgroup::"
+        echo "::group::Options camera"; javap -p -cp "$JAR" net.minecraft.client.Options | grep -i -E 'camera|fov|keyAttack|keyUse'; echo "::endgroup::"
