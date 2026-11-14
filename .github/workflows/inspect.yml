@@ -19,22 +19,20 @@ jobs:
     - name: Dump
       run: |
         JAR=./.gradle/mavenizer/repo/net/minecraftforge/forge/26.2-65.1.6/forge-26.2-65.1.6.jar
-        ls -la "$JAR"
         dump() { echo "::group::$1"; javap -p -cp "$JAR" "$1" 2>&1 | head -${2:-200}; echo "::endgroup::"; }
         dumpc() { echo "::group::CODE $1"; javap -p -c -constants -cp "$JAR" "$1" 2>&1 | head -${2:-400}; echo "::endgroup::"; }
-        dump net.minecraft.client.gui.components.debug.DebugScreenEntryList 120
-        dump net.minecraft.client.gui.components.debug.DebugScreenEntries 150
-        dump net.minecraft.client.gui.components.debug.DebugScreenEntryStatus 40
-        dump net.minecraft.client.renderer.state.level.LevelRenderState 60
-        dump net.minecraft.client.renderer.debug.EntityHitboxDebugRenderer 60
-        dumpc net.minecraft.client.renderer.debug.EntityHitboxDebugRenderer 500
-        mkdir -p /tmp/x && cd /tmp/x && unzip -q -o "$GITHUB_WORKSPACE/$JAR" 'net/minecraft/client/*' 'net/minecraftforge/client/*' || true
-        echo "::group::files referencing HitboxRenderState"
-        grep -rl 'HitboxRenderState' /tmp/x | head -20
+        echo "::group::gizmo classes"; unzip -l "$JAR" | grep -E 'net/minecraft/gizmos/' | awk '{print $4}'; echo "::endgroup::"
+        dump net.minecraft.client.renderer.debug.DebugRenderer 150
+        dump 'net.minecraft.client.renderer.debug.DebugRenderer$SimpleDebugRenderer' 20
+        dumpc net.minecraft.client.renderer.debug.DebugRenderer 450
+        dump net.minecraft.gizmos.Gizmos 80
+        dump net.minecraft.gizmos.GizmoStyle 40
+        dump net.minecraft.gizmos.GizmoProperties 40
+        dump net.minecraft.gizmos.GizmoCollector 40
+        echo "::group::KeyboardHandler ENTITY_HITBOXES ctx"
+        javap -p -c -constants -cp "$JAR" net.minecraft.client.KeyboardHandler | grep -n -B8 -A10 'ENTITY_HITBOXES' | head -60
         echo "::endgroup::"
-        echo "::group::files referencing ENTITY_HITBOXES"
-        grep -rl 'ENTITY_HITBOXES' /tmp/x | head -20
+        echo "::group::LevelRenderer gizmo/debug refs"
+        javap -p -c -constants -cp "$JAR" net.minecraft.client.renderer.LevelRenderer | grep -n -E 'emitGizmos|withCollector|Gizmo|DebugRenderer|^  [a-z].*\(' | grep -n -i -E 'emitGizmos|withCollector|Gizmo|DebugRenderer' | head -40
         echo "::endgroup::"
-        echo "::group::ForgeEvents list (client event)"
-        unzip -l "$GITHUB_WORKSPACE/$JAR" | grep -E 'net/minecraftforge/client/event/[A-Za-z]*Render[A-Za-z]*\.class' | head -40
-        echo "::endgroup::"
+        dump net.minecraft.client.renderer.LevelRenderer 120
