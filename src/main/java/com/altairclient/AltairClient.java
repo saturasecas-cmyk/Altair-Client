@@ -3,7 +3,6 @@ package com.altairclient;
 
 import com.altairclient.client.AltairHud;
 import com.altairclient.client.AltairKeyHandler;
-import com.altairclient.client.AltairTitleScreen;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -26,9 +25,6 @@ public class AltairClient {
 
         AltairKeyHandler.register();
         AltairHud.register();
-
-        // Registrar la pantalla personalizada
-        AltairTitleScreen.register();
 
         FMLClientSetupEvent.getBus(
                 context.getModBusGroup()
