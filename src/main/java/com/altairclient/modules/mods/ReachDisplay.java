@@ -173,7 +173,7 @@ public class ReachDisplay {
 
     @SubscribeEvent
     public static void onScreenRenderPost(ScreenEvent.Render.Post event) {
-        if (!(event.getScreen() instanceof AltairScreen)) {
+        if (Minecraft.getInstance().level != null && !(event.getScreen() instanceof AltairScreen)) {
             INSTANCE.render(event.getGuiGraphics());
         }
     }

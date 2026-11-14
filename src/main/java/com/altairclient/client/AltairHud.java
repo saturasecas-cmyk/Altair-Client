@@ -41,7 +41,7 @@ public final class AltairHud {
         event.getLayeredDraw().addWithCondition(
                 LAYER_ID,
                 (graphics, deltaTracker) -> renderAll(graphics),
-                () -> !Minecraft.getInstance().gui.hud.isHidden()
+                () -> Minecraft.getInstance().level != null && !Minecraft.getInstance().gui.hud.isHidden()
         );
     }
 

@@ -19,17 +19,16 @@ jobs:
     - name: Dump
       run: |
         JAR=$GITHUB_WORKSPACE/.gradle/mavenizer/repo/net/minecraftforge/forge/26.2-65.1.6/forge-26.2-65.1.6.jar
-        dump() { echo "::group::$1"; javap -p -cp "$JAR" "$1" 2>&1 | head -${2:-200}; echo "::endgroup::"; }
-        echo "::group::assets edition/title"
-        for j in $(find $HOME/.gradle $GITHUB_WORKSPACE/.gradle -name '*.jar' -size +3M 2>/dev/null); do
-          r=$(unzip -l "$j" 2>/dev/null | grep -i -E 'gui/title/|panorama' | head -30)
-          if [ -n "$r" ]; then echo "== $j"; echo "$r"; fi
-        done
+        mkdir -p /tmp/x && cd /tmp/x && unzip -q -o "$JAR" 'net/minecraft/client/*' 'net/minecraftforge/*' || true
+        echo "::group::classes referencing BackgroundRendered"
+        grep -rl 'ScreenEvent$BackgroundRendered' /tmp/x | head
         echo "::endgroup::"
-        echo "::group::CODE LogoRenderer"; javap -p -c -constants -cp "$JAR" net.minecraft.client.gui.components.LogoRenderer 2>&1 | grep -E 'class|static|ldc|blit|Sprite|sprite|extract|private|public|invoke' | head -120; echo "::endgroup::"
-        dump net.minecraft.client.gui.screens.TitleScreen 120
-        echo "::group::Screen bg"; javap -p -cp "$JAR" net.minecraft.client.gui.screens.Screen | grep -i -E 'background|panorama|extract|render|blur'; echo "::endgroup::"
-        dump net.minecraft.client.renderer.Panorama 40
-        echo "::group::ScreenEvent classes"; unzip -l "$JAR" | grep 'client/event/ScreenEvent' | awk '{print $4}'; echo "::endgroup::"
-        for c in 'ScreenEvent$Render$Pre' 'ScreenEvent$Render$Post' 'ScreenEvent$BackgroundRendered' 'ScreenEvent$Render' 'ScreenEvent'; do dump "net.minecraftforge.client.event.$c" 30; done
-        echo "::group::GuiGraphicsExtractor"; javap -p -cp "$JAR" net.minecraft.client.gui.GuiGraphicsExtractor | grep -E 'public' | head -80; echo "::endgroup::"
+        for c in net.minecraftforge.client.event.ForgeEventFactoryClient; do
+          echo "::group::factory bg"; javap -p -cp "$JAR" $c | grep -i -E 'background|ScreenRender|Render'; echo "::endgroup::"
+        done
+        for m in 'net.minecraft.client.gui.screens.Screen' 'net.minecraft.client.gui.screens.TitleScreen' 'net.minecraft.client.renderer.Panorama'; do
+          echo "::group::CODE $m"; javap -p -c -cp "$JAR" $m | grep -E '^  [a-z].*\(|invoke|getstatic' | grep -i -E 'extractBackground|extractRenderState\(|extractPanorama|Panorama|BackgroundRendered|ForgeEventFactoryClient|nextStratum|blurBefore|extractMenuBackground|^  (public|protected)' | head -80; echo "::endgroup::"
+        done
+        echo "::group::Pre-event fire sites"
+        grep -rl 'onRenderScreenPre\|ScreenEvent$Render$Pre' /tmp/x | head
+        echo "::endgroup::"
