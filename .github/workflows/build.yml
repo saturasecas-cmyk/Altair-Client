@@ -28,7 +28,6 @@ jobs:
         echo "JAR: $jar"
         unzip -l "$jar" | tee /tmp/jar.txt
         grep -q "META-INF/mods.toml" /tmp/jar.txt
-        grep -q "altairclient.mixins.json" /tmp/jar.txt
         grep -q "com/altairclient/AltairClient.class" /tmp/jar.txt
 
     - name: Upload mod JAR

@@ -11,9 +11,6 @@ description='''
 Altair Client adaptado para Forge 26.2.
 '''
 
-[[mixins]]
-config="altairclient.mixins.json"
-
 [[dependencies.altairclient]]
 modId="forge"
 mandatory=true

@@ -1,12 +1,14 @@
 package com.altairclient.client;
 
 import com.altairclient.AltairClient;
+import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ZoomHandler;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
 import org.lwjgl.glfw.GLFW;
 
@@ -34,10 +36,11 @@ public final class AltairKeyHandler {
     private AltairKeyHandler() {
     }
 
-    /** Registra el evento de teclas y el tick del cliente. */
+    /** Registra el evento de teclas, el tick del cliente y el cálculo del FOV (zoom). */
     public static void register() {
         RegisterKeyMappingsEvent.BUS.addListener(AltairKeyHandler::registerKeys);
         TickEvent.ClientTickEvent.Post.BUS.addListener(AltairKeyHandler::onClientTick);
+        ViewportEvent.ComputeFov.BUS.addListener(AltairKeyHandler::onComputeFov);
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {
@@ -45,8 +48,17 @@ public final class AltairKeyHandler {
         event.register(MENU_KEY);
     }
 
+    /** Aplica el zoom al campo de visión mientras se mantiene pulsada la tecla de zoom. */
+    private static void onComputeFov(ViewportEvent.ComputeFov event) {
+        event.setFOV(ZoomHandler.applyZoom(event.getFOV()));
+    }
+
     private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
+
+        // Cuenta los clics también a nivel de tick (además de en cada frame del HUD).
+        CPSCounter.getInstance().poll();
+
         if (minecraft.player == null || minecraft.gui.screen() != null) {
             ZoomHandler.setZoomKeyDown(false);
             return;

@@ -21,6 +21,9 @@ public class CPSCounter {
     private final List<Long> leftClicks = new ArrayList<>();
     private final List<Long> rightClicks = new ArrayList<>();
 
+    private boolean leftWasDown = false;
+    private boolean rightWasDown = false;
+
     private CPSCounter() {
     }
 
@@ -74,6 +77,30 @@ public class CPSCounter {
 
     public void addRightClick() {
         rightClicks.add(System.currentTimeMillis());
+    }
+
+    /**
+     * Detecta pulsaciones nuevas de los botones del ratón (flanco de subida). Es seguro llamarlo
+     * varias veces por frame; solo cuenta cuando el botón pasa de suelto a pulsado.
+     */
+    public void poll() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft == null || minecraft.mouseHandler == null) {
+            return;
+        }
+
+        boolean left = minecraft.mouseHandler.isLeftPressed();
+        boolean right = minecraft.mouseHandler.isRightPressed();
+
+        if (left && !leftWasDown) {
+            addLeftClick();
+        }
+        if (right && !rightWasDown) {
+            addRightClick();
+        }
+
+        leftWasDown = left;
+        rightWasDown = right;
     }
 
     public int getLeftCPS() {

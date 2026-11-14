@@ -4,6 +4,7 @@ import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.HitboxDisplay;
 import com.altairclient.modules.mods.Keystrokes;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.WorldInfo;
@@ -18,6 +19,9 @@ public final class AltairHud {
     private static final Identifier LAYER_ID =
             Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "hud");
 
+    private static final Identifier HITBOX_LAYER_ID =
+            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "hitboxes");
+
     private AltairHud() {
     }
 
@@ -26,7 +30,14 @@ public final class AltairHud {
     }
 
     private static void onAddLayers(AddGuiOverlayLayersEvent event) {
-        // La capa se oculta con F1, igual que el HUD de vanilla.
+        // Las hitboxes se dibujan en el mundo, no en el HUD, así que esta capa no se oculta con F1.
+        event.getLayeredDraw().addWithCondition(
+                HITBOX_LAYER_ID,
+                (graphics, deltaTracker) -> HitboxDisplay.getInstance().emit(deltaTracker),
+                () -> true
+        );
+
+        // La capa del HUD se oculta con F1, igual que el HUD de vanilla.
         event.getLayeredDraw().addWithCondition(
                 LAYER_ID,
                 (graphics, deltaTracker) -> renderAll(graphics),
@@ -35,6 +46,8 @@ public final class AltairHud {
     }
 
     public static void renderAll(GuiGraphicsExtractor graphics) {
+        CPSCounter.getInstance().poll();
+
         FPSDisplay.getInstance().render(graphics);
         CPSCounter.getInstance().render(graphics);
         ArmorHUD.getInstance().render(graphics);

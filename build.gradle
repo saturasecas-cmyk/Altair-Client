@@ -19,15 +19,11 @@ repositories {
     minecraft.mavenizer(it)
     maven fg.forgeMaven
     maven fg.minecraftLibsMaven
-    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
 dependencies {
     // Minecraft 26.x no está ofuscado, así que no hacen falta mappings.
     implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
-
-    // Solo para compilar los mixins; Forge ya incluye Mixin en tiempo de ejecución.
-    compileOnly 'org.spongepowered:mixin:0.8.7'
 }
 
 tasks.withType(JavaCompile).configureEach {
