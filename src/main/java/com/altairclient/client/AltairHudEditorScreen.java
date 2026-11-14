@@ -78,7 +78,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void render(GuiGraphicsExtractor g) { CPSCounter.getInstance().render(g); }
         });
 
-        // 3. Combo Counter (NUEVO)
+        // 3. Combo Counter
         targets.add(new HudTarget() {
             @Override public String getName() { return "Combo Counter"; }
             @Override public boolean isEnabled() { return ComboCounter.getInstance().isEnabled(); }
@@ -92,7 +92,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void render(GuiGraphicsExtractor g) { ComboCounter.getInstance().renderPreview(g); }
         });
 
-        // 4. Reach Display (NUEVO)
+        // 4. Reach Display
         targets.add(new HudTarget() {
             @Override public String getName() { return "Reach Display"; }
             @Override public boolean isEnabled() { return ReachDisplay.getInstance().isEnabled(); }
@@ -187,7 +187,6 @@ public final class AltairHudEditorScreen extends Screen {
         int hintWidth = font.width(hint);
         graphics.text(font, hint, (width - hintWidth) / 2, 17, MUTED, false);
 
-        // Renderizar todos los elementos para que siempre puedan ser posicionados
         for (HudTarget target : targets) {
             int tx = target.getX();
             int ty = target.getY();
@@ -208,7 +207,7 @@ public final class AltairHudEditorScreen extends Screen {
 
             graphics.fill(bx, by, bx + bw, by + 1, borderColor);
             graphics.fill(bx, by + bh - 1, bx + bw, by + bh, borderColor);
-            graphics.fill(bx, by + 1, by + bh, borderColor);
+            graphics.fill(bx, by + 1, bx + 1, by + bh, borderColor);
             graphics.fill(bx + bw - 1, by, bx + bw, by + bh, borderColor);
 
             String statusTag = isEnabled ? " [ON]" : " [OFF]";
@@ -243,7 +242,6 @@ public final class AltairHudEditorScreen extends Screen {
                 dragOffsetX = (int) mouseX - tx;
                 dragOffsetY = (int) mouseY - ty;
 
-                // Si estaba apagado, encenderlo al arrastrar para facilitar su uso
                 if (!target.isEnabled()) {
                     target.setEnabled(true);
                 }
@@ -264,7 +262,6 @@ public final class AltairHudEditorScreen extends Screen {
             int newX = (int) event.x() - dragOffsetX;
             int newY = (int) event.y() - dragOffsetY;
 
-            // Restringir a los bordes de la pantalla
             newX = Math.max(5, Math.min(width - draggedTarget.getWidth() - 5, newX));
             newY = Math.max(32, Math.min(height - draggedTarget.getHeight() - 5, newY));
 
