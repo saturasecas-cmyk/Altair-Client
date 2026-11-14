@@ -20,21 +20,18 @@ jobs:
       run: |
         JAR=$GITHUB_WORKSPACE/.gradle/mavenizer/repo/net/minecraftforge/forge/26.2-65.1.6/forge-26.2-65.1.6.jar
         dump() { echo "::group::$1"; javap -p -cp "$JAR" "$1" 2>&1 | head -${2:-200}; echo "::endgroup::"; }
-        dumpc() { echo "::group::CODE $1"; javap -p -c -constants -cp "$JAR" "$1" 2>&1 | head -${2:-400}; echo "::endgroup::"; }
-        dumpc net.minecraft.gizmos.Gizmos 140
-        dumpc 'net.minecraft.gizmos.Gizmos$TemporaryCollection' 80
-        dump net.minecraft.gizmos.SimpleGizmoCollector 40
-        mkdir -p /tmp/x && cd /tmp/x && unzip -q -o "$JAR" 'net/minecraft/client/*' || true
-        echo "::group::callers collectPerFrameRenderThreadGizmos"
-        for f in $(grep -rl 'collectPerFrameRenderThreadGizmos' /tmp/x); do
-          c=$(echo "$f" | sed 's#/tmp/x/##; s#\.class$##; s#/#.#g')
-          echo "== $c"
-          javap -p -c -cp "$JAR" "$c" | grep -n -B25 -A25 'collectPerFrameRenderThreadGizmos' | head -120
-        done
+        mkdir -p /tmp/x && cd /tmp/x && unzip -q -o "$JAR" 'net/minecraft/client/*' 'net/minecraftforge/*' || true
+        echo "::group::classes referencing ViewportEvent ComputeFov"
+        grep -rl 'ViewportEvent$ComputeFov' /tmp/x | head
         echo "::endgroup::"
-        echo "::group::callers DebugRenderer.emitGizmos"
-        for f in $(grep -rl 'DebugRenderer.emitGizmos\|emitGizmos' /tmp/x | head -6); do echo "$f"; done
+        dump net.minecraftforge.client.event.AddGuiOverlayLayersEvent 40
+        dump net.minecraft.client.gui.Hud 80
+        echo "::group::Layer iface"
+        for c in net.minecraft.client.gui.LayeredDraw 'net.minecraft.client.gui.LayeredDraw$Layer' net.minecraftforge.client.gui.overlay.ForgeLayerInstance; do javap -p -cp "$JAR" "$c" 2>&1 | head -40; done
         echo "::endgroup::"
-        echo "::group::ClientLevel entities"; javap -p -cp "$JAR" net.minecraft.client.multiplayer.ClientLevel | grep -i -E 'entit|partial'; echo "::endgroup::"
-        echo "::group::DeltaTracker"; javap -p -cp "$JAR" net.minecraft.client.DeltaTracker; echo "::endgroup::"
-        echo "::group::Options camera"; javap -p -cp "$JAR" net.minecraft.client.Options | grep -i -E 'camera|fov|keyAttack|keyUse'; echo "::endgroup::"
+        echo "::group::mixin related in forge jar"
+        unzip -l "$JAR" | grep -i -E 'mixin' | head -20
+        echo "::endgroup::"
+        echo "::group::TickEvent ClientTickEvent"
+        javap -p -cp "$JAR" 'net.minecraftforge.event.TickEvent$ClientTickEvent$Post' 2>&1 | head -20
+        echo "::endgroup::"
