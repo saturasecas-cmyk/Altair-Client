@@ -6,5 +6,6 @@
   "key.altairclient.toggle_sprint": "Activar/desactivar Toggle Sprint",
   "key.altairclient.toggle_sneak": "Activar/desactivar Toggle Sneak",
   "key.altairclient.perspective": "Perspective Mod (mantener)",
-  "key.altairclient.screenshot": "Captura de pantalla (Altair)"
+  "key.altairclient.screenshot": "Captura de pantalla (Altair)",
+  "key.altairclient.screenshot_upload": "Subir última captura (Altair)"
 }

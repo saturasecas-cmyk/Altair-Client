@@ -15,6 +15,7 @@ import com.altairclient.modules.mods.PingDisplay;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.ReachDisplay;
 import com.altairclient.modules.mods.ScreenshotModule;
+import com.altairclient.modules.mods.ScreenshotUpload;
 import com.altairclient.modules.mods.ToggleSneak;
 import com.altairclient.modules.mods.ToggleSprint;
 import com.altairclient.modules.mods.WorldInfo;
@@ -352,6 +353,19 @@ public final class AltairScreen extends Screen {
                     if (net.minecraft.client.Minecraft.getInstance() != null) {
                         net.minecraft.client.Minecraft.getInstance().gui.setScreen(null);
                     }
+                },
+                () -> false
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Screenshot Upload",
+                "Subir última captura",
+                "Envía tu última captura a un webhook de Discord tuyo. Pon la URL del webhook en el archivo altairclient-webhook.txt (carpeta de Minecraft). También con la tecla Subir captura (sin asignar, configurable en Controles).",
+                Category.MISC,
+                "\u2191",
+                () -> {
+                    net.minecraft.client.Minecraft.getInstance().gui.setScreen(null);
+                    ScreenshotUpload.upload();
                 },
                 () -> false
         ));

@@ -6,6 +6,7 @@ import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.PerspectiveHandler;
 import com.altairclient.modules.mods.ScreenshotModule;
+import com.altairclient.modules.mods.ScreenshotUpload;
 import com.altairclient.modules.mods.ToggleSneak;
 import com.altairclient.modules.mods.ToggleSprint;
 import com.altairclient.modules.mods.ZoomHandler;
@@ -77,6 +78,14 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
+    // Sin tecla por defecto: sube la última captura a tu webhook de Discord.
+    public static final KeyMapping SCREENSHOT_UPLOAD_KEY = new KeyMapping(
+            "key.altairclient.screenshot_upload",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
     private AltairKeyHandler() {
     }
 
@@ -97,6 +106,7 @@ public final class AltairKeyHandler {
         event.register(TOGGLE_SNEAK_KEY);
         event.register(PERSPECTIVE_KEY);
         event.register(SCREENSHOT_KEY);
+        event.register(SCREENSHOT_UPLOAD_KEY);
     }
 
     /** Antes de cada tick: el giro del ratón pasa a la cámara y la cámara se mueve con WASD. */
@@ -162,6 +172,10 @@ public final class AltairKeyHandler {
 
         while (SCREENSHOT_KEY.consumeClick()) {
             ScreenshotModule.request();
+        }
+
+        while (SCREENSHOT_UPLOAD_KEY.consumeClick()) {
+            ScreenshotUpload.upload();
         }
 
         ZoomHandler.setZoomKeyDown(ZOOM_KEY.isDown());
