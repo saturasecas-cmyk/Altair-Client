@@ -34,11 +34,11 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
-    // Mantén pulsada para mover solo la cámara (Freelook).
+    // Activa/desactiva Freelook (el mismo estado que la tarjeta del menú de módulos).
     public static final KeyMapping FREELOOK_KEY = new KeyMapping(
             "key.altairclient.freelook",
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_LEFT_ALT,
+            GLFW.GLFW_KEY_V,
             CATEGORY
     );
 
@@ -86,7 +86,6 @@ public final class AltairKeyHandler {
 
         if (minecraft.player == null || minecraft.gui.screen() != null) {
             ZoomHandler.setZoomKeyDown(false);
-            FreelookHandler.setKeyDown(false);
             return;
         }
 
@@ -94,7 +93,10 @@ public final class AltairKeyHandler {
             minecraft.gui.setScreen(new AltairScreen());
         }
 
+        while (FREELOOK_KEY.consumeClick()) {
+            FreelookHandler.toggle();
+        }
+
         ZoomHandler.setZoomKeyDown(ZOOM_KEY.isDown());
-        FreelookHandler.setKeyDown(FREELOOK_KEY.isDown());
     }
 }

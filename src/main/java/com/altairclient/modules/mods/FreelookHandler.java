@@ -4,8 +4,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 
 /**
- * Freelook: mientras mantienes la tecla, el ratón mueve solo la cámara y el
- * jugador conserva la rotación con la que empezó.
+ * Freelook: con el módulo activado, el ratón mueve solo la cámara y el jugador
+ * conserva la rotación con la que empezó. Se activa y desactiva desde el menú de
+ * módulos o con la tecla "Freelook" de los controles de Minecraft (ambos cambian
+ * el mismo estado).
  *
  * Es puramente visual y del lado del cliente: se devuelve la rotación del jugador
  * a su valor bloqueado antes de cada tick, así que al servidor no le llega ningún
@@ -13,10 +15,9 @@ import net.minecraft.client.player.LocalPlayer;
  */
 public class FreelookHandler {
 
-    private static boolean enabled = true;
-    private static boolean keyDown = false;
+    private static boolean enabled = false;
+    private static boolean initialized = false;
 
-    private static boolean active = false;
     private static float lockedYaw;
     private static float lockedPitch;
     private static float camYaw;
@@ -31,25 +32,12 @@ public class FreelookHandler {
 
     public static void setEnabled(boolean value) {
         enabled = value;
-        if (!enabled) {
-            keyDown = false;
-            active = false;
-        }
+        // Al activar se empieza desde donde mira el jugador; al desactivar la cámara vuelve a él.
+        initialized = false;
     }
 
     public static void toggle() {
         setEnabled(!enabled);
-    }
-
-    public static void setKeyDown(boolean value) {
-        keyDown = value;
-        if (!value) {
-            active = false;
-        }
-    }
-
-    public static boolean isActive() {
-        return active;
     }
 
     /** Desfase de la cámara respecto a la rotación (bloqueada) del jugador. */
@@ -64,19 +52,23 @@ public class FreelookHandler {
     /**
      * Pasa el giro que el ratón haya aplicado al jugador a la cámara y devuelve al
      * jugador a su rotación bloqueada. Se llama cada frame y al inicio de cada tick.
-     * Devuelve true si el freelook está activo.
+     * Devuelve true si el freelook está aplicándose ahora mismo.
      */
     public static boolean absorb() {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
 
-        if (player == null || !enabled || !keyDown || mc.gui.screen() != null) {
-            active = false;
+        if (player == null || !enabled) {
             return false;
         }
 
-        if (!active) {
-            active = true;
+        // Con un menú abierto no se aplica, pero se conserva la posición de la cámara.
+        if (mc.gui.screen() != null) {
+            return false;
+        }
+
+        if (!initialized) {
+            initialized = true;
             lockedYaw = player.getYRot();
             lockedPitch = player.getXRot();
             camYaw = lockedYaw;

@@ -221,7 +221,7 @@ public final class AltairScreen extends Screen {
         allModules.add(new ModuleEntry(
                 "Freelook",
                 "Mirar sin girar",
-                "Mantén pulsada la tecla Freelook (Alt izquierdo por defecto) para mover solo la cámara sin girar al jugador. Es visual y no envía ningún giro al servidor.",
+                "Al activarlo, el ratón mueve solo la cámara sin girar al jugador. Actívalo aquí o con la tecla Freelook (V por defecto, configurable en Controles). Es visual y no envía giros al servidor.",
                 Category.RENDER,
                 "\u25CE",
                 () -> FreelookHandler.toggle(),
