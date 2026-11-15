@@ -260,7 +260,9 @@ public final class AltairHudEditorScreen extends Screen {
         double mouseX = event.x();
         double mouseY = event.y();
 
-        for (HudTarget target : targets) {
+        // Se recorre al revés: si dos módulos se solapan, se agarra el que está dibujado encima.
+        for (int i = targets.size() - 1; i >= 0; i--) {
+            HudTarget target = targets.get(i);
             int tx = target.getX();
             int ty = target.getY();
             int tw = target.getWidth();

@@ -17,8 +17,8 @@ public class PingDisplay {
     private static final int RED = 0xFFFF5C77;
 
     private boolean enabled = false;
-    private int x = 10;
-    private int y = 30;
+    private int x = 95;
+    private int y = 10;
 
     private PingDisplay() {
     }

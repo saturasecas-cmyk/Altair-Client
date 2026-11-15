@@ -26,8 +26,8 @@ public class HealthDisplay {
     private static final long TARGET_HOLD_MS = 1500L;
 
     private boolean enabled = false;
-    private int x = 10;
-    private int y = 50;
+    private int x = 200;
+    private int y = 10;
 
     private LivingEntity lastTarget = null;
     private long lastTargetTime = 0L;
