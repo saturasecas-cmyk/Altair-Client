@@ -3,6 +3,8 @@ package com.altairclient.client;
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.AutoRespawn;
+import com.altairclient.modules.mods.AutoTool;
+import com.altairclient.modules.mods.FastGame;
 import com.altairclient.modules.mods.ChatBubbleHandler;
 import com.altairclient.modules.mods.DamageIndicator;
 import com.altairclient.modules.mods.NoHurtCamera;
@@ -156,6 +158,8 @@ public final class AltairKeyHandler {
         Minecraft mc = Minecraft.getInstance();
 
         NoHurtCamera.apply(mc);
+        AutoTool.tick(mc);
+        FastGame.tick(mc);
         ToggleSprint.tick(mc);
         FullbrightHandler.tick(mc);
         ToggleSneak.tick(mc);

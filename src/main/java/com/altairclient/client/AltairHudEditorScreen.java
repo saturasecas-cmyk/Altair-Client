@@ -6,6 +6,7 @@ import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.ArrowCounter;
 import com.altairclient.modules.mods.DamageIndicator;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.ItemNameDisplay;
 import com.altairclient.modules.mods.MemoryDisplay;
 import com.altairclient.modules.mods.TotemCounter;
 import com.altairclient.modules.mods.HealthDisplay;
@@ -247,6 +248,19 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public int getHeight() { return DamageIndicator.getInstance().getHeight(); }
             @Override public void render(GuiGraphicsExtractor g) { DamageIndicator.getInstance().renderPreview(g); }
         });
+
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Item Name"; }
+            @Override public boolean isEnabled() { return ItemNameDisplay.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { ItemNameDisplay.getInstance().setEnabled(e); }
+            @Override public int getX() { return ItemNameDisplay.getInstance().getX(); }
+            @Override public void setX(int x) { ItemNameDisplay.getInstance().setX(x); }
+            @Override public int getY() { return ItemNameDisplay.getInstance().getY(); }
+            @Override public void setY(int y) { ItemNameDisplay.getInstance().setY(y); }
+            @Override public int getWidth() { return ItemNameDisplay.getInstance().getWidth(); }
+            @Override public int getHeight() { return ItemNameDisplay.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { ItemNameDisplay.getInstance().renderPreview(g); }
+        });
     }
 
     @Override
@@ -269,11 +283,16 @@ public final class AltairHudEditorScreen extends Screen {
         int titleWidth = font.width(title);
         graphics.text(font, title, (width - titleWidth) / 2, 6, WHITE, false);
 
-        String hint = "Arrastra cualquier módulo para posicionarlo • ESC para guardar y volver";
+        String hint = "Arrastra los módulos activos para posicionarlos • ESC para guardar y volver";
         int hintWidth = font.width(hint);
         graphics.text(font, hint, (width - hintWidth) / 2, 17, MUTED, false);
 
+        int activeCount = 0;
         for (HudTarget target : targets) {
+            if (!target.isEnabled()) {
+                continue;
+            }
+            activeCount++;
             int tx = target.getX();
             int ty = target.getY();
             int tw = target.getWidth();
@@ -282,9 +301,7 @@ public final class AltairHudEditorScreen extends Screen {
             boolean isHovered = mouseX >= tx - 6 && mouseX <= tx + tw + 6
                     && mouseY >= ty - 5 && mouseY <= ty + th + 5;
             boolean isDragged = (draggedTarget == target);
-            boolean isEnabled = target.isEnabled();
-
-            int borderColor = isDragged ? CYAN : (isHovered ? 0xFF8BE9FD : (isEnabled ? PURPLE : 0xFF434E73));
+            int borderColor = isDragged ? CYAN : (isHovered ? 0xFF8BE9FD : PURPLE);
 
             int bx = tx - 6;
             int by = ty - 5;
@@ -296,11 +313,14 @@ public final class AltairHudEditorScreen extends Screen {
             graphics.fill(bx, by + 1, bx + 1, by + bh, borderColor);
             graphics.fill(bx + bw - 1, by, bx + bw, by + bh, borderColor);
 
-            String statusTag = isEnabled ? " [ON]" : " [OFF]";
-            int tagColor = isEnabled ? GREEN : MUTED;
-            graphics.text(font, target.getName() + statusTag, bx + 2, by - 9, tagColor, false);
+            graphics.text(font, target.getName(), bx + 2, by - 9, GREEN, false);
 
             target.render(graphics);
+        }
+
+        if (activeCount == 0) {
+            String empty = "No hay m\u00F3dulos de HUD activos. Act\u00EDvalos en el men\u00FA de m\u00F3dulos.";
+            graphics.text(font, empty, (width - font.width(empty)) / 2, height / 2 - 4, MUTED, false);
         }
     }
 
@@ -319,6 +339,9 @@ public final class AltairHudEditorScreen extends Screen {
         // Se recorre al revés: si dos módulos se solapan, se agarra el que está dibujado encima.
         for (int i = targets.size() - 1; i >= 0; i--) {
             HudTarget target = targets.get(i);
+            if (!target.isEnabled()) {
+                continue;
+            }
             int tx = target.getX();
             int ty = target.getY();
             int tw = target.getWidth();
@@ -329,10 +352,6 @@ public final class AltairHudEditorScreen extends Screen {
                 draggedTarget = target;
                 dragOffsetX = (int) mouseX - tx;
                 dragOffsetY = (int) mouseY - ty;
-
-                if (!target.isEnabled()) {
-                    target.setEnabled(true);
-                }
                 return true;
             }
         }

@@ -5,6 +5,9 @@ import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.FPSDisplay;
 import com.altairclient.modules.mods.ArrowCounter;
+import com.altairclient.modules.mods.AutoTool;
+import com.altairclient.modules.mods.FastGame;
+import com.altairclient.modules.mods.ItemNameDisplay;
 import com.altairclient.modules.mods.AutoGG;
 import com.altairclient.modules.mods.AutoRespawn;
 import com.altairclient.modules.mods.ChatBubbleHandler;
@@ -542,6 +545,36 @@ public final class AltairScreen extends Screen {
                 () -> ChatTimestamps.isEnabled()
         ));
 
+        allModules.add(new ModuleEntry(
+                "Item Name",
+                "Nombre del objeto",
+                "Muestra el nombre del objeto que llevas en la mano, con el color de su rareza. Se mueve en el HUD Editor.",
+                Category.PLAYER,
+                "\u270E",
+                () -> ItemNameDisplay.getInstance().toggle(),
+                () -> ItemNameDisplay.getInstance().isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Tool",
+                "Herramienta adecuada",
+                "Al picar un bloque, selecciona de tu barra rápida la herramienta más rápida para ese bloque y al terminar vuelve al hueco que tenías.",
+                Category.PLAYER,
+                "\u26CF",
+                () -> AutoTool.toggle(),
+                () -> AutoTool.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Fast Game",
+                "Optimiza el juego",
+                "No dibuja las entidades tapadas por bloques, baja la distancia de entidades, quita sombras de entidades y reduce partículas. Al desactivarlo vuelven tus ajustes.",
+                Category.MISC,
+                "\u26A1",
+                () -> FastGame.toggle(),
+                () -> FastGame.isEnabled()
+        ));
+
         // ==================== WORLD ====================
         allModules.add(new ModuleEntry(
                 "World Info",
@@ -904,6 +937,7 @@ public final class AltairScreen extends Screen {
         ArrowCounter.getInstance().render(graphics);
         MemoryDisplay.getInstance().render(graphics);
         DamageIndicator.getInstance().render(graphics);
+        ItemNameDisplay.getInstance().render(graphics);
         CPSCounter.getInstance().render(graphics);
         ArmorHUD.getInstance().render(graphics);
         Keystrokes.getInstance().render(graphics);

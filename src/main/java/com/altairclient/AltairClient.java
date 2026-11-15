@@ -7,6 +7,7 @@ import com.altairclient.modules.mods.AutoGG;
 import com.altairclient.modules.mods.ChatBubbleHandler;
 import com.altairclient.modules.mods.ChatTimestamps;
 import com.altairclient.modules.mods.ClearWater;
+import com.altairclient.modules.mods.FastGame;
 import com.altairclient.modules.mods.NametagHandler;
 
 import net.minecraftforge.fml.common.Mod;
@@ -35,6 +36,7 @@ public class AltairClient {
         AutoGG.register();
         ChatTimestamps.register();
         ClearWater.register();
+        FastGame.register();
 
         FMLClientSetupEvent.getBus(
                 context.getModBusGroup()

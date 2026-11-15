@@ -6,6 +6,7 @@ import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ArrowCounter;
 import com.altairclient.modules.mods.DamageIndicator;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.ItemNameDisplay;
 import com.altairclient.modules.mods.MemoryDisplay;
 import com.altairclient.modules.mods.TotemCounter;
 import com.altairclient.modules.mods.HealthDisplay;
@@ -60,6 +61,7 @@ public final class AltairHud {
         TotemCounter.getInstance().render(graphics);
         ArrowCounter.getInstance().render(graphics);
         MemoryDisplay.getInstance().render(graphics);
+        ItemNameDisplay.getInstance().render(graphics);
         DamageIndicator.getInstance().render(graphics);
         CPSCounter.getInstance().render(graphics);
         ArmorHUD.getInstance().render(graphics);
