@@ -4,14 +4,19 @@ import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.HealthDisplay;
 import com.altairclient.modules.mods.HitIndicator;
 import com.altairclient.modules.mods.HitboxDisplay;
 import com.altairclient.modules.mods.Keystrokes;
+import com.altairclient.modules.mods.PerspectiveHandler;
 import com.altairclient.modules.mods.PingDisplay;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.ReachDisplay;
+import com.altairclient.modules.mods.ScreenshotModule;
+import com.altairclient.modules.mods.ToggleSneak;
+import com.altairclient.modules.mods.ToggleSprint;
 import com.altairclient.modules.mods.WorldInfo;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -68,6 +73,42 @@ public final class AltairScreen extends Screen {
         final String icon;
         final Runnable onToggle;
         final java.util.function.BooleanSupplier isEnabledSupplier;
+
+        // Ajuste numérico opcional (se muestra con botones - / + en el panel derecho)
+        String settingLabel = null;
+        java.util.function.IntSupplier settingGetter = null;
+        java.util.function.IntConsumer settingSetter = null;
+        int settingMin = 0;
+        int settingMax = 0;
+        int settingStep = 1;
+
+        ModuleEntry withSetting(
+                String label,
+                int min,
+                int max,
+                int step,
+                java.util.function.IntSupplier getter,
+                java.util.function.IntConsumer setter
+        ) {
+            this.settingLabel = label;
+            this.settingMin = min;
+            this.settingMax = max;
+            this.settingStep = step;
+            this.settingGetter = getter;
+            this.settingSetter = setter;
+            return this;
+        }
+
+        boolean hasSetting() {
+            return settingGetter != null && settingSetter != null;
+        }
+
+        void adjustSetting(int direction) {
+            if (hasSetting()) {
+                int v = settingGetter.getAsInt() + direction * settingStep;
+                settingSetter.accept(Math.max(settingMin, Math.min(settingMax, v)));
+            }
+        }
 
         ModuleEntry(
                 String name,
@@ -247,6 +288,72 @@ public final class AltairScreen extends Screen {
                 "🔍",
                 null,
                 () -> true
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Custom FOV",
+                "FOV personalizado",
+                "Usa tu propio campo de visión en lugar del de las opciones de vídeo. Ajusta el valor con los botones - y + (de 30 a 110).",
+                Category.RENDER,
+                "\u25CD",
+                () -> FovHandler.toggleCustom(),
+                () -> FovHandler.isCustomEnabled()
+        ).withSetting("FOV", FovHandler.MIN_FOV, FovHandler.MAX_FOV, 5,
+                () -> FovHandler.getCustomFov(), v -> FovHandler.setCustomFov(v)));
+
+        allModules.add(new ModuleEntry(
+                "Dynamic FOV",
+                "Cambios dinámicos",
+                "Activado: el FOV cambia al correr o con efectos de velocidad, como en vanilla. Desactivado: el FOV se queda fijo.",
+                Category.RENDER,
+                "\u2194",
+                () -> FovHandler.toggleDynamic(),
+                () -> FovHandler.isDynamicEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Perspective Mod",
+                "Mirar alrededor",
+                "Mantén la tecla Perspective Mod (Alt izquierdo por defecto, configurable en Controles) y mueve el ratón: la cámara pasa a tercera persona y orbita sin girar a tu jugador. Es visual y no envía giros al servidor.",
+                Category.RENDER,
+                "\u25CE",
+                () -> PerspectiveHandler.toggle(),
+                () -> PerspectiveHandler.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Toggle Sprint",
+                "Correr automático",
+                "Corres automáticamente mientras avanzas, sin mantener la tecla de sprint. Asígnale un atajo en Controles si quieres.",
+                Category.PLAYER,
+                "\u00BB",
+                () -> ToggleSprint.toggle(),
+                () -> ToggleSprint.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Toggle Sneak",
+                "Agacharse automático",
+                "Te mantienes agachado automáticamente, sin mantener la tecla de agacharse. Asígnale un atajo en Controles si quieres.",
+                Category.PLAYER,
+                "\u2193",
+                () -> ToggleSneak.toggle(),
+                () -> ToggleSneak.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Screenshot",
+                "Captura de pantalla",
+                "Hace una captura del juego sin el menú y la guarda en la carpeta screenshots. También con la tecla Captura de pantalla (F9 por defecto, configurable en Controles).",
+                Category.MISC,
+                "\u25A3",
+                () -> {
+                    ScreenshotModule.request();
+                    if (net.minecraft.client.Minecraft.getInstance() != null) {
+                        net.minecraft.client.Minecraft.getInstance().gui.setScreen(null);
+                    }
+                },
+                () -> false
         ));
 
         // ==================== WORLD ====================
@@ -456,9 +563,25 @@ public final class AltairScreen extends Screen {
             int descY = iconBoxY + 40;
             List<FormattedCharSequence> wrappedLines = font.split(Component.literal(selectedModule.fullDesc), rightPanelWidth - 28);
             for (FormattedCharSequence line : wrappedLines) {
-                if (descY + 10 > panelY + panelHeight - 65) break;
+                if (descY + 10 > panelY + panelHeight - (selectedModule.hasSetting() ? 105 : 65)) break;
                 graphics.text(font, line, rightPanelX + 14, descY, MUTED, false);
                 descY += 11;
+            }
+
+            if (selectedModule.hasSetting()) {
+                int setY = panelY + panelHeight - 88;
+                int minusX = rightPanelX + rightPanelWidth - 14 - 38;
+                int plusX = rightPanelX + rightPanelWidth - 14 - 16;
+                boolean minusHover = mouseX >= minusX && mouseX <= minusX + 16 && mouseY >= setY && mouseY <= setY + 14;
+                boolean plusHover = mouseX >= plusX && mouseX <= plusX + 16 && mouseY >= setY && mouseY <= setY + 14;
+
+                graphics.text(font, selectedModule.settingLabel + ": " + selectedModule.settingGetter.getAsInt(),
+                        rightPanelX + 14, setY + 3, WHITE, false);
+
+                graphics.fill(minusX, setY, minusX + 16, setY + 14, minusHover ? 0xFF2E3550 : 0xFF22283D);
+                graphics.fill(plusX, setY, plusX + 16, setY + 14, plusHover ? 0xFF2E3550 : 0xFF22283D);
+                graphics.text(font, "-", minusX + 6, setY + 3, WHITE, false);
+                graphics.text(font, "+", plusX + 5, setY + 3, WHITE, false);
             }
 
             boolean isModEnabled = selectedModule.isEnabled();
@@ -648,6 +771,22 @@ public final class AltairScreen extends Screen {
         int bigBtnY = panelY + panelHeight - 44;
         int bigBtnW = rightPanelWidth - 28;
         int bigBtnH = 26;
+
+        if (selectedModule != null && selectedModule.hasSetting()) {
+            int setY = panelY + panelHeight - 88;
+            int minusX = rightPanelX + rightPanelWidth - 14 - 38;
+            int plusX = rightPanelX + rightPanelWidth - 14 - 16;
+            if (my >= setY && my <= setY + 14) {
+                if (mx >= minusX && mx <= minusX + 16) {
+                    selectedModule.adjustSetting(-1);
+                    return true;
+                }
+                if (mx >= plusX && mx <= plusX + 16) {
+                    selectedModule.adjustSetting(1);
+                    return true;
+                }
+            }
+        }
 
         if (selectedModule != null && mx >= bigBtnX && mx <= bigBtnX + bigBtnW && my >= bigBtnY && my <= bigBtnY + bigBtnH) {
             selectedModule.toggle();

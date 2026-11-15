@@ -2,7 +2,12 @@ package com.altairclient.client;
 
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.CPSCounter;
+import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.FreecamHandler;
+import com.altairclient.modules.mods.PerspectiveHandler;
+import com.altairclient.modules.mods.ScreenshotModule;
+import com.altairclient.modules.mods.ToggleSneak;
+import com.altairclient.modules.mods.ToggleSprint;
 import com.altairclient.modules.mods.ZoomHandler;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -42,6 +47,36 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
+    // Sin tecla por defecto: se asigna en Controles si se quiere un atajo.
+    public static final KeyMapping TOGGLE_SPRINT_KEY = new KeyMapping(
+            "key.altairclient.toggle_sprint",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
+    public static final KeyMapping TOGGLE_SNEAK_KEY = new KeyMapping(
+            "key.altairclient.toggle_sneak",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
+    // Mantener pulsada: la cámara orbita alrededor del jugador sin girarlo.
+    public static final KeyMapping PERSPECTIVE_KEY = new KeyMapping(
+            "key.altairclient.perspective",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_LEFT_ALT,
+            CATEGORY
+    );
+
+    public static final KeyMapping SCREENSHOT_KEY = new KeyMapping(
+            "key.altairclient.screenshot",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_F9,
+            CATEGORY
+    );
+
     private AltairKeyHandler() {
     }
 
@@ -58,12 +93,23 @@ public final class AltairKeyHandler {
         event.register(ZOOM_KEY);
         event.register(MENU_KEY);
         event.register(FREECAM_KEY);
+        event.register(TOGGLE_SPRINT_KEY);
+        event.register(TOGGLE_SNEAK_KEY);
+        event.register(PERSPECTIVE_KEY);
+        event.register(SCREENSHOT_KEY);
     }
 
     /** Antes de cada tick: el giro del ratón pasa a la cámara y la cámara se mueve con WASD. */
     private static void onClientTickPre(TickEvent.ClientTickEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+
+        ToggleSprint.tick(mc);
+        ToggleSneak.tick(mc);
+
         if (FreecamHandler.absorbRotation()) {
             FreecamHandler.tickMovement();
+        } else {
+            PerspectiveHandler.absorb();
         }
     }
 
@@ -72,12 +118,15 @@ public final class AltairKeyHandler {
         if (FreecamHandler.absorbRotation()) {
             event.setYaw(FreecamHandler.getCameraYaw());
             event.setPitch(FreecamHandler.getCameraPitch());
+        } else if (PerspectiveHandler.absorb()) {
+            event.setYaw(event.getYaw() + PerspectiveHandler.getYawOffset());
+            event.setPitch(event.getPitch() + PerspectiveHandler.getPitchOffset());
         }
     }
 
-    /** Aplica el zoom al campo de visión mientras se mantiene pulsada la tecla de zoom. */
+    /** Aplica el FOV personalizado/dinámico y el zoom (mientras se mantiene pulsada la tecla de zoom). */
     private static void onComputeFov(ViewportEvent.ComputeFov event) {
-        event.setFOV(ZoomHandler.applyZoom(event.getFOV()));
+        event.setFOV(ZoomHandler.applyZoom(FovHandler.apply(event.getFOV())));
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
@@ -86,8 +135,12 @@ public final class AltairKeyHandler {
         // Cuenta los clics también a nivel de tick (además de en cada frame del HUD).
         CPSCounter.getInstance().poll();
 
+        // La captura se hace aunque el menú acabe de cerrarse (espera a que no haya pantalla abierta).
+        ScreenshotModule.tick(minecraft);
+
         if (minecraft.player == null || minecraft.gui.screen() != null) {
             ZoomHandler.setZoomKeyDown(false);
+            PerspectiveHandler.setKeyDown(false);
             return;
         }
 
@@ -99,6 +152,19 @@ public final class AltairKeyHandler {
             FreecamHandler.toggle();
         }
 
+        while (TOGGLE_SPRINT_KEY.consumeClick()) {
+            ToggleSprint.toggle();
+        }
+
+        while (TOGGLE_SNEAK_KEY.consumeClick()) {
+            ToggleSneak.toggle();
+        }
+
+        while (SCREENSHOT_KEY.consumeClick()) {
+            ScreenshotModule.request();
+        }
+
         ZoomHandler.setZoomKeyDown(ZOOM_KEY.isDown());
+        PerspectiveHandler.setKeyDown(PERSPECTIVE_KEY.isDown());
     }
 }

@@ -2,5 +2,9 @@
   "key.category.altairclient.altair_client": "ALTAIR CLIENT",
   "key.altairclient.zoom": "Zoom",
   "key.altairclient.menu": "Abrir menú",
-  "key.altairclient.freecam": "Activar/desactivar Freecam"
+  "key.altairclient.freecam": "Activar/desactivar Freecam",
+  "key.altairclient.toggle_sprint": "Activar/desactivar Toggle Sprint",
+  "key.altairclient.toggle_sneak": "Activar/desactivar Toggle Sneak",
+  "key.altairclient.perspective": "Perspective Mod (mantener)",
+  "key.altairclient.screenshot": "Captura de pantalla (Altair)"
 }
