@@ -3,7 +3,6 @@ package com.altairclient;
 
 import com.altairclient.client.AltairHud;
 import com.altairclient.client.AltairKeyHandler;
-import com.altairclient.client.AltairTitleBackground;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -26,7 +25,6 @@ public class AltairClient {
 
         AltairKeyHandler.register();
         AltairHud.register();
-        AltairTitleBackground.register();
 
         FMLClientSetupEvent.getBus(
                 context.getModBusGroup()

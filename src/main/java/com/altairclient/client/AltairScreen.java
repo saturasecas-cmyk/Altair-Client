@@ -12,6 +12,7 @@ import com.altairclient.modules.mods.ReachDisplay;
 import com.altairclient.modules.mods.WorldInfo;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -102,6 +103,12 @@ public final class AltairScreen extends Screen {
     private int panelY;
     private int panelWidth;
     private int panelHeight;
+
+    // Barra de búsqueda del header
+    private static final int SEARCH_WIDTH = 220;
+    private static final int SEARCH_HEIGHT = 20;
+    private EditBox searchBox;
+    private String searchQuery = "";
 
     public AltairScreen() {
         super(Component.literal("Altair Client"));
@@ -233,12 +240,55 @@ public final class AltairScreen extends Screen {
         panelHeight = Math.min(380, height - 20);
         panelX = (width - panelWidth) / 2;
         panelY = (height - panelHeight) / 2;
+
+        // Caja de texto real dentro de la barra de búsqueda (se conserva el texto al redimensionar).
+        int searchX = panelX + (panelWidth - SEARCH_WIDTH) / 2 - 20;
+        int searchY = panelY + 8;
+        searchBox = new EditBox(
+                font,
+                searchX + 24,
+                searchY + 6,
+                SEARCH_WIDTH - 32,
+                12,
+                Component.literal("Buscar módulos")
+        );
+        searchBox.setBordered(false);
+        searchBox.setMaxLength(32);
+        searchBox.setHint(Component.literal("Buscar módulos..."));
+        searchBox.setValue(searchQuery);
+        searchBox.setResponder(this::onSearchChanged);
+        addWidget(searchBox);
+    }
+
+    private void onSearchChanged(String text) {
+        searchQuery = text == null ? "" : text.trim();
+        List<ModuleEntry> visible = getVisibleModules();
+        if (!visible.isEmpty() && !visible.contains(selectedModule)) {
+            selectedModule = visible.get(0);
+        }
     }
 
     private List<ModuleEntry> getModulesForCategory(Category cat) {
         List<ModuleEntry> list = new ArrayList<>();
         for (ModuleEntry m : allModules) {
             if (m.category == cat) {
+                list.add(m);
+            }
+        }
+        return list;
+    }
+
+    /** Con búsqueda activa filtra en todas las categorías; si no, muestra la categoría actual. */
+    private List<ModuleEntry> getVisibleModules() {
+        if (searchQuery.isEmpty()) {
+            return getModulesForCategory(currentCategory);
+        }
+        String q = searchQuery.toLowerCase(java.util.Locale.ROOT);
+        List<ModuleEntry> list = new ArrayList<>();
+        for (ModuleEntry m : allModules) {
+            if (m.name.toLowerCase(java.util.Locale.ROOT).contains(q)
+                    || m.shortDesc.toLowerCase(java.util.Locale.ROOT).contains(q)
+                    || m.category.displayName.toLowerCase(java.util.Locale.ROOT).contains(q)) {
                 list.add(m);
             }
         }
@@ -276,18 +326,22 @@ public final class AltairScreen extends Screen {
         graphics.text(font, "Altair Client", panelX + 28, panelY + 13, WHITE, false);
 
         // Barra de búsqueda simulada (Centro del Header)
-        int searchWidth = 220;
-        int searchHeight = 20;
+        int searchWidth = SEARCH_WIDTH;
+        int searchHeight = SEARCH_HEIGHT;
         int searchX = panelX + (panelWidth - searchWidth) / 2 - 20;
         int searchY = panelY + 8;
+        int searchBorder = (searchBox != null && searchBox.isFocused()) ? CYAN : BORDER_COLOR;
 
         graphics.fill(searchX, searchY, searchX + searchWidth, searchY + searchHeight, 0xFF182038);
-        graphics.fill(searchX, searchY, searchX + searchWidth, searchY + 1, BORDER_COLOR);
-        graphics.fill(searchX, searchY + searchHeight - 1, searchX + searchWidth, searchY + searchHeight, BORDER_COLOR);
-        graphics.fill(searchX, searchY + 1, searchX + 1, searchY + searchHeight, BORDER_COLOR);
-        graphics.fill(searchX + searchWidth - 1, searchY, searchX + searchWidth, searchY + searchHeight, BORDER_COLOR);
+        graphics.fill(searchX, searchY, searchX + searchWidth, searchY + 1, searchBorder);
+        graphics.fill(searchX, searchY + searchHeight - 1, searchX + searchWidth, searchY + searchHeight, searchBorder);
+        graphics.fill(searchX, searchY + 1, searchX + 1, searchY + searchHeight, searchBorder);
+        graphics.fill(searchX + searchWidth - 1, searchY, searchX + searchWidth, searchY + searchHeight, searchBorder);
 
-        graphics.text(font, "🔍  Buscar módulos...", searchX + 8, searchY + 6, MUTED, false);
+        graphics.text(font, "🔍", searchX + 8, searchY + 6, MUTED, false);
+        if (searchBox != null) {
+            searchBox.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        }
 
         // Botones de ventana (Derecha del Header)
         int winBtnY = panelY + 10;
@@ -410,10 +464,17 @@ public final class AltairScreen extends Screen {
         int gridStartY = contentY + 14;
         int gridWidth = rightPanelX - gridStartX - 14;
 
-        graphics.text(font, currentCategory.displayName, gridStartX, gridStartY, WHITE, false);
-        graphics.text(font, "Selecciona una tarjeta para ver sus opciones", gridStartX + 60, gridStartY + 1, MUTED, false);
+        boolean searching = !searchQuery.isEmpty();
+        String gridTitle = searching ? "Resultados" : currentCategory.displayName;
+        graphics.text(font, gridTitle, gridStartX, gridStartY, WHITE, false);
+        graphics.text(font, searching ? "\"" + searchQuery + "\"" : "Selecciona una tarjeta para ver sus opciones",
+                gridStartX + font.width(gridTitle) + 10, gridStartY + 1, MUTED, false);
 
-        List<ModuleEntry> categoryModules = getModulesForCategory(currentCategory);
+        List<ModuleEntry> categoryModules = getVisibleModules();
+
+        if (searching && categoryModules.isEmpty()) {
+            graphics.text(font, "Sin resultados", gridStartX, gridStartY + 22, MUTED, false);
+        }
 
         int cols = 3;
         int cardSpacingX = 8;
@@ -480,6 +541,19 @@ public final class AltairScreen extends Screen {
         double mx = event.x();
         double my = event.y();
 
+        // 0. Clic en la barra de búsqueda: enfocar; en cualquier otro sitio: quitar el foco.
+        if (searchBox != null) {
+            int searchX = panelX + (panelWidth - SEARCH_WIDTH) / 2 - 20;
+            int searchY = panelY + 8;
+            boolean inSearch = mx >= searchX && mx <= searchX + SEARCH_WIDTH
+                    && my >= searchY && my <= searchY + SEARCH_HEIGHT;
+            searchBox.setFocused(inSearch);
+            if (inSearch) {
+                searchBox.mouseClicked(event, doubleClick);
+                return true;
+            }
+        }
+
         // 1. Clic en botón cerrar [✕]
         int winBtnY = panelY + 10;
         int winCloseX = panelX + panelWidth - 24;
@@ -513,6 +587,9 @@ public final class AltairScreen extends Screen {
         for (Category cat : cats) {
             if (mx >= panelX + 8 && mx <= panelX + sidebarWidth - 8 && my >= catBtnY && my <= catBtnY + catBtnH) {
                 currentCategory = cat;
+                if (searchBox != null && !searchBox.getValue().isEmpty()) {
+                    searchBox.setValue(""); // al cambiar de categoría se limpia la búsqueda
+                }
                 List<ModuleEntry> mods = getModulesForCategory(cat);
                 if (!mods.isEmpty()) {
                     selectedModule = mods.get(0);
@@ -540,7 +617,7 @@ public final class AltairScreen extends Screen {
         int gridStartY = contentY + 14;
         int gridWidth = rightPanelX - gridStartX - 14;
 
-        List<ModuleEntry> categoryModules = getModulesForCategory(currentCategory);
+        List<ModuleEntry> categoryModules = getVisibleModules();
         int cols = 3;
         int cardSpacingX = 8;
         int cardSpacingY = 8;
