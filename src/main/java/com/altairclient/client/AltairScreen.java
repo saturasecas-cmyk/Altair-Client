@@ -547,11 +547,18 @@ public final class AltairScreen extends Screen {
             int searchY = panelY + 8;
             boolean inSearch = mx >= searchX && mx <= searchX + SEARCH_WIDTH
                     && my >= searchY && my <= searchY + SEARCH_HEIGHT;
-            searchBox.setFocused(inSearch);
             if (inSearch) {
+                // La pantalla manda teclado/texto a su elemento enfocado, así que hay que
+                // enfocar la caja también a nivel de pantalla, no solo en la caja.
+                setFocused(searchBox);
+                searchBox.setFocused(true);
                 searchBox.mouseClicked(event, doubleClick);
                 return true;
             }
+            if (getFocused() == searchBox) {
+                setFocused(null);
+            }
+            searchBox.setFocused(false);
         }
 
         // 1. Clic en botón cerrar [✕]
