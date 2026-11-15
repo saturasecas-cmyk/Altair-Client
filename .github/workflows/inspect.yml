@@ -18,15 +18,8 @@ jobs:
       run: ./gradlew compileJava --no-daemon || true
     - name: Dump
       run: |
-        JAR=$(find $GITHUB_WORKSPACE/.gradle -name 'forge-26.2-*.jar' | head -1)
-        echo "JAR=$JAR"
-        echo "::group::client events"
-        unzip -l "$JAR" | grep -E 'net/minecraftforge/client/event/' | awk '{print $4}' | sed 's#.*/##' | sort | head -150
-        echo "::endgroup::"
-        for c in net.minecraftforge.client.event.RenderNameTagEvent net.minecraftforge.client.event.ClientChatReceivedEvent net.minecraftforge.client.event.RenderLivingEvent net.minecraftforge.client.event.RenderLevelStageEvent net.minecraftforge.client.event.RenderHandEvent net.minecraftforge.client.event.RenderItemInFrameEvent; do
-          echo "::group::$c"; javap -p -cp "$JAR" "$c" 2>&1 | head -40; echo "::endgroup::"
+        JAR=$(find $GITHUB_WORKSPACE/.gradle -name 'forge-26.2-*-sources.jar' | head -1)
+        mkdir -p /tmp/src && cd /tmp/src && unzip -q -o "$JAR" 'net/minecraftforge/client/event/*'
+        for c in RenderNameTagEvent ClientChatReceivedEvent SystemMessageReceivedEvent RenderAvatarEvent RenderLivingEvent RenderHandEvent RenderItemInFrameEvent; do
+          echo "::group::$c"; grep -v -E '^\s*(\*|/\*|//|import|$)' net/minecraftforge/client/event/$c.java | head -90; echo "::endgroup::"
         done
-        echo "::group::mixin deps"; grep -rn -i mixin build.gradle; unzip -l "$JAR" | grep -i mixin | head -5; echo "::endgroup::"
-        echo "::group::nametag renderer"
-        unzip -l "$JAR" | grep -i -E 'nametag|NameTag|EntityRenderState|AvatarRenderer|PlayerRenderer' | awk '{print $4}' | head -30
-        echo "::endgroup::"
