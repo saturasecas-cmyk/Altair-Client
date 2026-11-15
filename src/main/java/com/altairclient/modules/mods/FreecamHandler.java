@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Marker;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -24,7 +24,7 @@ public class FreecamHandler {
     private static final double SPRINT_FACTOR = 2.5D;
 
     private static boolean active = false;
-    private static Marker camera = null;
+    private static ArmorStand camera = null;
     private static ClientInput savedInput = null;
     private static CameraType savedCameraType = null;
 
@@ -61,10 +61,13 @@ public class FreecamHandler {
         camPitch = lockedPitch;
 
         Vec3 eye = player.getEyePosition();
-        camera = new Marker(EntityType.MARKER, mc.level);
-        placeCamera(eye.x, eye.y, eye.z);
+        // Entidad auxiliar (nunca se añade al mundo). La cámara se coloca a la altura de los ojos,
+        // así que se resta su altura de ojos para que coincida con la posición del jugador.
+        camera = new ArmorStand(EntityType.ARMOR_STAND, mc.level);
+        double feetY = eye.y - camera.getEyeHeight();
+        placeCamera(eye.x, feetY, eye.z);
         camera.xo = camera.xOld = eye.x;
-        camera.yo = camera.yOld = eye.y;
+        camera.yo = camera.yOld = feetY;
         camera.zo = camera.zOld = eye.z;
 
         // Los controles del jugador real se anulan: se queda quieto.
