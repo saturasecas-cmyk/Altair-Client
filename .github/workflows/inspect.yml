@@ -1,0 +1,38 @@
+name: Inspect API 2
+
+on:
+  push:
+    branches: ['inspect/**']
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '25'
+    - uses: gradle/actions/setup-gradle@v4
+    - name: Resolve deps
+      run: ./gradlew compileJava --no-daemon || true
+    - name: Dump
+      run: |
+        SRC=$(find $GITHUB_WORKSPACE/.gradle -name 'forge-26.2-*-sources.jar' | head -1)
+        JAR=$(find $GITHUB_WORKSPACE/.gradle -name 'forge-26.2-*.jar' ! -name '*sources*' | head -1)
+        mkdir -p /tmp/src && cd /tmp/src && unzip -q -o "$SRC" 'net/minecraftforge/client/event/*'
+        for c in RenderGuiOverlayEvent ViewportEvent RenderBlockScreenEffectEvent RenderGuiEvent CustomizeGuiOverlayEvent; do
+          echo "::group::$c"; grep -v -E '^\s*(\*|/\*|//|import|$)' net/minecraftforge/client/event/$c.java | grep -E 'class|record|BUS|public |enum' | head -70; echo "::endgroup::"
+        done
+        d() { echo "::group::$1 ($2)"; javap -p -cp "$JAR" "$1" 2>&1 | grep -i -E "$2" | head -${3:-25}; echo "::endgroup::"; }
+        d net.minecraft.client.player.LocalPlayer "respawn"
+        d net.minecraft.client.multiplayer.ClientPacketListener "sendChat|sendCommand"
+        d net.minecraft.client.gui.Hud "pumpkin|Overlay|renderCamera|layer|extract" 40
+        d net.minecraft.world.entity.LivingEntity "hurtTime|hurtDuration|getHealth\b|getHealth\("
+        d net.minecraft.client.gui.GuiGraphicsExtractor "Scissor|pose|scale|void text|drawString|blit" 30
+        d net.minecraft.client.gui.screens.Screen "mouseScrolled"
+        d net.minecraft.world.entity.player.Inventory "getItem|getContainerSize|getNonEquipment|offhand"
+        d net.minecraft.world.level.Level "getEntities|getEntitiesOfClass"
+        d net.minecraft.client.gui.screens.DeathScreen "class"
+        d net.minecraft.client.Minecraft "screen|setScreen" 15
+        echo "::group::pumpkin strings"; unzip -o -q "$JAR" 'net/minecraft/client/gui/*' -d /tmp/cls; grep -rl -i pumpkin /tmp/cls | head; echo "::endgroup::"
