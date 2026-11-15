@@ -1,7 +1,6 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.ParticleStatus;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.HitResult;
@@ -14,7 +13,7 @@ import java.util.Map;
 /**
  * Fast Game: aligera el juego sin cambiar cómo se juega.
  *  - No dibuja las entidades que no ves (tapadas por bloques) ni las muy lejanas.
- *  - Baja la distancia a la que se dibujan entidades, quita las sombras de entidades y reduce partículas.
+ *  - Baja la distancia a la que se dibujan entidades, quita las sombras de entidades.
  * Al desactivarlo (o cerrar el juego) se devuelven tus ajustes originales.
  */
 public final class FastGame {
@@ -34,7 +33,6 @@ public final class FastGame {
 
     private static Double savedDistance;
     private static Boolean savedShadows;
-    private static ParticleStatus savedParticles;
 
     private FastGame() {
     }
@@ -65,12 +63,10 @@ public final class FastGame {
         }
         savedDistance = mc.options.entityDistanceScaling().get();
         savedShadows = mc.options.entityShadows().get();
-        savedParticles = mc.options.particles().get();
         applied = true;
 
         mc.options.entityDistanceScaling().set(0.5D);
         mc.options.entityShadows().set(false);
-        mc.options.particles().set(ParticleStatus.DECREASED);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
@@ -87,7 +83,6 @@ public final class FastGame {
         if (applied && mc != null && mc.options != null) {
             mc.options.entityDistanceScaling().set(savedDistance);
             mc.options.entityShadows().set(savedShadows);
-            mc.options.particles().set(savedParticles);
         }
         applied = false;
     }

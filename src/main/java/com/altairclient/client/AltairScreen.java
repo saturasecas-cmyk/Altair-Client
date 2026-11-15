@@ -568,7 +568,7 @@ public final class AltairScreen extends Screen {
         allModules.add(new ModuleEntry(
                 "Fast Game",
                 "Optimiza el juego",
-                "No dibuja las entidades tapadas por bloques, baja la distancia de entidades, quita sombras de entidades y reduce partículas. Al desactivarlo vuelven tus ajustes.",
+                "No dibuja las entidades tapadas por bloques, baja la distancia de entidades y quita sus sombras. Al desactivarlo vuelven tus ajustes.",
                 Category.MISC,
                 "\u26A1",
                 () -> FastGame.toggle(),
