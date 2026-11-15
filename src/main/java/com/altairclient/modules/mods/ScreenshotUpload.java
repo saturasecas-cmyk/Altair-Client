@@ -106,7 +106,7 @@ public final class ScreenshotUpload {
 
     private static void say(Minecraft mc, String text) {
         if (mc.player != null) {
-            mc.player.displayClientMessage(Component.literal("[Altair] " + text), false);
+            mc.player.sendSystemMessage(Component.literal("[Altair] " + text));
         }
     }
 }
