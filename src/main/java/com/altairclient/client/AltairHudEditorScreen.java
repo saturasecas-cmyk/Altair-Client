@@ -4,7 +4,9 @@ import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.HealthDisplay;
 import com.altairclient.modules.mods.Keystrokes;
+import com.altairclient.modules.mods.PingDisplay;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.ReachDisplay;
 import com.altairclient.modules.mods.WorldInfo;
@@ -160,6 +162,34 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public int getWidth() { return WorldInfo.getInstance().getWidth(); }
             @Override public int getHeight() { return WorldInfo.getInstance().getHeight(); }
             @Override public void render(GuiGraphicsExtractor g) { WorldInfo.getInstance().render(g); }
+        });
+
+        // Ping Display
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Ping Display"; }
+            @Override public boolean isEnabled() { return PingDisplay.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { PingDisplay.getInstance().setEnabled(e); }
+            @Override public int getX() { return PingDisplay.getInstance().getX(); }
+            @Override public void setX(int x) { PingDisplay.getInstance().setX(x); }
+            @Override public int getY() { return PingDisplay.getInstance().getY(); }
+            @Override public void setY(int y) { PingDisplay.getInstance().setY(y); }
+            @Override public int getWidth() { return PingDisplay.getInstance().getWidth(); }
+            @Override public int getHeight() { return PingDisplay.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { PingDisplay.getInstance().renderPreview(g); }
+        });
+
+        // Health Display
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Health Display"; }
+            @Override public boolean isEnabled() { return HealthDisplay.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { HealthDisplay.getInstance().setEnabled(e); }
+            @Override public int getX() { return HealthDisplay.getInstance().getX(); }
+            @Override public void setX(int x) { HealthDisplay.getInstance().setX(x); }
+            @Override public int getY() { return HealthDisplay.getInstance().getY(); }
+            @Override public void setY(int y) { HealthDisplay.getInstance().setY(y); }
+            @Override public int getWidth() { return HealthDisplay.getInstance().getWidth(); }
+            @Override public int getHeight() { return HealthDisplay.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { HealthDisplay.getInstance().renderPreview(g); }
         });
     }
 

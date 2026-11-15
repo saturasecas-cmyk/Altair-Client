@@ -4,9 +4,12 @@ import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.FreelookHandler;
+import com.altairclient.modules.mods.HealthDisplay;
 import com.altairclient.modules.mods.HitIndicator;
 import com.altairclient.modules.mods.HitboxDisplay;
 import com.altairclient.modules.mods.Keystrokes;
+import com.altairclient.modules.mods.PingDisplay;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.ReachDisplay;
 import com.altairclient.modules.mods.WorldInfo;
@@ -154,6 +157,16 @@ public final class AltairScreen extends Screen {
                 () -> CPSCounter.getInstance().isEnabled()
         ));
 
+        allModules.add(new ModuleEntry(
+                "Health Display",
+                "Corazones del objetivo",
+                "Muestra el número de corazones de la entidad o jugador al que apuntas (1 corazón = 2 de vida). Si no apuntas a nadie, muestra los tuyos.",
+                Category.COMBAT,
+                "\u2665",
+                () -> HealthDisplay.getInstance().toggle(),
+                () -> HealthDisplay.getInstance().isEnabled()
+        ));
+
         // ==================== RENDER ====================
         allModules.add(new ModuleEntry(
                 "FPS Display",
@@ -193,6 +206,26 @@ public final class AltairScreen extends Screen {
                 "⌨",
                 () -> Keystrokes.getInstance().toggle(),
                 () -> Keystrokes.getInstance().isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Ping Display",
+                "Latencia al servidor",
+                "Muestra tu latencia (ping) en milisegundos con colores: verde hasta 80 ms, amarillo hasta 150 ms y rojo por encima.",
+                Category.RENDER,
+                "\u25C9",
+                () -> PingDisplay.getInstance().toggle(),
+                () -> PingDisplay.getInstance().isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Freelook",
+                "Mirar sin girar",
+                "Mantén pulsada la tecla Freelook (Alt izquierdo por defecto) para mover solo la cámara sin girar al jugador. Es visual y no envía ningún giro al servidor.",
+                Category.RENDER,
+                "\u25CE",
+                () -> FreelookHandler.toggle(),
+                () -> FreelookHandler.isEnabled()
         ));
 
         // ==================== PLAYER ====================
@@ -523,6 +556,8 @@ public final class AltairScreen extends Screen {
 
         // 7. Overlays activos en pantalla (previsualización fiel)
         FPSDisplay.getInstance().render(graphics);
+        PingDisplay.getInstance().render(graphics);
+        HealthDisplay.getInstance().render(graphics);
         CPSCounter.getInstance().render(graphics);
         ArmorHUD.getInstance().render(graphics);
         Keystrokes.getInstance().render(graphics);

@@ -4,8 +4,10 @@ import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.HealthDisplay;
 import com.altairclient.modules.mods.HitboxDisplay;
 import com.altairclient.modules.mods.Keystrokes;
+import com.altairclient.modules.mods.PingDisplay;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.WorldInfo;
 import net.minecraft.client.Minecraft;
@@ -49,6 +51,8 @@ public final class AltairHud {
         CPSCounter.getInstance().poll();
 
         FPSDisplay.getInstance().render(graphics);
+        PingDisplay.getInstance().render(graphics);
+        HealthDisplay.getInstance().render(graphics);
         CPSCounter.getInstance().render(graphics);
         ArmorHUD.getInstance().render(graphics);
         Keystrokes.getInstance().render(graphics);

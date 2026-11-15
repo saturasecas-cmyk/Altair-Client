@@ -2,6 +2,7 @@ package com.altairclient.client;
 
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.CPSCounter;
+import com.altairclient.modules.mods.FreelookHandler;
 import com.altairclient.modules.mods.ZoomHandler;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -33,19 +34,43 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
+    // Mantén pulsada para mover solo la cámara (Freelook).
+    public static final KeyMapping FREELOOK_KEY = new KeyMapping(
+            "key.altairclient.freelook",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_LEFT_ALT,
+            CATEGORY
+    );
+
     private AltairKeyHandler() {
     }
 
-    /** Registra el evento de teclas, el tick del cliente y el cálculo del FOV (zoom). */
+    /** Registra el evento de teclas, el tick del cliente, el FOV (zoom) y la cámara (freelook). */
     public static void register() {
         RegisterKeyMappingsEvent.BUS.addListener(AltairKeyHandler::registerKeys);
+        TickEvent.ClientTickEvent.Pre.BUS.addListener(AltairKeyHandler::onClientTickPre);
         TickEvent.ClientTickEvent.Post.BUS.addListener(AltairKeyHandler::onClientTick);
         ViewportEvent.ComputeFov.BUS.addListener(AltairKeyHandler::onComputeFov);
+        ViewportEvent.ComputeCameraAngles.BUS.addListener(AltairKeyHandler::onComputeCameraAngles);
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(ZOOM_KEY);
         event.register(MENU_KEY);
+        event.register(FREELOOK_KEY);
+    }
+
+    /** Antes de cada tick: el giro del ratón pasa a la cámara y el jugador conserva su rotación. */
+    private static void onClientTickPre(TickEvent.ClientTickEvent.Pre event) {
+        FreelookHandler.absorb();
+    }
+
+    /** Cada frame: la cámara gira con el ratón mientras el jugador sigue mirando al mismo sitio. */
+    private static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
+        if (FreelookHandler.absorb()) {
+            event.setYaw(event.getYaw() + FreelookHandler.getYawOffset());
+            event.setPitch(event.getPitch() + FreelookHandler.getPitchOffset());
+        }
     }
 
     /** Aplica el zoom al campo de visión mientras se mantiene pulsada la tecla de zoom. */
@@ -61,6 +86,7 @@ public final class AltairKeyHandler {
 
         if (minecraft.player == null || minecraft.gui.screen() != null) {
             ZoomHandler.setZoomKeyDown(false);
+            FreelookHandler.setKeyDown(false);
             return;
         }
 
@@ -69,5 +95,6 @@ public final class AltairKeyHandler {
         }
 
         ZoomHandler.setZoomKeyDown(ZOOM_KEY.isDown());
+        FreelookHandler.setKeyDown(FREELOOK_KEY.isDown());
     }
 }
