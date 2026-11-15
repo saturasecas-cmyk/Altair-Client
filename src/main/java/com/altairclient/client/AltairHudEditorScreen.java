@@ -3,7 +3,11 @@ package com.altairclient.client;
 import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
+import com.altairclient.modules.mods.ArrowCounter;
+import com.altairclient.modules.mods.DamageIndicator;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.MemoryDisplay;
+import com.altairclient.modules.mods.TotemCounter;
 import com.altairclient.modules.mods.HealthDisplay;
 import com.altairclient.modules.mods.Keystrokes;
 import com.altairclient.modules.mods.PingDisplay;
@@ -190,6 +194,58 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public int getWidth() { return HealthDisplay.getInstance().getWidth(); }
             @Override public int getHeight() { return HealthDisplay.getInstance().getHeight(); }
             @Override public void render(GuiGraphicsExtractor g) { HealthDisplay.getInstance().renderPreview(g); }
+        });
+
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Totem Counter"; }
+            @Override public boolean isEnabled() { return TotemCounter.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { TotemCounter.getInstance().setEnabled(e); }
+            @Override public int getX() { return TotemCounter.getInstance().getX(); }
+            @Override public void setX(int x) { TotemCounter.getInstance().setX(x); }
+            @Override public int getY() { return TotemCounter.getInstance().getY(); }
+            @Override public void setY(int y) { TotemCounter.getInstance().setY(y); }
+            @Override public int getWidth() { return TotemCounter.getInstance().getWidth(); }
+            @Override public int getHeight() { return TotemCounter.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { TotemCounter.getInstance().renderPreview(g); }
+        });
+
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Arrow Counter"; }
+            @Override public boolean isEnabled() { return ArrowCounter.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { ArrowCounter.getInstance().setEnabled(e); }
+            @Override public int getX() { return ArrowCounter.getInstance().getX(); }
+            @Override public void setX(int x) { ArrowCounter.getInstance().setX(x); }
+            @Override public int getY() { return ArrowCounter.getInstance().getY(); }
+            @Override public void setY(int y) { ArrowCounter.getInstance().setY(y); }
+            @Override public int getWidth() { return ArrowCounter.getInstance().getWidth(); }
+            @Override public int getHeight() { return ArrowCounter.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { ArrowCounter.getInstance().renderPreview(g); }
+        });
+
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Memory Display"; }
+            @Override public boolean isEnabled() { return MemoryDisplay.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { MemoryDisplay.getInstance().setEnabled(e); }
+            @Override public int getX() { return MemoryDisplay.getInstance().getX(); }
+            @Override public void setX(int x) { MemoryDisplay.getInstance().setX(x); }
+            @Override public int getY() { return MemoryDisplay.getInstance().getY(); }
+            @Override public void setY(int y) { MemoryDisplay.getInstance().setY(y); }
+            @Override public int getWidth() { return MemoryDisplay.getInstance().getWidth(); }
+            @Override public int getHeight() { return MemoryDisplay.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { MemoryDisplay.getInstance().renderPreview(g); }
+        });
+
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Damage Indicator"; }
+            @Override public boolean isEnabled() { return DamageIndicator.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { DamageIndicator.getInstance().setEnabled(e); }
+            @Override public int getX() { return DamageIndicator.getInstance().getX(); }
+            @Override public void setX(int x) { DamageIndicator.getInstance().setX(x); }
+            @Override public int getY() { return DamageIndicator.getInstance().getY(); }
+            @Override public void setY(int y) { DamageIndicator.getInstance().setY(y); }
+            @Override public int getWidth() { return DamageIndicator.getInstance().getWidth(); }
+            @Override public int getHeight() { return DamageIndicator.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { DamageIndicator.getInstance().renderPreview(g); }
         });
     }
 

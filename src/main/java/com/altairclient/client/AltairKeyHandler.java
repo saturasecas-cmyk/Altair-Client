@@ -2,7 +2,10 @@ package com.altairclient.client;
 
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.CPSCounter;
+import com.altairclient.modules.mods.AutoRespawn;
 import com.altairclient.modules.mods.ChatBubbleHandler;
+import com.altairclient.modules.mods.DamageIndicator;
+import com.altairclient.modules.mods.NoHurtCamera;
 import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
@@ -152,6 +155,7 @@ public final class AltairKeyHandler {
     private static void onClientTickPre(TickEvent.ClientTickEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
 
+        NoHurtCamera.apply(mc);
         ToggleSprint.tick(mc);
         FullbrightHandler.tick(mc);
         ToggleSneak.tick(mc);
@@ -165,6 +169,7 @@ public final class AltairKeyHandler {
 
     /** Cada frame: la cámara gira con el ratón mientras el jugador sigue mirando al mismo sitio. */
     private static void onComputeCameraAngles(ViewportEvent.ComputeCameraAngles event) {
+        NoHurtCamera.apply(Minecraft.getInstance());
         if (FreecamHandler.absorbRotation()) {
             event.setYaw(FreecamHandler.getCameraYaw());
             event.setPitch(FreecamHandler.getCameraPitch());
@@ -184,6 +189,9 @@ public final class AltairKeyHandler {
 
         // Cuenta los clics también a nivel de tick (además de en cada frame del HUD).
         CPSCounter.getInstance().poll();
+
+        AutoRespawn.tick(minecraft);
+        DamageIndicator.getInstance().tick(minecraft);
 
         // La captura se hace aunque el menú acabe de cerrarse (espera a que no haya pantalla abierta).
         ScreenshotModule.tick(minecraft);

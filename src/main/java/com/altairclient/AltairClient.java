@@ -3,7 +3,10 @@ package com.altairclient;
 
 import com.altairclient.client.AltairHud;
 import com.altairclient.client.AltairKeyHandler;
+import com.altairclient.modules.mods.AutoGG;
 import com.altairclient.modules.mods.ChatBubbleHandler;
+import com.altairclient.modules.mods.ChatTimestamps;
+import com.altairclient.modules.mods.ClearWater;
 import com.altairclient.modules.mods.NametagHandler;
 
 import net.minecraftforge.fml.common.Mod;
@@ -29,6 +32,9 @@ public class AltairClient {
         AltairHud.register();
         NametagHandler.register();
         ChatBubbleHandler.register();
+        AutoGG.register();
+        ChatTimestamps.register();
+        ClearWater.register();
 
         FMLClientSetupEvent.getBus(
                 context.getModBusGroup()

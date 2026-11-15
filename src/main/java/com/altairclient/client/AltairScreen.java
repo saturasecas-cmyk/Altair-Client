@@ -4,7 +4,16 @@ import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.ArrowCounter;
+import com.altairclient.modules.mods.AutoGG;
+import com.altairclient.modules.mods.AutoRespawn;
 import com.altairclient.modules.mods.ChatBubbleHandler;
+import com.altairclient.modules.mods.ChatTimestamps;
+import com.altairclient.modules.mods.ClearWater;
+import com.altairclient.modules.mods.DamageIndicator;
+import com.altairclient.modules.mods.MemoryDisplay;
+import com.altairclient.modules.mods.NoHurtCamera;
+import com.altairclient.modules.mods.TotemCounter;
 import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
@@ -85,6 +94,7 @@ public final class AltairScreen extends Screen {
         int settingMin = 0;
         int settingMax = 0;
         int settingStep = 1;
+        String[] settingNames = null;
 
         ModuleEntry withSetting(
                 String label,
@@ -101,6 +111,19 @@ public final class AltairScreen extends Screen {
             this.settingGetter = getter;
             this.settingSetter = setter;
             return this;
+        }
+
+        ModuleEntry withSettingNames(String[] names) {
+            this.settingNames = names;
+            return this;
+        }
+
+        String settingText() {
+            int v = settingGetter.getAsInt();
+            if (settingNames != null && v >= 0 && v < settingNames.length) {
+                return settingNames[v];
+            }
+            return String.valueOf(v);
         }
 
         boolean hasSetting() {
@@ -151,6 +174,18 @@ public final class AltairScreen extends Screen {
     private int panelY;
     private int panelWidth;
     private int panelHeight;
+
+    // Cuadrícula con scroll
+    private static final int CARD_HEIGHT = 68;
+    private int scrollOffset = 0;
+    private int maxScroll = 0;
+
+    private String fit(String text, int maxWidth) {
+        if (maxWidth <= 0 || font.width(text) <= maxWidth) {
+            return text;
+        }
+        return font.plainSubstrByWidth(text, Math.max(0, maxWidth - font.width("\u2026"))) + "\u2026";
+    }
 
     // Barra de búsqueda del header
     private static final int SEARCH_WIDTH = 220;
@@ -402,7 +437,8 @@ public final class AltairScreen extends Screen {
                 () -> NametagHandler.toggle(),
                 () -> NametagHandler.isEnabled()
         ).withSetting("Estilo", 0, NametagHandler.STYLE_COUNT - 1, 1,
-                () -> NametagHandler.getStyle(), v -> NametagHandler.setStyle(v)));
+                () -> NametagHandler.getStyle(), v -> NametagHandler.setStyle(v))
+                .withSettingNames(NametagHandler.STYLE_NAMES));
 
         allModules.add(new ModuleEntry(
                 "Better Chat Bubbles",
@@ -412,6 +448,98 @@ public final class AltairScreen extends Screen {
                 "\uD83D\uDCAC",
                 () -> ChatBubbleHandler.toggle(),
                 () -> ChatBubbleHandler.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Damage Indicator",
+                "Daño en números",
+                "Cada vez que le quitas vida a una entidad, el daño sale en números que flotan y se desvanecen, estilo Fortnite. Mueve el punto de salida en el HUD Editor.",
+                Category.COMBAT,
+                "\u2736",
+                () -> DamageIndicator.getInstance().toggle(),
+                () -> DamageIndicator.getInstance().isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Totem Counter",
+                "Tótems en inventario",
+                "Cuenta los tótems de la inmortalidad que llevas, incluida la mano secundaria. Se mueve en el HUD Editor.",
+                Category.COMBAT,
+                "\u2605",
+                () -> TotemCounter.getInstance().toggle(),
+                () -> TotemCounter.getInstance().isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Arrow Counter",
+                "Flechas en inventario",
+                "Cuenta las flechas (normales, espectrales y con efecto) que llevas. Se mueve en el HUD Editor.",
+                Category.COMBAT,
+                "\u27B3",
+                () -> ArrowCounter.getInstance().toggle(),
+                () -> ArrowCounter.getInstance().isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Memory Display",
+                "RAM usada",
+                "Muestra la RAM que usa el juego como porcentaje, como gráfico de los últimos segundos o las dos cosas. Elige el modo con - y +. Se mueve en el HUD Editor.",
+                Category.WORLD,
+                "\u25A6",
+                () -> MemoryDisplay.getInstance().toggle(),
+                () -> MemoryDisplay.getInstance().isEnabled()
+        ).withSetting("Modo", 0, MemoryDisplay.MODE_NAMES.length - 1, 1,
+                () -> MemoryDisplay.getInstance().getMode(), v -> MemoryDisplay.getInstance().setMode(v))
+                .withSettingNames(MemoryDisplay.MODE_NAMES));
+
+        allModules.add(new ModuleEntry(
+                "Auto GG",
+                "GG automático",
+                "Escribe gg en el chat cuando el servidor anuncia el final de una partida. Solo reacciona a mensajes del servidor y espera 15 s entre envíos. Algunos servidores no permiten mensajes automáticos: actívalo solo si lo admiten.",
+                Category.MISC,
+                "\u2713",
+                () -> AutoGG.toggle(),
+                () -> AutoGG.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Respawn",
+                "Reaparecer solo",
+                "Al morir, pulsa Reaparecer por ti automáticamente.",
+                Category.PLAYER,
+                "\u21BB",
+                () -> AutoRespawn.toggle(),
+                () -> AutoRespawn.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Clear Water",
+                "Agua sin niebla",
+                "Bajo el agua se ve lejos y sin el filtro azul de la pantalla. No cambia el aspecto de la superficie del agua.",
+                Category.RENDER,
+                "\u2248",
+                () -> ClearWater.toggle(),
+                () -> ClearWater.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "No Hurt Camera",
+                "Sin sacudida de cámara",
+                "Elimina el movimiento de cámara al recibir daño.",
+                Category.RENDER,
+                "\u2715",
+                () -> NoHurtCamera.toggle(),
+                () -> NoHurtCamera.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Chat Timestamps",
+                "Hora en el chat",
+                "Añade la hora [HH:mm] delante de cada mensaje del chat.",
+                Category.MISC,
+                "\u231A",
+                () -> ChatTimestamps.toggle(),
+                () -> ChatTimestamps.isEnabled()
         ));
 
         // ==================== WORLD ====================
@@ -460,6 +588,7 @@ public final class AltairScreen extends Screen {
 
     private void onSearchChanged(String text) {
         searchQuery = text == null ? "" : text.trim();
+        scrollOffset = 0;
         List<ModuleEntry> visible = getVisibleModules();
         if (!visible.isEmpty() && !visible.contains(selectedModule)) {
             selectedModule = visible.get(0);
@@ -613,7 +742,7 @@ public final class AltairScreen extends Screen {
         if (selectedModule != null) {
             int iconBoxY = contentY + 16;
             graphics.text(font, selectedModule.icon, rightPanelX + 16, iconBoxY + 2, PURPLE, false);
-            graphics.text(font, selectedModule.name, rightPanelX + 34, iconBoxY + 2, WHITE, false);
+            graphics.text(font, fit(selectedModule.name, rightPanelWidth - 34 - 14), rightPanelX + 34, iconBoxY + 2, WHITE, false);
             graphics.text(font, selectedModule.category.displayName + " • Módulo", rightPanelX + 16, iconBoxY + 17, MUTED, false);
 
             graphics.fill(rightPanelX + 14, iconBoxY + 31, panelX + panelWidth - 14, iconBoxY + 32, BORDER_COLOR);
@@ -633,7 +762,7 @@ public final class AltairScreen extends Screen {
                 boolean minusHover = mouseX >= minusX && mouseX <= minusX + 16 && mouseY >= setY && mouseY <= setY + 14;
                 boolean plusHover = mouseX >= plusX && mouseX <= plusX + 16 && mouseY >= setY && mouseY <= setY + 14;
 
-                graphics.text(font, selectedModule.settingLabel + ": " + selectedModule.settingGetter.getAsInt(),
+                graphics.text(font, fit(selectedModule.settingLabel + ": " + selectedModule.settingText(), minusX - (rightPanelX + 14) - 6),
                         rightPanelX + 14, setY + 3, WHITE, false);
 
                 graphics.fill(minusX, setY, minusX + 16, setY + 14, minusHover ? 0xFF2E3550 : 0xFF22283D);
@@ -694,8 +823,17 @@ public final class AltairScreen extends Screen {
         int cardSpacingX = 8;
         int cardSpacingY = 8;
         int cardWidth = (gridWidth - (cardSpacingX * (cols - 1))) / cols;
-        int cardHeight = 62;
+        int cardHeight = CARD_HEIGHT;
         int cardsAreaY = gridStartY + 18;
+        int areaBottom = panelY + panelHeight - 8;
+
+        int rows = (categoryModules.size() + cols - 1) / cols;
+        int contentHeight = rows * (cardHeight + cardSpacingY) - cardSpacingY;
+        maxScroll = Math.max(0, contentHeight - (areaBottom - cardsAreaY));
+        scrollOffset = Math.max(0, Math.min(maxScroll, scrollOffset));
+
+        // Todo lo que se salga del área de tarjetas se recorta: así los módulos salen al hacer scroll.
+        graphics.enableScissor(gridStartX - 1, cardsAreaY, gridStartX + gridWidth + 1, areaBottom);
 
         for (int i = 0; i < categoryModules.size(); i++) {
             ModuleEntry entry = categoryModules.get(i);
@@ -703,9 +841,14 @@ public final class AltairScreen extends Screen {
             int row = i / cols;
 
             int cx = gridStartX + col * (cardWidth + cardSpacingX);
-            int cy = cardsAreaY + row * (cardHeight + cardSpacingY);
+            int cy = cardsAreaY + row * (cardHeight + cardSpacingY) - scrollOffset;
 
-            boolean isHovered = mouseX >= cx && mouseX <= cx + cardWidth && mouseY >= cy && mouseY <= cy + cardHeight;
+            if (cy + cardHeight < cardsAreaY || cy > areaBottom) {
+                continue;
+            }
+
+            boolean isHovered = mouseX >= cx && mouseX <= cx + cardWidth
+                    && mouseY >= Math.max(cy, cardsAreaY) && mouseY <= Math.min(cy + cardHeight, areaBottom);
             boolean isSelected = (entry == selectedModule);
             boolean isEnabled = entry.isEnabled();
 
@@ -718,9 +861,15 @@ public final class AltairScreen extends Screen {
             graphics.fill(cx, cy, cx + 1, cy + cardHeight, borderCol);
             graphics.fill(cx + cardWidth - 1, cy, cx + cardWidth, cy + cardHeight, borderCol);
 
+            // Textos con 8 px de margen a cada lado, recortados si no caben
+            int textWidth = cardWidth - 16;
             graphics.text(font, entry.icon, cx + 8, cy + 8, PURPLE, false);
-            graphics.text(font, entry.name, cx + 22, cy + 8, WHITE, false);
-            graphics.text(font, entry.shortDesc, cx + 8, cy + 24, MUTED, false);
+            graphics.text(font, fit(entry.name, textWidth - 14), cx + 22, cy + 8, WHITE, false);
+
+            List<FormattedCharSequence> descLines = font.split(Component.literal(entry.shortDesc), textWidth);
+            for (int l = 0; l < Math.min(2, descLines.size()); l++) {
+                graphics.text(font, descLines.get(l), cx + 8, cy + 23 + l * 11, MUTED, false);
+            }
 
             // Switch toggle en la tarjeta
             int toggleW = 24;
@@ -735,10 +884,26 @@ public final class AltairScreen extends Screen {
             graphics.fill(knobPos, toggleY + 2, knobPos + 9, toggleY + toggleH - 2, WHITE);
         }
 
+        graphics.disableScissor();
+
+        // Barra de scroll
+        if (maxScroll > 0) {
+            int trackX = gridStartX + gridWidth + 5;
+            int trackH = areaBottom - cardsAreaY;
+            int thumbH = Math.max(16, trackH * trackH / (trackH + maxScroll));
+            int thumbY = cardsAreaY + (trackH - thumbH) * scrollOffset / maxScroll;
+            graphics.fill(trackX, cardsAreaY, trackX + 3, areaBottom, 0xFF1B2138);
+            graphics.fill(trackX, thumbY, trackX + 3, thumbY + thumbH, PURPLE);
+        }
+
         // 7. Overlays activos en pantalla (previsualización fiel)
         FPSDisplay.getInstance().render(graphics);
         PingDisplay.getInstance().render(graphics);
         HealthDisplay.getInstance().render(graphics);
+        TotemCounter.getInstance().render(graphics);
+        ArrowCounter.getInstance().render(graphics);
+        MemoryDisplay.getInstance().render(graphics);
+        DamageIndicator.getInstance().render(graphics);
         CPSCounter.getInstance().render(graphics);
         ArmorHUD.getInstance().render(graphics);
         Keystrokes.getInstance().render(graphics);
@@ -746,6 +911,15 @@ public final class AltairScreen extends Screen {
         WorldInfo.getInstance().render(graphics);
         ComboCounter.getInstance().render(graphics);
         ReachDisplay.getInstance().render(graphics);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (maxScroll > 0) {
+            scrollOffset = Math.max(0, Math.min(maxScroll, scrollOffset - (int) Math.round(scrollY * 22)));
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override
@@ -810,6 +984,7 @@ public final class AltairScreen extends Screen {
         for (Category cat : cats) {
             if (mx >= panelX + 8 && mx <= panelX + sidebarWidth - 8 && my >= catBtnY && my <= catBtnY + catBtnH) {
                 currentCategory = cat;
+                scrollOffset = 0;
                 if (searchBox != null && !searchBox.getValue().isEmpty()) {
                     searchBox.setValue(""); // al cambiar de categoría se limpia la búsqueda
                 }
@@ -861,31 +1036,34 @@ public final class AltairScreen extends Screen {
         int cardSpacingX = 8;
         int cardSpacingY = 8;
         int cardWidth = (gridWidth - (cardSpacingX * (cols - 1))) / cols;
-        int cardHeight = 62;
+        int cardHeight = CARD_HEIGHT;
         int cardsAreaY = gridStartY + 18;
+        int areaBottom = panelY + panelHeight - 8;
 
-        for (int i = 0; i < categoryModules.size(); i++) {
-            ModuleEntry entry = categoryModules.get(i);
-            int col = i % cols;
-            int row = i / cols;
+        if (my >= cardsAreaY && my <= areaBottom) {
+            for (int i = 0; i < categoryModules.size(); i++) {
+                ModuleEntry entry = categoryModules.get(i);
+                int col = i % cols;
+                int row = i / cols;
 
-            int cx = gridStartX + col * (cardWidth + cardSpacingX);
-            int cy = cardsAreaY + row * (cardHeight + cardSpacingY);
+                int cx = gridStartX + col * (cardWidth + cardSpacingX);
+                int cy = cardsAreaY + row * (cardHeight + cardSpacingY) - scrollOffset;
 
-            if (mx >= cx && mx <= cx + cardWidth && my >= cy && my <= cy + cardHeight) {
-                selectedModule = entry;
+                if (mx >= cx && mx <= cx + cardWidth && my >= cy && my <= cy + cardHeight) {
+                    selectedModule = entry;
 
-                // Clic directo sobre el switch de la tarjeta
-                int toggleW = 24;
-                int toggleH = 12;
-                int toggleX = cx + cardWidth - toggleW - 8;
-                int toggleY = cy + cardHeight - toggleH - 8;
+                    // Clic directo sobre el switch de la tarjeta
+                    int toggleW = 24;
+                    int toggleH = 12;
+                    int toggleX = cx + cardWidth - toggleW - 8;
+                    int toggleY = cy + cardHeight - toggleH - 8;
 
-                if (mx >= toggleX - 4 && mx <= toggleX + toggleW + 4 && my >= toggleY - 4 && my <= toggleY + toggleH + 4) {
-                    entry.toggle();
+                    if (mx >= toggleX - 4 && mx <= toggleX + toggleW + 4 && my >= toggleY - 4 && my <= toggleY + toggleH + 4) {
+                        entry.toggle();
+                    }
+
+                    return true;
                 }
-
-                return true;
             }
         }
 
