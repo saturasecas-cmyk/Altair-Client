@@ -9,5 +9,7 @@
   "key.altairclient.screenshot": "Captura de pantalla (Altair)",
   "key.altairclient.screenshot_upload": "Subir última captura (Altair)",
   "key.altairclient.freelook": "Activar/desactivar Freelook",
-  "key.altairclient.fullbright": "Activar/desactivar Fullbright"
+  "key.altairclient.fullbright": "Activar/desactivar Fullbright",
+  "key.altairclient.nametags": "Activar/desactivar Custom Nametags",
+  "key.altairclient.chat_bubbles": "Activar/desactivar Burbujas de chat"
 }

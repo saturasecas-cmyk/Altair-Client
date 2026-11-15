@@ -2,7 +2,9 @@ package com.altairclient.client;
 
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.CPSCounter;
+import com.altairclient.modules.mods.ChatBubbleHandler;
 import com.altairclient.modules.mods.FovHandler;
+import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.PerspectiveHandler;
@@ -103,6 +105,22 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
+    // Sin tecla por defecto: activa/desactiva Custom Nametags.
+    public static final KeyMapping NAMETAGS_KEY = new KeyMapping(
+            "key.altairclient.nametags",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
+    // Sin tecla por defecto: activa/desactiva Better Chat Bubbles.
+    public static final KeyMapping CHAT_BUBBLES_KEY = new KeyMapping(
+            "key.altairclient.chat_bubbles",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
     private AltairKeyHandler() {
     }
 
@@ -126,6 +144,8 @@ public final class AltairKeyHandler {
         event.register(SCREENSHOT_UPLOAD_KEY);
         event.register(FREELOOK_KEY);
         event.register(FULLBRIGHT_KEY);
+        event.register(NAMETAGS_KEY);
+        event.register(CHAT_BUBBLES_KEY);
     }
 
     /** Antes de cada tick: el giro del ratón pasa a la cámara y la cámara se mueve con WASD. */
@@ -196,6 +216,14 @@ public final class AltairKeyHandler {
 
         while (FREELOOK_KEY.consumeClick()) {
             PerspectiveHandler.toggleLatched();
+        }
+
+        while (NAMETAGS_KEY.consumeClick()) {
+            NametagHandler.toggle();
+        }
+
+        while (CHAT_BUBBLES_KEY.consumeClick()) {
+            ChatBubbleHandler.toggle();
         }
 
         while (FULLBRIGHT_KEY.consumeClick()) {

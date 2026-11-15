@@ -3,6 +3,8 @@ package com.altairclient;
 
 import com.altairclient.client.AltairHud;
 import com.altairclient.client.AltairKeyHandler;
+import com.altairclient.modules.mods.ChatBubbleHandler;
+import com.altairclient.modules.mods.NametagHandler;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -25,6 +27,8 @@ public class AltairClient {
 
         AltairKeyHandler.register();
         AltairHud.register();
+        NametagHandler.register();
+        ChatBubbleHandler.register();
 
         FMLClientSetupEvent.getBus(
                 context.getModBusGroup()

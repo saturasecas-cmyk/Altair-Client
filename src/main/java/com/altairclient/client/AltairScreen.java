@@ -4,7 +4,9 @@ import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.FPSDisplay;
+import com.altairclient.modules.mods.ChatBubbleHandler;
 import com.altairclient.modules.mods.FovHandler;
+import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.HealthDisplay;
@@ -389,6 +391,27 @@ public final class AltairScreen extends Screen {
                 "\u2600",
                 () -> FullbrightHandler.toggle(),
                 () -> FullbrightHandler.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Custom Nametags",
+                "Nombres con estilo",
+                "Cambia el aspecto de los nombres sobre jugadores y entidades: Altair, Dorado, Neón o Marcado. Solo lo ves tú, no cambia el nombre real de nadie. Elige el estilo con - y +. Tecla opcional en Controles.",
+                Category.RENDER,
+                "\u25C6",
+                () -> NametagHandler.toggle(),
+                () -> NametagHandler.isEnabled()
+        ).withSetting("Estilo", 0, NametagHandler.STYLE_COUNT - 1, 1,
+                () -> NametagHandler.getStyle(), v -> NametagHandler.setStyle(v)));
+
+        allModules.add(new ModuleEntry(
+                "Better Chat Bubbles",
+                "Burbujas de chat",
+                "Lo que escribe un jugador aparece unos segundos sobre su cabeza, bajo su nombre. Solo lo ves tú. Tecla opcional en Controles.",
+                Category.RENDER,
+                "\uD83D\uDCAC",
+                () -> ChatBubbleHandler.toggle(),
+                () -> ChatBubbleHandler.isEnabled()
         ));
 
         // ==================== WORLD ====================
