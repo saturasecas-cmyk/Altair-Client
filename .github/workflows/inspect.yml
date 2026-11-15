@@ -1,0 +1,36 @@
+name: Inspect API
+
+on:
+  push:
+    branches: ['inspect/**']
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '25'
+    - uses: gradle/actions/setup-gradle@v4
+    - name: Resolve deps
+      run: ./gradlew compileJava --no-daemon || true
+    - name: Dump
+      run: |
+        JAR=$GITHUB_WORKSPACE/.gradle/mavenizer/repo/net/minecraftforge/forge/26.2-65.1.6/forge-26.2-65.1.6.jar
+        echo "::group::Screenshot"
+        javap -p -cp "$JAR" net.minecraft.client.Screenshot 2>&1 | head -60
+        echo "::endgroup::"
+        echo "::group::Minecraft render target / screenshot methods"
+        javap -p -cp "$JAR" net.minecraft.client.Minecraft 2>&1 | grep -i -E "RenderTarget|screenshot|mainTarget|getMain|gameDirectory|public .*chat" | head -30
+        echo "::endgroup::"
+        echo "::group::Gui chat"
+        javap -p -cp "$JAR" net.minecraft.client.gui.Gui 2>&1 | grep -i -E "chat" | head -20
+        echo "::endgroup::"
+        echo "::group::Hud chat"
+        javap -p -cp "$JAR" net.minecraft.client.gui.Hud 2>&1 | grep -i -E "chat|getChat" | head -20
+        echo "::endgroup::"
+        echo "::group::ChatComponent"
+        javap -p -cp "$JAR" net.minecraft.client.gui.components.ChatComponent 2>&1 | grep -i -E "addMessage|addClientSystem" | head
+        echo "::endgroup::"
