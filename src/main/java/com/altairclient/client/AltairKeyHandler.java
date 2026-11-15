@@ -3,6 +3,7 @@ package com.altairclient.client;
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.FovHandler;
+import com.altairclient.modules.mods.FullbrightHandler;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.PerspectiveHandler;
 import com.altairclient.modules.mods.ScreenshotModule;
@@ -86,6 +87,22 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
+    // Activa/desactiva Freelook: cámara libre en tercera persona (el mismo estado que la tarjeta del menú).
+    public static final KeyMapping FREELOOK_KEY = new KeyMapping(
+            "key.altairclient.freelook",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_B,
+            CATEGORY
+    );
+
+    // Sin tecla por defecto: activa/desactiva Fullbright.
+    public static final KeyMapping FULLBRIGHT_KEY = new KeyMapping(
+            "key.altairclient.fullbright",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
     private AltairKeyHandler() {
     }
 
@@ -107,6 +124,8 @@ public final class AltairKeyHandler {
         event.register(PERSPECTIVE_KEY);
         event.register(SCREENSHOT_KEY);
         event.register(SCREENSHOT_UPLOAD_KEY);
+        event.register(FREELOOK_KEY);
+        event.register(FULLBRIGHT_KEY);
     }
 
     /** Antes de cada tick: el giro del ratón pasa a la cámara y la cámara se mueve con WASD. */
@@ -114,6 +133,7 @@ public final class AltairKeyHandler {
         Minecraft mc = Minecraft.getInstance();
 
         ToggleSprint.tick(mc);
+        FullbrightHandler.tick(mc);
         ToggleSneak.tick(mc);
 
         if (FreecamHandler.absorbRotation()) {
@@ -172,6 +192,14 @@ public final class AltairKeyHandler {
 
         while (SCREENSHOT_KEY.consumeClick()) {
             ScreenshotModule.request();
+        }
+
+        while (FREELOOK_KEY.consumeClick()) {
+            PerspectiveHandler.toggleLatched();
+        }
+
+        while (FULLBRIGHT_KEY.consumeClick()) {
+            FullbrightHandler.toggle();
         }
 
         while (SCREENSHOT_UPLOAD_KEY.consumeClick()) {

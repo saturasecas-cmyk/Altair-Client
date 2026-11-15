@@ -5,6 +5,7 @@ import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.FPSDisplay;
 import com.altairclient.modules.mods.FovHandler;
+import com.altairclient.modules.mods.FullbrightHandler;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.HealthDisplay;
 import com.altairclient.modules.mods.HitIndicator;
@@ -368,6 +369,26 @@ public final class AltairScreen extends Screen {
                     ScreenshotUpload.upload();
                 },
                 () -> false
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Freelook",
+                "Cámara libre 3ª persona",
+                "Pasa a tercera persona y el ratón mueve la cámara alrededor de tu jugador sin girarlo, como un orbitar libre. No vuela como Freecam: sigue anclada a ti. Actívalo aquí o con la tecla Freelook (B por defecto, configurable en Controles). Es visual y no envía giros al servidor.",
+                Category.RENDER,
+                "\u25CE",
+                () -> PerspectiveHandler.toggleLatched(),
+                () -> PerspectiveHandler.isLatched()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Fullbright",
+                "Brillo máximo",
+                "Sube el brillo al máximo para ver en cuevas y de noche. Es el ajuste de brillo del propio juego: no añade efectos de poción ni envía nada al servidor. Si el servidor prohíbe el fullbright, no lo actives. Al desactivarlo vuelve tu brillo original.",
+                Category.RENDER,
+                "\u2600",
+                () -> FullbrightHandler.toggle(),
+                () -> FullbrightHandler.isEnabled()
         ));
 
         // ==================== WORLD ====================

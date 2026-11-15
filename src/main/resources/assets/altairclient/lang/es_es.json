@@ -7,5 +7,7 @@
   "key.altairclient.toggle_sneak": "Activar/desactivar Toggle Sneak",
   "key.altairclient.perspective": "Perspective Mod (mantener)",
   "key.altairclient.screenshot": "Captura de pantalla (Altair)",
-  "key.altairclient.screenshot_upload": "Subir última captura (Altair)"
+  "key.altairclient.screenshot_upload": "Subir última captura (Altair)",
+  "key.altairclient.freelook": "Activar/desactivar Freelook",
+  "key.altairclient.fullbright": "Activar/desactivar Fullbright"
 }
