@@ -4,7 +4,7 @@ import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.ComboCounter;
 import com.altairclient.modules.mods.FPSDisplay;
-import com.altairclient.modules.mods.FreelookHandler;
+import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.HealthDisplay;
 import com.altairclient.modules.mods.HitIndicator;
 import com.altairclient.modules.mods.HitboxDisplay;
@@ -219,13 +219,13 @@ public final class AltairScreen extends Screen {
         ));
 
         allModules.add(new ModuleEntry(
-                "Freelook",
-                "Mirar sin girar",
-                "Al activarlo, el ratón mueve solo la cámara sin girar al jugador. Actívalo aquí o con la tecla Freelook (V por defecto, configurable en Controles). Es visual y no envía giros al servidor.",
+                "Freecam",
+                "Cámara libre",
+                "Tu jugador se queda quieto y la cámara vuela libre como en modo espectador. Vuela con W/A/S/D, Espacio sube, Mayús baja y Ctrl acelera. Actívalo aquí o con la tecla Freecam (V por defecto, configurable en Controles). Es solo visual: no mueve a tu jugador en el servidor.",
                 Category.RENDER,
                 "\u25CE",
-                () -> FreelookHandler.toggle(),
-                () -> FreelookHandler.isEnabled()
+                () -> FreecamHandler.toggle(),
+                () -> FreecamHandler.isActive()
         ));
 
         // ==================== PLAYER ====================
