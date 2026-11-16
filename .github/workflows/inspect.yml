@@ -23,12 +23,9 @@ jobs:
         mkdir -p /tmp/src && cd /tmp/src && unzip -q -o "$SRC" 'net/minecraftforge/client/event/*'
         echo "::group::events list"; ls net/minecraftforge/client/event | tr '\n' ' '; echo "::endgroup::"
         d() { echo "::group::$1 ($2)"; javap -p -cp "$JAR" "$1" 2>&1 | grep -i -E "$2" | head -${3:-25}; echo "::endgroup::"; }
-        d net.minecraft.client.renderer.OrderedSubmitNodeCollector "ShapeOutline|CustomGeometry|Line" 10
-        echo "::group::ClockInstance"; javap -p -cp "$JAR" 'net.minecraft.client.ClientClockManager$ClockInstance'; echo "::endgroup::"
-        echo "::group::ClockNetworkState"; javap -p -cp "$JAR" net.minecraft.world.clock.ClockNetworkState; echo "::endgroup::"
-        d net.minecraft.world.clock.WorldClock "." 10
-        d net.minecraft.world.clock.WorldClocks "." 10
-        d net.minecraft.world.level.dimension.DimensionType "clock|Clock|fixedTime" 10
-        d net.minecraft.world.level.Level "dimensionType|clock|Clock" 10
-        d net.minecraft.client.multiplayer.ClientLevel "ClientLevelData|getDayTime|clock" 10
-        echo "::group::submitBlockOutline"; javap -p -c -cp "$JAR" net.minecraft.client.renderer.LevelRenderer | grep -A70 "void submitBlockOutline" | grep -E "invoke|getfield|getstatic" | cut -c1-260 | head -40; echo "::endgroup::"
+        unzip -q -o "$SRC" 'net/minecraftforge/client/gui/*' -d /tmp/src2
+        echo "::group::files"; find /tmp/src2 -name '*.java' | head -30; echo "::endgroup::"
+        echo "::group::ForgeLayeredDraw"; grep -v -E '^\s*(\*|/\*|//|import|$)' /tmp/src2/net/minecraftforge/client/gui/overlay/ForgeLayeredDraw.java | grep -E "public|BUS" | head -40; echo "::endgroup::"
+        echo "::group::RenderGuiOverlay events"; sed -n 1,15p /tmp/src/net/minecraftforge/client/event/RenderGuiOverlayEvent.java | head -5; grep -n "Deprecated\|BUS" /tmp/src/net/minecraftforge/client/event/RenderGuiOverlayEvent.java | head; echo "::endgroup::"
+        echo "::group::gui events"; grep -rln "CROSSHAIR" /tmp/src2 /tmp/src | head; echo "::endgroup::"
+        echo "::group::layer events"; unzip -l "$SRC" | grep -i -E "Layer" | awk '{print $4}' | head -20; echo "::endgroup::"
