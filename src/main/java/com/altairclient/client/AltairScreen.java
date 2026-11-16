@@ -40,6 +40,7 @@ import com.altairclient.modules.mods.ScreenshotUpload;
 import com.altairclient.modules.mods.ToggleSneak;
 import com.altairclient.modules.mods.ToggleSprint;
 import com.altairclient.modules.mods.WorldInfo;
+import com.altairclient.modules.textures.TextureModules;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
@@ -71,18 +72,52 @@ public final class AltairScreen extends Screen {
     private static final int GREEN = 0xFF5DFFA8;
     private static final int RED = 0xFFFF5C77;
 
-    public enum Category {
-        COMBAT("Combat", "⚔"),
-        RENDER("Render", "🖥"),
-        PLAYER("Player", "👤"),
-        WORLD("World", "🌐"),
-        MISC("Misc", "✨");
+    /** Las dos carpetas de la barra izquierda: al abrir una salen sus apartados. */
+    public enum Section {
+        MODS("Mods", "Módulo"),
+        TEXTURES("Textures", "Textura");
 
         final String displayName;
+        /** Cómo se llama cada elemento de la carpeta en el panel de detalles. */
+        final String kind;
+
+        Section(String displayName, String kind) {
+            this.displayName = displayName;
+            this.kind = kind;
+        }
+    }
+
+    public enum Category {
+        // Carpeta Mods
+        COMBAT(Section.MODS, null, "Combat", "Combat", "⚔"),
+        RENDER(Section.MODS, null, "Render", "Render", "🖥"),
+        PLAYER(Section.MODS, null, "Player", "Player", "👤"),
+        WORLD(Section.MODS, null, "World", "World", "🌐"),
+        MISC(Section.MODS, null, "Misc", "Misc", "✨"),
+
+        // Carpeta Textures
+        TEX_PVP(Section.TEXTURES, TextureModules.PVP, "PvP Textures", "PvP", "⚔"),
+        TEX_BUILD(Section.TEXTURES, TextureModules.BUILD, "Build Textures", "Build", "▣"),
+        TEX_BREAKING(Section.TEXTURES, TextureModules.BREAKING, "Breaking Effects", "Breaking", "⛏"),
+        TEX_MOVEMENT(Section.TEXTURES, TextureModules.MOVEMENT, "Movement Effects", "Movement", "»"),
+        TEX_WALK(Section.TEXTURES, TextureModules.WALK, "Walk Effects", "Walk", "✧"),
+        TEX_ANIMATIONS(Section.TEXTURES, TextureModules.ANIMATIONS, "Movement Animations", "Animations", "↻"),
+        TEX_EXTRA(Section.TEXTURES, TextureModules.EXTRA, "Extra Visual Effects", "Extra", "✦");
+
+        final Section section;
+        /** Clave del apartado en {@link TextureModules}; null en la carpeta Mods. */
+        final String textureGroup;
+        /** Nombre completo: título de la cuadrícula y búsqueda. */
+        final String displayName;
+        /** Nombre corto para la barra izquierda, donde el ancho es justo. */
+        final String shortName;
         final String icon;
 
-        Category(String displayName, String icon) {
+        Category(Section section, String textureGroup, String displayName, String shortName, String icon) {
+            this.section = section;
+            this.textureGroup = textureGroup;
             this.displayName = displayName;
+            this.shortName = shortName;
             this.icon = icon;
         }
     }
@@ -109,6 +144,19 @@ public final class AltairScreen extends Screen {
         int settingMax = 0;
         int settingStep = 1;
         String[] settingNames = null;
+
+        /** Si la entrada tiene color (texturas con color), devuelve su color de la paleta de Altair. */
+        java.util.function.IntSupplier colorSupplier = null;
+
+        ModuleEntry withColor(java.util.function.IntSupplier colorIndexSupplier) {
+            this.colorSupplier = colorIndexSupplier;
+            return this;
+        }
+
+        /** Color del icono y del círculo de color: el de la paleta si lo tiene; si no, morado Altair. */
+        int accent() {
+            return colorSupplier != null ? Palette.color(colorSupplier.getAsInt()) : PURPLE;
+        }
 
         /** Ajustes adicionales (se dibujan encima del principal). */
         final java.util.List<Extra> extras = new java.util.ArrayList<>();
@@ -220,6 +268,50 @@ public final class AltairScreen extends Screen {
     private final List<ModuleEntry> allModules = new ArrayList<>();
     private Category currentCategory = Category.COMBAT;
     private ModuleEntry selectedModule = null;
+
+    // Barra izquierda: carpetas Mods / Textures (solo una abierta a la vez) y su scroll
+    private Section openSection = Section.MODS;
+    private int sidebarScroll = 0;
+    private int sidebarMaxScroll = 0;
+    private final Anim.Smooth[] secHov = newSmooths(Section.values().length);
+    private static final int SIDEBAR_WIDTH = 110;
+    private static final int FOLDER_H = 24;
+    private static final int SUB_H = 20;
+    private static final int ROW_GAP = 2;
+
+    /** Una fila de la barra izquierda: una carpeta o un apartado dentro de la carpeta abierta. */
+    private static final class SideRow {
+        final Section section;
+        final Category category;
+        final int y;
+        final int h;
+
+        SideRow(Section section, Category category, int y, int h) {
+            this.section = section;
+            this.category = category;
+            this.y = y;
+            this.h = h;
+        }
+    }
+
+    /** Filas de la barra izquierda con su posición, sin aplicar el scroll. Sirve para dibujar y para los clics. */
+    private List<SideRow> sidebarRows(int firstY) {
+        List<SideRow> rows = new ArrayList<>();
+        int y = firstY;
+        for (Section sec : Section.values()) {
+            rows.add(new SideRow(sec, null, y, FOLDER_H));
+            y += FOLDER_H + ROW_GAP;
+            if (sec == openSection) {
+                for (Category cat : Category.values()) {
+                    if (cat.section == sec) {
+                        rows.add(new SideRow(sec, cat, y, SUB_H));
+                        y += SUB_H + ROW_GAP;
+                    }
+                }
+            }
+        }
+        return rows;
+    }
 
     private int panelX;
     private int panelY;
@@ -735,9 +827,46 @@ public final class AltairScreen extends Screen {
                 () -> WorldInfo.getInstance().isEnabled()
         ));
 
+        // ==================== CARPETA TEXTURES ====================
+        for (Category cat : Category.values()) {
+            if (cat.textureGroup == null) {
+                continue;
+            }
+            for (TextureModules.Entry tex : TextureModules.group(cat.textureGroup)) {
+                allModules.add(textureEntry(tex, cat));
+            }
+        }
+
         if (!allModules.isEmpty()) {
             selectedModule = allModules.get(0);
         }
+    }
+
+    /** Tarjeta de una textura: interruptor propio y, si tiene color, selector de la paleta de Altair. */
+    private static ModuleEntry textureEntry(TextureModules.Entry tex, Category cat) {
+        Runnable toggle = tex::toggle;
+        java.util.function.BooleanSupplier enabled = tex::isEnabled;
+        java.util.function.IntSupplier colorGet = tex::getColorIndex;
+        java.util.function.IntConsumer colorSet = tex::setColorIndex;
+
+        // Estas dos comparten estado con módulos que ya existen en la carpeta Mods.
+        if (TextureModules.ID_CLEAR_WATER.equals(tex.id)) {
+            toggle = ClearWater::toggle;
+            enabled = ClearWater::isEnabled;
+        } else if (TextureModules.ID_MINIMAL_OUTLINE.equals(tex.id)) {
+            toggle = BlockOutline::toggle;
+            enabled = BlockOutline::isEnabled;
+            colorGet = BlockOutline::getColorIndex;
+            colorSet = BlockOutline::setColorIndex;
+        }
+
+        ModuleEntry entry = new ModuleEntry(tex.name, tex.description, tex.description, cat, cat.icon, toggle, enabled);
+        if (tex.hasColor()) {
+            entry.withSetting("Color", 0, Palette.MAX_INDEX, 1, colorGet, colorSet)
+                    .withSettingNames(Palette.NAMES)
+                    .withColor(colorGet);
+        }
+        return entry;
     }
 
     @Override
@@ -766,6 +895,18 @@ public final class AltairScreen extends Screen {
         searchBox.setValue(searchQuery);
         searchBox.setResponder(this::onSearchChanged);
         addWidget(searchBox);
+    }
+
+    private void selectCategory(Category cat) {
+        currentCategory = cat;
+        resetGridAnim();
+        if (searchBox != null && !searchBox.getValue().isEmpty()) {
+            searchBox.setValue(""); // al cambiar de apartado se limpia la búsqueda
+        }
+        List<ModuleEntry> mods = getModulesForCategory(cat);
+        if (!mods.isEmpty()) {
+            selectedModule = mods.get(0);
+        }
     }
 
     private void onSearchChanged(String text) {
@@ -797,7 +938,8 @@ public final class AltairScreen extends Screen {
         for (ModuleEntry m : allModules) {
             if (m.name.toLowerCase(java.util.Locale.ROOT).contains(q)
                     || m.shortDesc.toLowerCase(java.util.Locale.ROOT).contains(q)
-                    || m.category.displayName.toLowerCase(java.util.Locale.ROOT).contains(q)) {
+                    || m.category.displayName.toLowerCase(java.util.Locale.ROOT).contains(q)
+                    || m.category.section.displayName.toLowerCase(java.util.Locale.ROOT).contains(q)) {
                 list.add(m);
             }
         }
@@ -873,41 +1015,60 @@ public final class AltairScreen extends Screen {
         graphics.text(font, "✕", winCloseX, winBtnY + 2, closeHover ? RED : MUTED, false);
 
         // ==================== 4. SIDEBAR IZQUIERDA ====================
-        int sidebarWidth = 110;
+        int sidebarWidth = SIDEBAR_WIDTH;
         int contentY = panelY + headerHeight + 1;
 
         graphics.fill(panelX, contentY, panelX + sidebarWidth, panelY + panelHeight, SIDEBAR_BG);
         graphics.fill(panelX + sidebarWidth, contentY, panelX + sidebarWidth + 1, panelY + panelHeight, BORDER_COLOR);
 
-        // Lista de Categorías
-        Category[] cats = Category.values();
-        int catBtnY = contentY + 10;
-        int catBtnH = 26;
+        // Lista de carpetas (Mods / Textures) y, dentro de la abierta, sus apartados.
+        // Se recorta justo encima del botón HUD Editor y se puede desplazar con la rueda.
+        int sideTop = contentY + 4;
+        int sideBottom = panelY + panelHeight - 46;
+        List<SideRow> sideRows = sidebarRows(contentY + 10);
+        SideRow lastRow = sideRows.get(sideRows.size() - 1);
+        sidebarMaxScroll = Math.max(0, lastRow.y + lastRow.h + 6 - sideBottom);
+        sidebarScroll = Math.max(0, Math.min(sidebarMaxScroll, sidebarScroll));
 
-        for (Category cat : cats) {
-            boolean isSelected = (cat == currentCategory);
+        graphics.enableScissor(panelX + 1, sideTop, panelX + sidebarWidth, sideBottom);
+        for (SideRow row : sideRows) {
+            int ry = row.y - sidebarScroll;
+            if (ry + row.h < sideTop || ry > sideBottom) {
+                continue;
+            }
             boolean isHovered = mouseX >= panelX + 8 && mouseX <= panelX + sidebarWidth - 8
-                    && mouseY >= catBtnY && mouseY <= catBtnY + catBtnH;
+                    && mouseY >= Math.max(ry, sideTop) && mouseY <= Math.min(ry + row.h, sideBottom);
 
-            // El resaltado pasa suavemente de la categoría anterior a la nueva.
-            float sel = catSel[cat.ordinal()].update(isSelected ? 1.0F : 0.0F, 14.0F);
-            float hov = catHov[cat.ordinal()].update(isHovered ? 1.0F : 0.0F, 18.0F);
+            if (row.category == null) {
+                // Carpeta: flecha ▸ / ▾ según esté cerrada o abierta
+                boolean open = row.section == openSection;
+                float hov = secHov[row.section.ordinal()].update(isHovered ? 1.0F : 0.0F, 18.0F);
+                int bg = Anim.mix(open ? 0xFF1F2750 : 0xFF181F3B, 0xFF272952, hov);
+                graphics.fill(panelX + 8, ry, panelX + sidebarWidth - 8, ry + row.h, bg);
+                graphics.fill(panelX + 8, ry, panelX + 11, ry + row.h, open ? CYAN : PURPLE);
+                int textColor = Anim.mix(open ? WHITE : MUTED, CYAN, hov);
+                graphics.text(font, (open ? "▾ " : "▸ ") + row.section.displayName, panelX + 18, ry + 8, textColor, false);
+            } else {
+                // Apartado dentro de la carpeta abierta, con sangría
+                Category cat = row.category;
+                boolean isSelected = (cat == currentCategory);
+                float sel = catSel[cat.ordinal()].update(isSelected ? 1.0F : 0.0F, 14.0F);
+                float hov = catHov[cat.ordinal()].update(isHovered ? 1.0F : 0.0F, 18.0F);
 
-            int bg = Anim.mix(Anim.mix(0x001B2240, 0xFF1B2240, hov), 0xFF272952, sel);
-            if ((bg >>> 24) > 0) {
-                graphics.fill(panelX + 8, catBtnY, panelX + sidebarWidth - 8, catBtnY + catBtnH, bg);
+                int bg = Anim.mix(Anim.mix(0x001B2240, 0xFF1B2240, hov), 0xFF272952, sel);
+                if ((bg >>> 24) > 0) {
+                    graphics.fill(panelX + 14, ry, panelX + sidebarWidth - 8, ry + row.h, bg);
+                }
+                int barW = Math.round(3.0F * sel);
+                if (barW > 0) {
+                    graphics.fill(panelX + 14, ry, panelX + 14 + barW, ry + row.h, PURPLE);
+                }
+                int textColor = Anim.mix(Anim.mix(MUTED, CYAN, hov), WHITE, sel);
+                int textX = panelX + 22 + Math.round(2.0F * sel);
+                graphics.text(font, fit(cat.icon + " " + cat.shortName, panelX + sidebarWidth - 12 - textX), textX, ry + 6, textColor, false);
             }
-
-            int barW = Math.round(3.0F * sel);
-            if (barW > 0) {
-                graphics.fill(panelX + 8, catBtnY, panelX + 8 + barW, catBtnY + catBtnH, PURPLE);
-            }
-
-            int textColor = Anim.mix(Anim.mix(MUTED, CYAN, hov), WHITE, sel);
-            graphics.text(font, cat.icon + "  " + cat.displayName, panelX + 16 + Math.round(2.0F * sel), catBtnY + 9, textColor, false);
-
-            catBtnY += catBtnH + 4;
         }
+        graphics.disableScissor();
 
         // Botón inferior de HUD Editor
         int hudBtnY = panelY + panelHeight - 40;
@@ -949,9 +1110,10 @@ public final class AltairScreen extends Screen {
             graphics.pose().pushMatrix();
             graphics.pose().translate((1.0F - selectT) * 10.0F, 0.0F);
             int iconBoxY = contentY + 16;
-            graphics.text(font, selectedModule.icon, rightPanelX + 16, iconBoxY + 2, PURPLE, false);
+            graphics.text(font, selectedModule.icon, rightPanelX + 16, iconBoxY + 2, selectedModule.accent(), false);
             graphics.text(font, fit(selectedModule.name, rightPanelWidth - 34 - 14), rightPanelX + 34, iconBoxY + 2, WHITE, false);
-            graphics.text(font, selectedModule.category.displayName + " • Módulo", rightPanelX + 16, iconBoxY + 17, MUTED, false);
+            graphics.text(font, fit(selectedModule.category.displayName + " • " + selectedModule.category.section.kind, rightPanelWidth - 32),
+                    rightPanelX + 16, iconBoxY + 17, MUTED, false);
 
             graphics.fill(rightPanelX + 14, iconBoxY + 31, panelX + panelWidth - 14, iconBoxY + 32, BORDER_COLOR);
 
@@ -1099,8 +1261,14 @@ public final class AltairScreen extends Screen {
 
             // Textos con 8 px de margen a cada lado, recortados si no caben
             int textWidth = cardWidth - 16;
-            graphics.text(font, entry.icon, cx + 8, cy + 8, PURPLE, false);
+            int accent = entry.accent();
+            graphics.text(font, entry.icon, cx + 8, cy + 8, accent, false);
             graphics.text(font, fit(entry.name, textWidth - 14), cx + 22, cy + 8, WHITE, false);
+            if (entry.colorSupplier != null) {
+                // Cuadrado con el color de la paleta que usa la textura (abajo a la izquierda, con el mismo margen)
+                graphics.fill(cx + 8, cy + cardHeight - 18, cx + 18, cy + cardHeight - 8, BORDER_COLOR);
+                graphics.fill(cx + 9, cy + cardHeight - 17, cx + 17, cy + cardHeight - 9, accent);
+            }
 
             List<FormattedCharSequence> descLines = font.split(Component.literal(entry.shortDesc), textWidth);
             for (int l = 0; l < Math.min(2, descLines.size()); l++) {
@@ -1158,6 +1326,11 @@ public final class AltairScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        // Rueda sobre la barra izquierda: desplaza las carpetas
+        if (mouseX < panelX + SIDEBAR_WIDTH && sidebarMaxScroll > 0) {
+            sidebarScroll = Math.max(0, Math.min(sidebarMaxScroll, sidebarScroll - (int) (scrollY * 16)));
+            return true;
+        }
         if (maxScroll > 0) {
             scrollTarget = Anim.clamp(scrollTarget - (float) (scrollY * 22), 0.0F, maxScroll);
             return true;
@@ -1217,27 +1390,34 @@ public final class AltairScreen extends Screen {
             return true;
         }
 
-        // 3. Clic en Categorías de la Sidebar
+        // 3. Clic en las carpetas (Mods / Textures) y sus apartados
         int headerHeight = 36;
         int contentY = panelY + headerHeight + 1;
-        int catBtnY = contentY + 10;
-        int catBtnH = 26;
-        Category[] cats = Category.values();
-
-        for (Category cat : cats) {
-            if (mx >= panelX + 8 && mx <= panelX + sidebarWidth - 8 && my >= catBtnY && my <= catBtnY + catBtnH) {
-                currentCategory = cat;
-                resetGridAnim();
-                if (searchBox != null && !searchBox.getValue().isEmpty()) {
-                    searchBox.setValue(""); // al cambiar de categoría se limpia la búsqueda
+        int sideTop = contentY + 4;
+        int sideBottom = panelY + panelHeight - 46;
+        if (mx >= panelX + 8 && mx <= panelX + sidebarWidth - 8 && my >= sideTop && my <= sideBottom) {
+            for (SideRow row : sidebarRows(contentY + 10)) {
+                int ry = row.y - sidebarScroll;
+                if (my < ry || my > ry + row.h) {
+                    continue;
                 }
-                List<ModuleEntry> mods = getModulesForCategory(cat);
-                if (!mods.isEmpty()) {
-                    selectedModule = mods.get(0);
+                if (row.category == null) {
+                    if (row.section == openSection) {
+                        openSection = null; // clic en la carpeta abierta: se cierra
+                    } else {
+                        openSection = row.section;
+                        for (Category cat : Category.values()) {
+                            if (cat.section == row.section) {
+                                selectCategory(cat); // al abrir una carpeta sale su primer apartado
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    selectCategory(row.category);
                 }
                 return true;
             }
-            catBtnY += catBtnH + 4;
         }
 
         // 4. Clic en el botón toggle del panel derecho
