@@ -8,6 +8,12 @@ import com.altairclient.modules.mods.ArrowCounter;
 import com.altairclient.modules.mods.AutoTool;
 import com.altairclient.modules.mods.FastGame;
 import com.altairclient.modules.mods.ItemNameDisplay;
+import com.altairclient.modules.mods.BlockOutline;
+import com.altairclient.modules.mods.CustomCrosshair;
+import com.altairclient.modules.mods.DirectionHud;
+import com.altairclient.modules.mods.ServerAddress;
+import com.altairclient.modules.mods.TimeChanger;
+import com.altairclient.modules.mods.WeatherChanger;
 import com.altairclient.modules.mods.AutoGG;
 import com.altairclient.modules.mods.AutoRespawn;
 import com.altairclient.modules.mods.ChatBubbleHandler;
@@ -103,6 +109,43 @@ public final class AltairScreen extends Screen {
         int settingMax = 0;
         int settingStep = 1;
         String[] settingNames = null;
+
+        /** Ajustes adicionales (se dibujan encima del principal). */
+        final java.util.List<Extra> extras = new java.util.ArrayList<>();
+
+        static final class Extra {
+            String label;
+            int min;
+            int max;
+            int step;
+            java.util.function.IntSupplier getter;
+            java.util.function.IntConsumer setter;
+            String[] names;
+
+            String text() {
+                int v = getter.getAsInt();
+                return names != null && v >= 0 && v < names.length ? names[v] : String.valueOf(v);
+            }
+
+            void adjust(int direction) {
+                setter.accept(Math.max(min, Math.min(max, getter.getAsInt() + direction * step)));
+            }
+        }
+
+        ModuleEntry withExtra(String label, int min, int max, int step,
+                              java.util.function.IntSupplier getter, java.util.function.IntConsumer setter,
+                              String[] names) {
+            Extra e = new Extra();
+            e.label = label;
+            e.min = min;
+            e.max = max;
+            e.step = step;
+            e.getter = getter;
+            e.setter = setter;
+            e.names = names;
+            extras.add(e);
+            return this;
+        }
 
         ModuleEntry withSetting(
                 String label,
@@ -527,6 +570,81 @@ public final class AltairScreen extends Screen {
                 .withSettingNames(MemoryDisplay.MODE_NAMES));
 
         allModules.add(new ModuleEntry(
+                "Direction HUD",
+                "Brújula en pantalla",
+                "Muestra una brújula con las direcciones (N, E, S, W...) y los grados hacia donde miras. Se mueve en el HUD Editor.",
+                Category.WORLD,
+                "\u2736",
+                () -> DirectionHud.getInstance().toggle(),
+                () -> DirectionHud.getInstance().isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Server Address",
+                "IP del servidor",
+                "Muestra la IP del servidor en el que estás jugando. Se mueve en el HUD Editor.",
+                Category.WORLD,
+                "\u2301",
+                () -> ServerAddress.getInstance().toggle(),
+                () -> ServerAddress.getInstance().isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Time Changer",
+                "Hora visual del día",
+                "Fija la hora del día solo en tu cliente (siempre de día, de noche...). No afecta al servidor ni a otros jugadores. Elige la hora con - y +.",
+                Category.RENDER,
+                "\u263C",
+                () -> TimeChanger.toggle(),
+                () -> TimeChanger.isEnabled()
+        ).withSetting("Hora", 0, TimeChanger.MODE_NAMES.length - 1, 1,
+                () -> TimeChanger.getMode(), v -> TimeChanger.setMode(v))
+                .withSettingNames(TimeChanger.MODE_NAMES));
+
+        allModules.add(new ModuleEntry(
+                "Weather Changer",
+                "Clima visual",
+                "Cambia el clima solo en tu cliente: quita la lluvia y la nieve o fuerza lluvia y tormenta. No afecta al servidor. Elige el clima con - y +.",
+                Category.RENDER,
+                "\u2602",
+                () -> WeatherChanger.toggle(),
+                () -> WeatherChanger.isEnabled()
+        ).withSetting("Clima", 0, WeatherChanger.MODE_NAMES.length - 1, 1,
+                () -> WeatherChanger.getMode(), v -> WeatherChanger.setMode(v))
+                .withSettingNames(WeatherChanger.MODE_NAMES));
+
+        allModules.add(new ModuleEntry(
+                "Block Outline",
+                "Contorno de bloque",
+                "Cambia el color y el grosor del contorno del bloque que miras. Elige un color de la paleta, el Ciclo Altair (pasa por los colores de la paleta) o Arcoíris.",
+                Category.RENDER,
+                "\u25A2",
+                () -> BlockOutline.toggle(),
+                () -> BlockOutline.isEnabled()
+        ).withSetting("Color", 0, com.altairclient.client.Palette.MAX_INDEX, 1,
+                () -> BlockOutline.getColorIndex(), v -> BlockOutline.setColorIndex(v))
+                .withSettingNames(com.altairclient.client.Palette.NAMES)
+                .withExtra("Grosor", BlockOutline.MIN_WIDTH, BlockOutline.MAX_WIDTH, 1,
+                        () -> BlockOutline.getWidth(), v -> BlockOutline.setWidth(v), null));
+
+        allModules.add(new ModuleEntry(
+                "Custom Crosshair",
+                "Mira para PvP",
+                "Sustituye la mira por un modelo para PvP: punto, cruz, cruz con hueco, círculo, T, X o esquinas. Elige estilo, color (paleta de Altair, ciclo o arcoíris) y tamaño.",
+                Category.COMBAT,
+                "\u2316",
+                () -> CustomCrosshair.toggle(),
+                () -> CustomCrosshair.isEnabled()
+        ).withSetting("Estilo", 0, CustomCrosshair.STYLE_NAMES.length - 1, 1,
+                () -> CustomCrosshair.getStyle(), v -> CustomCrosshair.setStyle(v))
+                .withSettingNames(CustomCrosshair.STYLE_NAMES)
+                .withExtra("Color", 0, com.altairclient.client.Palette.MAX_INDEX, 1,
+                        () -> CustomCrosshair.getColorIndex(), v -> CustomCrosshair.setColorIndex(v),
+                        com.altairclient.client.Palette.NAMES)
+                .withExtra("Tamaño", CustomCrosshair.MIN_SIZE, CustomCrosshair.MAX_SIZE, 1,
+                        () -> CustomCrosshair.getSize(), v -> CustomCrosshair.setSize(v), null));
+
+        allModules.add(new ModuleEntry(
                 "Auto GG",
                 "GG automático",
                 "Escribe gg en el chat cuando el servidor anuncia el final de una partida. Solo reacciona a mensajes del servidor y espera 15 s entre envíos. Algunos servidores no permiten mensajes automáticos: actívalo solo si lo admiten.",
@@ -840,7 +958,7 @@ public final class AltairScreen extends Screen {
             int descY = iconBoxY + 40;
             List<FormattedCharSequence> wrappedLines = font.split(Component.literal(selectedModule.fullDesc), rightPanelWidth - 28);
             for (FormattedCharSequence line : wrappedLines) {
-                if (descY + 10 > panelY + panelHeight - (selectedModule.hasSetting() ? 105 : 65)) break;
+                if (descY + 10 > panelY + panelHeight - (selectedModule.hasSetting() ? 105 + 20 * selectedModule.extras.size() : 65)) break;
                 graphics.text(font, line, rightPanelX + 14, descY, MUTED, false);
                 descY += 11;
             }
@@ -859,6 +977,19 @@ public final class AltairScreen extends Screen {
                 graphics.fill(plusX, setY, plusX + 16, setY + 14, plusHover ? 0xFF2E3550 : 0xFF22283D);
                 graphics.text(font, "-", minusX + 6, setY + 3, WHITE, false);
                 graphics.text(font, "+", plusX + 5, setY + 3, WHITE, false);
+
+                for (int ei = 0; ei < selectedModule.extras.size(); ei++) {
+                    ModuleEntry.Extra extra = selectedModule.extras.get(ei);
+                    int ey = setY - 20 * (ei + 1);
+                    boolean emHover = mouseX >= minusX && mouseX <= minusX + 16 && mouseY >= ey && mouseY <= ey + 14;
+                    boolean epHover = mouseX >= plusX && mouseX <= plusX + 16 && mouseY >= ey && mouseY <= ey + 14;
+                    graphics.text(font, fit(extra.label + ": " + extra.text(), minusX - (rightPanelX + 14) - 6),
+                            rightPanelX + 14, ey + 3, WHITE, false);
+                    graphics.fill(minusX, ey, minusX + 16, ey + 14, emHover ? 0xFF2E3550 : 0xFF22283D);
+                    graphics.fill(plusX, ey, plusX + 16, ey + 14, epHover ? 0xFF2E3550 : 0xFF22283D);
+                    graphics.text(font, "-", minusX + 6, ey + 3, WHITE, false);
+                    graphics.text(font, "+", plusX + 5, ey + 3, WHITE, false);
+                }
             }
 
             boolean isModEnabled = selectedModule.isEnabled();
@@ -1021,6 +1152,8 @@ public final class AltairScreen extends Screen {
         WorldInfo.getInstance().render(graphics);
         ComboCounter.getInstance().render(graphics);
         ReachDisplay.getInstance().render(graphics);
+        ServerAddress.getInstance().render(graphics);
+        DirectionHud.getInstance().render(graphics);
     }
 
     @Override
@@ -1127,6 +1260,19 @@ public final class AltairScreen extends Screen {
                 if (mx >= plusX && mx <= plusX + 16) {
                     selectedModule.adjustSetting(1);
                     return true;
+                }
+            }
+            for (int ei = 0; ei < selectedModule.extras.size(); ei++) {
+                int ey = setY - 20 * (ei + 1);
+                if (my >= ey && my <= ey + 14) {
+                    if (mx >= minusX && mx <= minusX + 16) {
+                        selectedModule.extras.get(ei).adjust(-1);
+                        return true;
+                    }
+                    if (mx >= plusX && mx <= plusX + 16) {
+                        selectedModule.extras.get(ei).adjust(1);
+                        return true;
+                    }
                 }
             }
         }

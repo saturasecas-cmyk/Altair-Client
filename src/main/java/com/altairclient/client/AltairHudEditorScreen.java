@@ -7,6 +7,8 @@ import com.altairclient.modules.mods.ArrowCounter;
 import com.altairclient.modules.mods.DamageIndicator;
 import com.altairclient.modules.mods.FPSDisplay;
 import com.altairclient.modules.mods.ItemNameDisplay;
+import com.altairclient.modules.mods.DirectionHud;
+import com.altairclient.modules.mods.ServerAddress;
 import com.altairclient.modules.mods.MemoryDisplay;
 import com.altairclient.modules.mods.TotemCounter;
 import com.altairclient.modules.mods.HealthDisplay;
@@ -260,6 +262,32 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public int getWidth() { return ItemNameDisplay.getInstance().getWidth(); }
             @Override public int getHeight() { return ItemNameDisplay.getInstance().getHeight(); }
             @Override public void render(GuiGraphicsExtractor g) { ItemNameDisplay.getInstance().renderPreview(g); }
+        });
+
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Server Address"; }
+            @Override public boolean isEnabled() { return ServerAddress.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { ServerAddress.getInstance().setEnabled(e); }
+            @Override public int getX() { return ServerAddress.getInstance().getX(); }
+            @Override public void setX(int x) { ServerAddress.getInstance().setX(x); }
+            @Override public int getY() { return ServerAddress.getInstance().getY(); }
+            @Override public void setY(int y) { ServerAddress.getInstance().setY(y); }
+            @Override public int getWidth() { return ServerAddress.getInstance().getWidth(); }
+            @Override public int getHeight() { return ServerAddress.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { ServerAddress.getInstance().renderPreview(g); }
+        });
+
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Direction HUD"; }
+            @Override public boolean isEnabled() { return DirectionHud.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { DirectionHud.getInstance().setEnabled(e); }
+            @Override public int getX() { return DirectionHud.getInstance().getX(); }
+            @Override public void setX(int x) { DirectionHud.getInstance().setX(x); }
+            @Override public int getY() { return DirectionHud.getInstance().getY(); }
+            @Override public void setY(int y) { DirectionHud.getInstance().setY(y); }
+            @Override public int getWidth() { return DirectionHud.getInstance().getWidth(); }
+            @Override public int getHeight() { return DirectionHud.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { DirectionHud.getInstance().renderPreview(g); }
         });
     }
 

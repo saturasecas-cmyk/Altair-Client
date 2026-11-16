@@ -11,5 +11,9 @@
   "key.altairclient.freelook": "Activar/desactivar Freelook",
   "key.altairclient.fullbright": "Activar/desactivar Fullbright",
   "key.altairclient.nametags": "Activar/desactivar Custom Nametags",
-  "key.altairclient.chat_bubbles": "Activar/desactivar Burbujas de chat"
+  "key.altairclient.chat_bubbles": "Activar/desactivar Burbujas de chat",
+  "key.altairclient.time_changer": "Activar/desactivar Time Changer",
+  "key.altairclient.weather_changer": "Activar/desactivar Weather Changer",
+  "key.altairclient.block_outline": "Activar/desactivar Block Outline",
+  "key.altairclient.crosshair": "Activar/desactivar Custom Crosshair"
 }

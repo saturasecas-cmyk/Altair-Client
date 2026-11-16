@@ -2,6 +2,10 @@ package com.altairclient.client;
 
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.CPSCounter;
+import com.altairclient.modules.mods.BlockOutline;
+import com.altairclient.modules.mods.CustomCrosshair;
+import com.altairclient.modules.mods.TimeChanger;
+import com.altairclient.modules.mods.WeatherChanger;
 import com.altairclient.modules.mods.AutoRespawn;
 import com.altairclient.modules.mods.AutoTool;
 import com.altairclient.modules.mods.FastGame;
@@ -126,6 +130,38 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
+    // Sin tecla por defecto: se asigna en Controles.
+    public static final KeyMapping TIME_CHANGER_KEY = new KeyMapping(
+            "key.altairclient.time_changer",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
+    // Sin tecla por defecto: se asigna en Controles.
+    public static final KeyMapping WEATHER_CHANGER_KEY = new KeyMapping(
+            "key.altairclient.weather_changer",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
+    // Sin tecla por defecto: se asigna en Controles.
+    public static final KeyMapping BLOCK_OUTLINE_KEY = new KeyMapping(
+            "key.altairclient.block_outline",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
+    // Sin tecla por defecto: se asigna en Controles.
+    public static final KeyMapping CROSSHAIR_KEY = new KeyMapping(
+            "key.altairclient.crosshair",
+            InputConstants.Type.KEYSYM,
+            InputConstants.UNKNOWN.getValue(),
+            CATEGORY
+    );
+
     private AltairKeyHandler() {
     }
 
@@ -151,6 +187,10 @@ public final class AltairKeyHandler {
         event.register(FULLBRIGHT_KEY);
         event.register(NAMETAGS_KEY);
         event.register(CHAT_BUBBLES_KEY);
+        event.register(TIME_CHANGER_KEY);
+        event.register(WEATHER_CHANGER_KEY);
+        event.register(BLOCK_OUTLINE_KEY);
+        event.register(CROSSHAIR_KEY);
     }
 
     /** Antes de cada tick: el giro del ratón pasa a la cámara y la cámara se mueve con WASD. */
@@ -236,6 +276,22 @@ public final class AltairKeyHandler {
 
         while (CHAT_BUBBLES_KEY.consumeClick()) {
             ChatBubbleHandler.toggle();
+        }
+
+        while (TIME_CHANGER_KEY.consumeClick()) {
+            TimeChanger.toggle();
+        }
+
+        while (WEATHER_CHANGER_KEY.consumeClick()) {
+            WeatherChanger.toggle();
+        }
+
+        while (BLOCK_OUTLINE_KEY.consumeClick()) {
+            BlockOutline.toggle();
+        }
+
+        while (CROSSHAIR_KEY.consumeClick()) {
+            CustomCrosshair.toggle();
         }
 
         while (FULLBRIGHT_KEY.consumeClick()) {

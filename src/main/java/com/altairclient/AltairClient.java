@@ -4,6 +4,9 @@ package com.altairclient;
 import com.altairclient.client.AltairHud;
 import com.altairclient.client.AltairKeyHandler;
 import com.altairclient.modules.mods.AutoGG;
+import com.altairclient.modules.mods.BlockOutline;
+import com.altairclient.modules.mods.TimeChanger;
+import com.altairclient.modules.mods.WeatherChanger;
 import com.altairclient.modules.mods.ChatBubbleHandler;
 import com.altairclient.modules.mods.ChatTimestamps;
 import com.altairclient.modules.mods.ClearWater;
@@ -37,6 +40,9 @@ public class AltairClient {
         ChatTimestamps.register();
         ClearWater.register();
         FastGame.register();
+        BlockOutline.register();
+        TimeChanger.register();
+        WeatherChanger.register();
 
         FMLClientSetupEvent.getBus(
                 context.getModBusGroup()

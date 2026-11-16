@@ -3,6 +3,10 @@ package com.altairclient.client;
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
+import com.altairclient.modules.mods.CustomCrosshair;
+import com.altairclient.modules.mods.DirectionHud;
+import com.altairclient.modules.mods.ServerAddress;
+import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
 import com.altairclient.modules.mods.ArrowCounter;
 import com.altairclient.modules.mods.DamageIndicator;
 import com.altairclient.modules.mods.FPSDisplay;
@@ -29,6 +33,9 @@ public final class AltairHud {
     private static final Identifier HITBOX_LAYER_ID =
             Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "hitboxes");
 
+    private static final Identifier CROSSHAIR_LAYER_ID =
+            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "crosshair");
+
     private AltairHud() {
     }
 
@@ -42,6 +49,14 @@ public final class AltairHud {
                 HITBOX_LAYER_ID,
                 (graphics, deltaTracker) -> HitboxDisplay.getInstance().emit(deltaTracker),
                 () -> true
+        );
+
+        // La mira de Altair sustituye a la de vanilla mientras está activada.
+        event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.CROSSHAIR, () -> !CustomCrosshair.isEnabled());
+        event.getLayeredDraw().addWithCondition(
+                CROSSHAIR_LAYER_ID,
+                (graphics, deltaTracker) -> CustomCrosshair.render(graphics),
+                () -> CustomCrosshair.isEnabled() && !Minecraft.getInstance().gui.hud.isHidden()
         );
 
         // La capa del HUD se oculta con F1, igual que el HUD de vanilla.
@@ -68,5 +83,7 @@ public final class AltairHud {
         Keystrokes.getInstance().render(graphics);
         PotionStatus.getInstance().render(graphics);
         WorldInfo.getInstance().render(graphics);
+        ServerAddress.getInstance().render(graphics);
+        DirectionHud.getInstance().render(graphics);
     }
 }
