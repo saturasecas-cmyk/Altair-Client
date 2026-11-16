@@ -842,6 +842,10 @@ public final class AltairScreen extends Screen {
         }
     }
 
+    private static boolean isLinkedToMod(TextureModules.Entry tex) {
+        return TextureModules.ID_CLEAR_WATER.equals(tex.id);
+    }
+
     /** Tarjeta de una textura: interruptor propio y, si tiene color, selector de la paleta de Altair. */
     private static ModuleEntry textureEntry(TextureModules.Entry tex, Category cat) {
         Runnable toggle = tex::toggle;
@@ -860,7 +864,10 @@ public final class AltairScreen extends Screen {
             colorSet = BlockOutline::setColorIndex;
         }
 
-        ModuleEntry entry = new ModuleEntry(tex.name, tex.description, tex.description, cat, cat.icon, toggle, enabled);
+        String full = tex.isImplemented() || isLinkedToMod(tex)
+                ? tex.description
+                : tex.description + " Aún no tiene efecto en el juego: de momento solo está en el menú.";
+        ModuleEntry entry = new ModuleEntry(tex.name, tex.description, full, cat, cat.icon, toggle, enabled);
         if (tex.hasColor()) {
             entry.withSetting("Color", 0, Palette.MAX_INDEX, 1, colorGet, colorSet)
                     .withSettingNames(Palette.NAMES)

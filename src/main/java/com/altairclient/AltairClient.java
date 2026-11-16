@@ -12,6 +12,7 @@ import com.altairclient.modules.mods.ChatTimestamps;
 import com.altairclient.modules.mods.ClearWater;
 import com.altairclient.modules.mods.FastGame;
 import com.altairclient.modules.mods.NametagHandler;
+import com.altairclient.modules.textures.PvpTextures;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -43,6 +44,7 @@ public class AltairClient {
         BlockOutline.register();
         TimeChanger.register();
         WeatherChanger.register();
+        PvpTextures.register();
 
         FMLClientSetupEvent.getBus(
                 context.getModBusGroup()

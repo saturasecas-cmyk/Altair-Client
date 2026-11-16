@@ -19,6 +19,7 @@ import com.altairclient.modules.mods.Keystrokes;
 import com.altairclient.modules.mods.PingDisplay;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.WorldInfo;
+import com.altairclient.modules.textures.PvpTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
@@ -35,6 +36,9 @@ public final class AltairHud {
 
     private static final Identifier CROSSHAIR_LAYER_ID =
             Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "crosshair");
+
+    private static final Identifier FIRE_LAYER_ID =
+            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "texture_fire");
 
     private AltairHud() {
     }
@@ -57,6 +61,15 @@ public final class AltairHud {
                 CROSSHAIR_LAYER_ID,
                 (graphics, deltaTracker) -> CustomCrosshair.render(graphics),
                 () -> CustomCrosshair.isEnabled() && !Minecraft.getInstance().gui.hud.isHidden()
+        );
+
+        // Texturas PvP: la máscara de calabaza se oculta si Transparent Pumpkin Overlay está activo,
+        // y el fuego de Altair (bajo / semitransparente) sustituye al de vanilla.
+        event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.CAMERA_OVERLAY, () -> !PvpTextures.hideCameraOverlay());
+        event.getLayeredDraw().addWithCondition(
+                FIRE_LAYER_ID,
+                (graphics, deltaTracker) -> PvpTextures.renderFire(graphics),
+                () -> !Minecraft.getInstance().gui.hud.isHidden()
         );
 
         // La capa del HUD se oculta con F1, igual que el HUD de vanilla.

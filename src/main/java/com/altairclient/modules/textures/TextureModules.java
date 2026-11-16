@@ -26,6 +26,14 @@ public final class TextureModules {
     public static final String ID_CLEAR_WATER = PVP + "/clear-water";
     public static final String ID_MINIMAL_OUTLINE = BREAKING + "/minimal-block-outline";
 
+    /** Texturas PvP que ya tienen efecto en el juego (el resto de entradas solo están en el menú por ahora). */
+    private static final java.util.Set<String> IMPLEMENTED = new java.util.HashSet<>(java.util.Arrays.asList(
+            PVP + "/short-swords", PVP + "/low-fire", PVP + "/transparent-fire", PVP + "/low-shield",
+            PVP + "/low-particles", PVP + "/clear-water", PVP + "/clear-lava", PVP + "/simple-hit-particles",
+            PVP + "/critical-particles", PVP + "/minimal-totem", PVP + "/transparent-pumpkin-overlay",
+            BREAKING + "/minimal-block-outline"
+    ));
+
     /** Color por defecto de las entradas que llevan color: el primer color de la paleta (morado). */
     private static final int DEFAULT_COLOR = 0;
     /** Índice de "Ciclo Altair" dentro de la paleta. */
@@ -53,6 +61,11 @@ public final class TextureModules {
             return enabled;
         }
 
+        /** true si la textura ya hace algo en el juego; si no, solo existe en el menú. */
+        public boolean isImplemented() {
+            return IMPLEMENTED.contains(id);
+        }
+
         public void toggle() {
             enabled = !enabled;
         }
@@ -75,17 +88,17 @@ public final class TextureModules {
     static {
         // ==================== 1. PvP Textures ====================
         add(PVP, "Short Swords", "Espadas visualmente más cortas.");
-        add(PVP, "Low Fire", "Reduce la altura del fuego.");
-        add(PVP, "Transparent Fire", "Fuego semitransparente.");
+        addColor(PVP, "Low Fire", "Reduce la altura del fuego y lo pone morado del tono del cliente.", DEFAULT_COLOR);
+        addColor(PVP, "Transparent Fire", "Fuego semitransparente con la paleta del cliente.", DEFAULT_COLOR);
         add(PVP, "Low Shield", "Reduce la presencia visual del escudo.");
-        add(PVP, "Low Particles", "Reduce la cantidad de partículas.");
+        addColor(PVP, "Low Particles", "Reduce la cantidad de partículas y las tiñe con la paleta del cliente.", DEFAULT_COLOR);
         add(PVP, "Clear Water", "Agua más transparente.");
         add(PVP, "Clear Lava", "Lava más transparente.");
         add(PVP, "Low Armor Overlay", "Armadura menos invasiva visualmente.");
-        add(PVP, "Simple Hit Particles", "Partículas de impacto sencillas.");
-        add(PVP, "Critical Particles", "Partículas de crítico discretas.");
-        add(PVP, "Minimal Enchantment Glint", "Reduce el brillo de objetos encantados.");
-        add(PVP, "Minimal Totem", "Tótem simplificado.");
+        addColor(PVP, "Simple Hit Particles", "Partículas de impacto sencillas con la paleta del cliente.", DEFAULT_COLOR);
+        add(PVP, "Critical Particles", "Partículas de crítico discretas (menos y más sutiles).");
+        addColor(PVP, "Minimal Enchantment Glint", "Reduce el brillo de objetos encantados con la paleta del cliente.", DEFAULT_COLOR);
+        addColor(PVP, "Minimal Totem", "Tótem simplificado con la paleta del cliente.", DEFAULT_COLOR);
         add(PVP, "Transparent Pumpkin Overlay", "Máscara de calabaza transparente.");
         add(PVP, "Clean Glass", "Cristal más limpio.");
         add(PVP, "Simple XP Bar", "Barra de experiencia minimalista.");
@@ -199,6 +212,16 @@ public final class TextureModules {
 
     private static void addColor(String group, String name, String description, int colorIndex) {
         ALL.add(new Entry(group, name, description, true, colorIndex));
+    }
+
+    /** Busca una entrada por su id (por ejemplo "pvp/low-fire"). */
+    public static Entry byId(String id) {
+        for (Entry e : ALL) {
+            if (e.id.equals(id)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Textura desconocida: " + id);
     }
 
     /** Todas las entradas, en el orden del menú. */
