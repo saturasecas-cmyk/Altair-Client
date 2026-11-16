@@ -24,8 +24,7 @@ jobs:
         echo "::group::events list"; ls net/minecraftforge/client/event | tr '\n' ' '; echo "::endgroup::"
         d() { echo "::group::$1 ($2)"; javap -p -cp "$JAR" "$1" 2>&1 | grep -i -E "$2" | head -${3:-25}; echo "::endgroup::"; }
         unzip -q -o "$SRC" 'net/minecraftforge/client/gui/*' -d /tmp/src2
-        echo "::group::files"; find /tmp/src2 -name '*.java' | head -30; echo "::endgroup::"
-        echo "::group::ForgeLayeredDraw"; grep -v -E '^\s*(\*|/\*|//|import|$)' /tmp/src2/net/minecraftforge/client/gui/overlay/ForgeLayeredDraw.java | grep -E "public|BUS" | head -40; echo "::endgroup::"
-        echo "::group::RenderGuiOverlay events"; sed -n 1,15p /tmp/src/net/minecraftforge/client/event/RenderGuiOverlayEvent.java | head -5; grep -n "Deprecated\|BUS" /tmp/src/net/minecraftforge/client/event/RenderGuiOverlayEvent.java | head; echo "::endgroup::"
-        echo "::group::gui events"; grep -rln "CROSSHAIR" /tmp/src2 /tmp/src | head; echo "::endgroup::"
-        echo "::group::layer events"; unzip -l "$SRC" | grep -i -E "Layer" | awk '{print $4}' | head -20; echo "::endgroup::"
+        echo "::group::ForgeLayeredDraw methods"; grep -E "^    (public|private|protected)" /tmp/src2/net/minecraftforge/client/gui/overlay/ForgeLayeredDraw.java | grep -v "Identifier [ A-Z_]* =" | cut -c1-200; echo "::endgroup::"
+        echo "::group::ForgeLayer"; grep -v -E '^\s*(\*|/\*|//|import|$)' /tmp/src2/net/minecraftforge/client/gui/overlay/ForgeLayer.java | head -30; echo "::endgroup::"
+        echo "::group::crosshair usage"; grep -rn -i "crosshair" /tmp/src2 | cut -c1-240 | head; echo "::endgroup::"
+        echo "::group::AddGuiOverlayLayersEvent"; grep -E "public|BUS" /tmp/src/net/minecraftforge/client/event/AddGuiOverlayLayersEvent.java | head; echo "::endgroup::"
