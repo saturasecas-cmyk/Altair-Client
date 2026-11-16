@@ -1,5 +1,7 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.Anim;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
@@ -115,6 +117,10 @@ public class CPSCounter {
         return rightClicks.size();
     }
 
+    private final Anim.Counter leftAnim = new Anim.Counter(2.0F);
+    private final Anim.Counter rightAnim = new Anim.Counter(2.0F);
+    private final Anim.Smooth widthAnim = new Anim.Smooth();
+
     public void render(GuiGraphicsExtractor graphics) {
         if (!enabled) {
             return;
@@ -125,12 +131,13 @@ public class CPSCounter {
             return;
         }
 
-        int lCps = getLeftCPS();
-        int rCps = getRightCPS();
+        int lCps = Math.round(leftAnim.update(getLeftCPS(), 16.0F));
+        int rCps = Math.round(rightAnim.update(getRightCPS(), 16.0F));
 
         String text = "CPS: " + lCps + " | " + rCps;
 
-        int textWidth = minecraft.font.width(text);
+        int textWidth = Math.round(widthAnim.update(minecraft.font.width(text), 20.0F));
+        int textColor = leftAnim.flash() >= rightAnim.flash() ? leftAnim.color(WHITE) : rightAnim.color(WHITE);
 
         // Fondo del indicador
         graphics.fill(
@@ -156,7 +163,7 @@ public class CPSCounter {
                 text,
                 x,
                 y,
-                WHITE,
+                textColor,
                 false
         );
     }

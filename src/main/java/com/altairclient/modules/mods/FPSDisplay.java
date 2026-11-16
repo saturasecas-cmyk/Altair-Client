@@ -1,5 +1,7 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.Anim;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 public class FPSDisplay {
@@ -61,6 +63,9 @@ public class FPSDisplay {
         return 18;
     }
 
+    private final Anim.Counter fpsAnim = new Anim.Counter(4.0F);
+    private final Anim.Smooth widthAnim = new Anim.Smooth();
+
     public void render(GuiGraphicsExtractor graphics) {
         if (!enabled) {
             return;
@@ -71,10 +76,10 @@ public class FPSDisplay {
             return;
         }
 
-        int fps = minecraft.getFps();
+        int fps = Math.round(fpsAnim.update(minecraft.getFps(), 12.0F));
         String text = "FPS: " + fps;
 
-        int textWidth = minecraft.font.width(text);
+        int textWidth = Math.round(widthAnim.update(minecraft.font.width(text), 20.0F));
 
         // Fondo del indicador
         graphics.fill(
@@ -100,7 +105,7 @@ public class FPSDisplay {
                 text,
                 x,
                 y,
-                WHITE,
+                fpsAnim.color(WHITE),
                 false
         );
     }

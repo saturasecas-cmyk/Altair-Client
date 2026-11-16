@@ -1,5 +1,7 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.Anim;
+
 import com.altairclient.client.AltairScreen;
 
 import net.minecraft.client.Minecraft;
@@ -112,13 +114,34 @@ public class ComboCounter {
         renderContent(graphics, "Combo: 3");
     }
 
+    private final Anim.Smooth widthAnim = new Anim.Smooth();
+    private final Anim.Smooth popAnim = new Anim.Smooth();
+    private String lastText = "";
+    private float pop = 0.0F;
+
     private void renderContent(GuiGraphicsExtractor graphics, String text) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft == null || minecraft.font == null) {
             return;
         }
 
-        int textWidth = minecraft.font.width(text);
+        // Cada vez que cambia el combo, el módulo da un pequeño "pop" que se asienta.
+        if (!text.equals(lastText)) {
+            lastText = text;
+            pop = 1.0F;
+            popAnim.snap(1.0F);
+        }
+        pop = popAnim.update(0.0F, 9.0F);
+        float scale = 1.0F + 0.28F * pop;
+
+        int textWidth = Math.round(widthAnim.update(minecraft.font.width(text), 20.0F));
+
+        float pivotX = x - 5;
+        float pivotY = y + 5;
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(pivotX, pivotY);
+        graphics.pose().scale(scale, scale);
+        graphics.pose().translate(-pivotX, -pivotY);
 
         // Fondo del indicador
         graphics.fill(
@@ -144,9 +167,11 @@ public class ComboCounter {
                 text,
                 x,
                 y,
-                WHITE,
+                Anim.mix(WHITE, 0xFF5DFFA8, pop),
                 false
         );
+
+        graphics.pose().popMatrix();
     }
 
     @SubscribeEvent

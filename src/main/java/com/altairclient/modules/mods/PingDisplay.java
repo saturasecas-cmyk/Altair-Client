@@ -1,5 +1,7 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.Anim;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -95,6 +97,9 @@ public class PingDisplay {
         renderContent(graphics, 42);
     }
 
+    private final Anim.Counter pingAnim = new Anim.Counter(8.0F);
+    private final Anim.Smooth widthAnim = new Anim.Smooth();
+
     private void renderContent(GuiGraphicsExtractor graphics, int ping) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) {
@@ -102,10 +107,17 @@ public class PingDisplay {
         }
 
         String label = "Ping: ";
-        String value = ping >= 0 ? ping + " ms" : "-- ms";
-        int valueColor = ping < 0 ? WHITE : (ping < 80 ? GREEN : (ping < 150 ? YELLOW : RED));
+        float smoothPing = ping >= 0 ? pingAnim.update(ping, 10.0F) : -1.0F;
+        int shownPing = Math.round(smoothPing);
+        String value = shownPing >= 0 ? shownPing + " ms" : "-- ms";
+        // Color en degradado continuo: verde hasta 60 ms, amarillo hacia 120 ms y rojo desde 180 ms.
+        int baseColor = smoothPing < 0 ? WHITE
+                : (smoothPing < 120.0F
+                        ? Anim.mix(GREEN, YELLOW, (smoothPing - 60.0F) / 60.0F)
+                        : Anim.mix(YELLOW, RED, (smoothPing - 120.0F) / 60.0F));
+        int valueColor = pingAnim.color(baseColor);
 
-        int width = mc.font.width(label + value);
+        int width = Math.round(widthAnim.update(mc.font.width(label + value), 20.0F));
 
         graphics.fill(x - 5, y - 4, x + width + 8, y + 14, BACKGROUND);
         graphics.fill(x - 5, y - 4, x - 2, y + 14, CYAN);

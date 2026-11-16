@@ -1,5 +1,7 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.Anim;
+
 import com.altairclient.client.AltairScreen;
 
 import net.minecraft.client.Minecraft;
@@ -89,18 +91,18 @@ public class ReachDisplay {
         this.lastReachTime = System.currentTimeMillis();
     }
 
+    private final Anim.Counter reachAnim = new Anim.Counter(0.3F);
+    private final Anim.Smooth widthAnim = new Anim.Smooth();
+
     public void render(GuiGraphicsExtractor graphics) {
         if (!enabled) {
             return;
         }
 
-        String text;
         long now = System.currentTimeMillis();
-        if (now - lastReachTime < 4000 && lastReach > 0.0) {
-            text = String.format(Locale.US, "Reach: %.2fm", lastReach);
-        } else {
-            text = "Reach: 0.00m";
-        }
+        float target = (now - lastReachTime < 4000 && lastReach > 0.0) ? (float) lastReach : 0.0F;
+        float shown = reachAnim.update(target, 10.0F);
+        String text = String.format(Locale.US, "Reach: %.2fm", shown);
 
         renderContent(graphics, text);
     }
@@ -115,7 +117,7 @@ public class ReachDisplay {
             return;
         }
 
-        int textWidth = minecraft.font.width(text);
+        int textWidth = Math.round(widthAnim.update(minecraft.font.width(text), 20.0F));
 
         // Fondo del indicador
         graphics.fill(
@@ -141,7 +143,7 @@ public class ReachDisplay {
                 text,
                 x,
                 y,
-                WHITE,
+                reachAnim.color(WHITE),
                 false
         );
     }

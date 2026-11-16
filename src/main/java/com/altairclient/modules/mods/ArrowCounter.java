@@ -1,5 +1,7 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.Anim;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
@@ -27,14 +29,18 @@ public class ArrowCounter extends HudElement {
         return 18;
     }
 
+    private final Anim.Counter counter = new Anim.Counter(1.0F);
+    private final Anim.Smooth widthAnim = new Anim.Smooth();
+
     @Override
     protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         int n = preview ? 64 : TotemCounter.count(mc, true);
         String label = "Flechas: ";
-        String value = String.valueOf(n);
-        box(graphics, mc.font.width(label + value), getHeight(), CYAN);
+        int shown = Math.round(counter.update(n, 14.0F));
+        String value = String.valueOf(shown);
+        box(graphics, Math.round(widthAnim.update(mc.font.width(label + value), 20.0F)), getHeight(), CYAN);
         graphics.text(mc.font, label, getX(), getY(), WHITE, false);
-        graphics.text(mc.font, value, getX() + mc.font.width(label), getY(), n > 0 ? GREEN : RED, false);
+        graphics.text(mc.font, value, getX() + mc.font.width(label), getY(), counter.color(n > 0 ? GREEN : RED), false);
     }
 }

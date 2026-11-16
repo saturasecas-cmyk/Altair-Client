@@ -1,5 +1,7 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.Anim;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
@@ -79,6 +81,8 @@ public class MemoryDisplay extends HudElement {
         }
     }
 
+    private final Anim.Counter percentAnim = new Anim.Counter(5.0F);
+
     private static int colorFor(int percent) {
         return percent < 60 ? GREEN : (percent < 85 ? YELLOW : RED);
     }
@@ -98,6 +102,8 @@ public class MemoryDisplay extends HudElement {
             sample();
             percent = usedPercent();
         }
+        float smoothPercent = percentAnim.update(percent, 8.0F);
+        percent = Math.round(smoothPercent);
 
         int x = getX();
         int y = getY();
@@ -110,7 +116,7 @@ public class MemoryDisplay extends HudElement {
             String value = percent + "%";
             int textY = showGraph() ? y + (GRAPH_H - 8) / 2 : y;
             graphics.text(mc.font, label, x, textY, WHITE, false);
-            graphics.text(mc.font, value, x + mc.font.width(label), textY, colorFor(percent), false);
+            graphics.text(mc.font, value, x + mc.font.width(label), textY, percentAnim.color(colorFor(percent)), false);
             gx = x + mc.font.width("RAM: 100%") + 6;
         }
 
