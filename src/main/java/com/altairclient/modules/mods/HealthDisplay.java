@@ -1,5 +1,7 @@
 package com.altairclient.modules.mods;
 
+import com.altairclient.client.Anim;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.Entity;
@@ -117,6 +119,9 @@ public class HealthDisplay {
         renderContent(graphics, "Jugador", 15.0F, 20.0F);
     }
 
+    private final Anim.Counter healthAnim = new Anim.Counter(0.5F);
+    private final Anim.Smooth widthAnim = new Anim.Smooth();
+
     private void renderContent(GuiGraphicsExtractor graphics, String name, float health, float maxHealth) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) {
@@ -125,9 +130,11 @@ public class HealthDisplay {
 
         String label = name + ": ";
         String heart = "♥ ";
-        String value = formatHearts(health) + " / " + formatHearts(maxHealth);
+        // La vida sube o baja contando, y destella en rojo al recibir daño o en verde al curarse.
+        float shownHealth = healthAnim.update(health, 9.0F);
+        String value = formatHearts(shownHealth) + " / " + formatHearts(maxHealth);
 
-        int width = mc.font.width(label + heart + value);
+        int width = Math.round(widthAnim.update(mc.font.width(label + heart + value), 20.0F));
 
         graphics.fill(x - 5, y - 4, x + width + 8, y + 14, BACKGROUND);
         graphics.fill(x - 5, y - 4, x - 2, y + 14, RED);
@@ -137,6 +144,6 @@ public class HealthDisplay {
         cx += mc.font.width(label);
         graphics.text(mc.font, heart, cx, y, RED, false);
         cx += mc.font.width(heart);
-        graphics.text(mc.font, value, cx, y, WHITE, false);
+        graphics.text(mc.font, value, cx, y, healthAnim.color(WHITE), false);
     }
 }

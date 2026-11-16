@@ -90,6 +90,11 @@ public final class AltairScreen extends Screen {
         final Runnable onToggle;
         final java.util.function.BooleanSupplier isEnabledSupplier;
 
+        // Animaciones de la tarjeta: selección, hover e interruptor
+        final Anim.Smooth selAnim = new Anim.Smooth();
+        final Anim.Smooth hovAnim = new Anim.Smooth();
+        final Anim.Smooth togAnim = new Anim.Smooth();
+
         // Ajuste numérico opcional (se muestra con botones - / + en el panel derecho)
         String settingLabel = null;
         java.util.function.IntSupplier settingGetter = null;
@@ -181,6 +186,32 @@ public final class AltairScreen extends Screen {
     // Cuadrícula con scroll
     private static final int CARD_HEIGHT = 68;
     private int scrollOffset = 0;
+    private float scrollTarget = 0.0F;
+    private final Anim.Smooth scrollSmooth = new Anim.Smooth();
+
+    // Animaciones del menú
+    private final long openStart = System.nanoTime();
+    private long gridAnimStart = System.nanoTime();
+    private ModuleEntry lastDrawnSelected = null;
+    private long selectStart = System.nanoTime();
+    private final Anim.Smooth[] catSel = newSmooths(Category.values().length);
+    private final Anim.Smooth[] catHov = newSmooths(Category.values().length);
+
+    private static Anim.Smooth[] newSmooths(int n) {
+        Anim.Smooth[] arr = new Anim.Smooth[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = new Anim.Smooth();
+        }
+        return arr;
+    }
+
+    /** Vuelve al inicio del scroll y repite la animación de entrada de las tarjetas. */
+    private void resetGridAnim() {
+        scrollOffset = 0;
+        scrollTarget = 0.0F;
+        scrollSmooth.snap(0.0F);
+        gridAnimStart = System.nanoTime();
+    }
     private int maxScroll = 0;
 
     private String fit(String text, int maxWidth) {
@@ -294,7 +325,7 @@ public final class AltairScreen extends Screen {
         allModules.add(new ModuleEntry(
                 "Ping Display",
                 "Latencia al servidor",
-                "Muestra tu latencia (ping) en milisegundos con colores: verde hasta 80 ms, amarillo hasta 150 ms y rojo por encima.",
+                "Muestra tu latencia (ping) en milisegundos con un color que pasa suavemente de verde a amarillo y rojo según sube.",
                 Category.RENDER,
                 "\u25C9",
                 () -> PingDisplay.getInstance().toggle(),
@@ -621,7 +652,7 @@ public final class AltairScreen extends Screen {
 
     private void onSearchChanged(String text) {
         searchQuery = text == null ? "" : text.trim();
-        scrollOffset = 0;
+        resetGridAnim();
         List<ModuleEntry> visible = getVisibleModules();
         if (!visible.isEmpty() && !visible.contains(selectedModule)) {
             selectedModule = visible.get(0);
@@ -665,7 +696,19 @@ public final class AltairScreen extends Screen {
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
         // 1. Fondo oscuro global
-        graphics.fill(0, 0, width, height, OVERLAY_BG);
+        // Animación de apertura: el fondo se oscurece y el panel crece desde el 94 %.
+        float open = Anim.easeOut((System.nanoTime() - openStart) / 280_000_000.0F);
+        boolean opening = open < 1.0F;
+        graphics.fill(0, 0, width, height, Anim.scaleAlpha(OVERLAY_BG, open));
+        if (opening) {
+            float pivotX = panelX + panelWidth / 2.0F;
+            float pivotY = panelY + panelHeight / 2.0F;
+            float openScale = 0.94F + 0.06F * open;
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(pivotX, pivotY);
+            graphics.pose().scale(openScale, openScale);
+            graphics.pose().translate(-pivotX, -pivotY);
+        }
 
         // 2. Marco contenedor principal
         graphics.fill(panelX, panelY, panelX + panelWidth, panelY + panelHeight, MAIN_PANEL_BG);
@@ -728,17 +771,22 @@ public final class AltairScreen extends Screen {
             boolean isHovered = mouseX >= panelX + 8 && mouseX <= panelX + sidebarWidth - 8
                     && mouseY >= catBtnY && mouseY <= catBtnY + catBtnH;
 
-            int bg = isSelected ? 0xFF272952 : (isHovered ? 0xFF1B2240 : 0x00000000);
-            if (bg != 0) {
+            // El resaltado pasa suavemente de la categoría anterior a la nueva.
+            float sel = catSel[cat.ordinal()].update(isSelected ? 1.0F : 0.0F, 14.0F);
+            float hov = catHov[cat.ordinal()].update(isHovered ? 1.0F : 0.0F, 18.0F);
+
+            int bg = Anim.mix(Anim.mix(0x001B2240, 0xFF1B2240, hov), 0xFF272952, sel);
+            if ((bg >>> 24) > 0) {
                 graphics.fill(panelX + 8, catBtnY, panelX + sidebarWidth - 8, catBtnY + catBtnH, bg);
             }
 
-            if (isSelected) {
-                graphics.fill(panelX + 8, catBtnY, panelX + 11, catBtnY + catBtnH, PURPLE);
+            int barW = Math.round(3.0F * sel);
+            if (barW > 0) {
+                graphics.fill(panelX + 8, catBtnY, panelX + 8 + barW, catBtnY + catBtnH, PURPLE);
             }
 
-            int textColor = isSelected ? WHITE : (isHovered ? CYAN : MUTED);
-            graphics.text(font, cat.icon + "  " + cat.displayName, panelX + 16, catBtnY + 9, textColor, false);
+            int textColor = Anim.mix(Anim.mix(MUTED, CYAN, hov), WHITE, sel);
+            graphics.text(font, cat.icon + "  " + cat.displayName, panelX + 16 + Math.round(2.0F * sel), catBtnY + 9, textColor, false);
 
             catBtnY += catBtnH + 4;
         }
@@ -772,7 +820,16 @@ public final class AltairScreen extends Screen {
         graphics.fill(rightPanelX, contentY, panelX + panelWidth, panelY + panelHeight, RIGHT_PANEL_BG);
         graphics.fill(rightPanelX, contentY, rightPanelX + 1, panelY + panelHeight, BORDER_COLOR);
 
+        // Al elegir otro módulo, sus detalles se deslizan y aparecen con un fundido.
+        if (selectedModule != lastDrawnSelected) {
+            lastDrawnSelected = selectedModule;
+            selectStart = System.nanoTime();
+        }
+        float selectT = Anim.easeOut((System.nanoTime() - selectStart) / 300_000_000.0F);
+
         if (selectedModule != null) {
+            graphics.pose().pushMatrix();
+            graphics.pose().translate((1.0F - selectT) * 10.0F, 0.0F);
             int iconBoxY = contentY + 16;
             graphics.text(font, selectedModule.icon, rightPanelX + 16, iconBoxY + 2, PURPLE, false);
             graphics.text(font, fit(selectedModule.name, rightPanelWidth - 34 - 14), rightPanelX + 34, iconBoxY + 2, WHITE, false);
@@ -830,9 +887,16 @@ public final class AltairScreen extends Screen {
 
             int pillX = bigBtnX + bigBtnW - 28;
             int pillY = bigBtnY + 7;
-            graphics.fill(pillX, pillY, pillX + 20, pillY + 12, isModEnabled ? GREEN : 0xFF4A557A);
-            int knobX = isModEnabled ? pillX + 10 : pillX + 2;
+            float pillT = selectedModule.togAnim.update(isModEnabled ? 1.0F : 0.0F, 16.0F);
+            graphics.fill(pillX, pillY, pillX + 20, pillY + 12, Anim.mix(0xFF4A557A, GREEN, pillT));
+            int knobX = pillX + 2 + Math.round(8.0F * pillT);
             graphics.fill(knobX, pillY + 2, knobX + 8, pillY + 10, WHITE);
+
+            graphics.pose().popMatrix();
+            if (selectT < 1.0F) {
+                graphics.fill(rightPanelX + 1, contentY, panelX + panelWidth - 1, panelY + panelHeight - 1,
+                        Anim.scaleAlpha(0xFF141B33, 1.0F - selectT));
+            }
         }
 
         // ==================== 6. GRID CENTRAL (TARJETAS DE MÓDULOS) ====================
@@ -863,7 +927,8 @@ public final class AltairScreen extends Screen {
         int rows = (categoryModules.size() + cols - 1) / cols;
         int contentHeight = rows * (cardHeight + cardSpacingY) - cardSpacingY;
         maxScroll = Math.max(0, contentHeight - (areaBottom - cardsAreaY));
-        scrollOffset = Math.max(0, Math.min(maxScroll, scrollOffset));
+        scrollTarget = Anim.clamp(scrollTarget, 0.0F, maxScroll);
+        scrollOffset = Math.max(0, Math.min(maxScroll, Math.round(scrollSmooth.update(scrollTarget, 16.0F))));
 
         // Todo lo que se salga del área de tarjetas se recorta: así los módulos salen al hacer scroll.
         graphics.enableScissor(gridStartX - 1, cardsAreaY, gridStartX + gridWidth + 1, areaBottom);
@@ -885,10 +950,17 @@ public final class AltairScreen extends Screen {
             boolean isSelected = (entry == selectedModule);
             boolean isEnabled = entry.isEnabled();
 
-            int cardBgColor = isSelected ? CARD_SELECTED_BG : (isHovered ? CARD_HOVER_BG : CARD_BG);
+            // Selección, hover e interruptor cambian con transición; al cambiar de categoría las tarjetas suben escalonadas.
+            float selA = entry.selAnim.update(isSelected ? 1.0F : 0.0F, 12.0F);
+            float hovA = entry.hovAnim.update(isHovered ? 1.0F : 0.0F, 16.0F);
+            float togA = entry.togAnim.update(isEnabled ? 1.0F : 0.0F, 16.0F);
+            float enter = Anim.easeOut(((System.nanoTime() - gridAnimStart) / 1.0E9F - i * 0.03F) / 0.3F);
+            cy += Math.round((1.0F - enter) * 14.0F) - Math.round(hovA * 2.0F);
+
+            int cardBgColor = Anim.mix(Anim.mix(CARD_BG, CARD_HOVER_BG, hovA), CARD_SELECTED_BG, selA);
             graphics.fill(cx, cy, cx + cardWidth, cy + cardHeight, cardBgColor);
 
-            int borderCol = isSelected ? PURPLE : (isHovered ? CYAN : BORDER_COLOR);
+            int borderCol = Anim.mix(Anim.mix(BORDER_COLOR, CYAN, hovA), PURPLE, selA);
             graphics.fill(cx, cy, cx + cardWidth, cy + 1, borderCol);
             graphics.fill(cx, cy + cardHeight - 1, cx + cardWidth, cy + cardHeight, borderCol);
             graphics.fill(cx, cy, cx + 1, cy + cardHeight, borderCol);
@@ -910,10 +982,10 @@ public final class AltairScreen extends Screen {
             int toggleX = cx + cardWidth - toggleW - 8;
             int toggleY = cy + cardHeight - toggleH - 8;
 
-            int switchBg = isEnabled ? PURPLE : 0xFF353C57;
+            int switchBg = Anim.mix(0xFF353C57, PURPLE, togA);
             graphics.fill(toggleX, toggleY, toggleX + toggleW, toggleY + toggleH, switchBg);
 
-            int knobPos = isEnabled ? toggleX + 13 : toggleX + 2;
+            int knobPos = toggleX + 2 + Math.round(11.0F * togA);
             graphics.fill(knobPos, toggleY + 2, knobPos + 9, toggleY + toggleH - 2, WHITE);
         }
 
@@ -927,6 +999,10 @@ public final class AltairScreen extends Screen {
             int thumbY = cardsAreaY + (trackH - thumbH) * scrollOffset / maxScroll;
             graphics.fill(trackX, cardsAreaY, trackX + 3, areaBottom, 0xFF1B2138);
             graphics.fill(trackX, thumbY, trackX + 3, thumbY + thumbH, PURPLE);
+        }
+
+        if (opening) {
+            graphics.pose().popMatrix();
         }
 
         // 7. Overlays activos en pantalla (previsualización fiel)
@@ -950,7 +1026,7 @@ public final class AltairScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (maxScroll > 0) {
-            scrollOffset = Math.max(0, Math.min(maxScroll, scrollOffset - (int) Math.round(scrollY * 22)));
+            scrollTarget = Anim.clamp(scrollTarget - (float) (scrollY * 22), 0.0F, maxScroll);
             return true;
         }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
@@ -1018,7 +1094,7 @@ public final class AltairScreen extends Screen {
         for (Category cat : cats) {
             if (mx >= panelX + 8 && mx <= panelX + sidebarWidth - 8 && my >= catBtnY && my <= catBtnY + catBtnH) {
                 currentCategory = cat;
-                scrollOffset = 0;
+                resetGridAnim();
                 if (searchBox != null && !searchBox.getValue().isEmpty()) {
                     searchBox.setValue(""); // al cambiar de categoría se limpia la búsqueda
                 }
