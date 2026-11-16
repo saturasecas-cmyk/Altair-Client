@@ -22,16 +22,13 @@ jobs:
         JAR=$(find $GITHUB_WORKSPACE/.gradle -name 'forge-26.2-*.jar' ! -name '*sources*' | head -1)
         mkdir -p /tmp/src && cd /tmp/src && unzip -q -o "$SRC" 'net/minecraftforge/client/event/*'
         echo "::group::events list"; ls net/minecraftforge/client/event | tr '\n' ' '; echo "::endgroup::"
-        for c in RenderGuiOverlayEvent; do
-          echo "::group::$c"; grep -v -E '^\s*(\*|/\*|//|import|$)' net/minecraftforge/client/event/$c.java | head -70; echo "::endgroup::"
-        done
-        unzip -q -o "$SRC" 'net/minecraftforge/client/gui/*' -d /tmp/src2; echo "::group::vanilla overlays"; grep -rh -E "Identifier|CROSSHAIR|crosshair" /tmp/src2 | head -30; echo "::endgroup::"
         d() { echo "::group::$1 ($2)"; javap -p -cp "$JAR" "$1" 2>&1 | grep -i -E "$2" | head -${3:-25}; echo "::endgroup::"; }
-        d net.minecraft.client.renderer.SubmitNodeCollector "." 40
-        d net.minecraft.client.renderer.state.level.LevelRenderState "outline|Outline" 10
-        d net.minecraft.client.ClientClockManager "." 30
-        d net.minecraft.world.clock.ClockManager "." 30
-        d net.minecraft.client.renderer.ShapeRenderer "." 5
-        echo "::group::submitHitOutline code"; javap -p -c -cp "$JAR" net.minecraft.client.renderer.LevelRenderer | grep -A60 "void submitHitOutline" | grep -E "invoke|getstatic" | cut -c1-230 | head -40; echo "::endgroup::"
-        echo "::group::setTimeFromServer code"; javap -p -c -cp "$JAR" net.minecraft.client.multiplayer.ClientLevel | grep -A25 "void setTimeFromServer" | grep -E "invoke|getstatic" | cut -c1-230; echo "::endgroup::"
-        echo "::group::shape render classes"; unzip -l "$JAR" | grep -i -E "ShapeRenderer|ShapeRender|LevelRenderer|Outline" | head; echo "::endgroup::"
+        d net.minecraft.client.renderer.OrderedSubmitNodeCollector "ShapeOutline|CustomGeometry|Line" 10
+        echo "::group::ClockInstance"; javap -p -cp "$JAR" 'net.minecraft.client.ClientClockManager$ClockInstance'; echo "::endgroup::"
+        echo "::group::ClockNetworkState"; javap -p -cp "$JAR" net.minecraft.world.clock.ClockNetworkState; echo "::endgroup::"
+        d net.minecraft.world.clock.WorldClock "." 10
+        d net.minecraft.world.clock.WorldClocks "." 10
+        d net.minecraft.world.level.dimension.DimensionType "clock|Clock|fixedTime" 10
+        d net.minecraft.world.level.Level "dimensionType|clock|Clock" 10
+        d net.minecraft.client.multiplayer.ClientLevel "ClientLevelData|getDayTime|clock" 10
+        echo "::group::submitBlockOutline"; javap -p -c -cp "$JAR" net.minecraft.client.renderer.LevelRenderer | grep -A70 "void submitBlockOutline" | grep -E "invoke|getfield|getstatic" | cut -c1-260 | head -40; echo "::endgroup::"
