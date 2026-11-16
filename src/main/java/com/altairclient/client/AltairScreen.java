@@ -1041,13 +1041,13 @@ public final class AltairScreen extends Screen {
 
             if (row.category == null) {
                 // Carpeta: flecha ▸ / ▾ según esté cerrada o abierta
-                boolean open = row.section == openSection;
+                boolean folderOpen = row.section == openSection;
                 float hov = secHov[row.section.ordinal()].update(isHovered ? 1.0F : 0.0F, 18.0F);
-                int bg = Anim.mix(open ? 0xFF1F2750 : 0xFF181F3B, 0xFF272952, hov);
+                int bg = Anim.mix(folderOpen ? 0xFF1F2750 : 0xFF181F3B, 0xFF272952, hov);
                 graphics.fill(panelX + 8, ry, panelX + sidebarWidth - 8, ry + row.h, bg);
-                graphics.fill(panelX + 8, ry, panelX + 11, ry + row.h, open ? CYAN : PURPLE);
-                int textColor = Anim.mix(open ? WHITE : MUTED, CYAN, hov);
-                graphics.text(font, (open ? "▾ " : "▸ ") + row.section.displayName, panelX + 18, ry + 8, textColor, false);
+                graphics.fill(panelX + 8, ry, panelX + 11, ry + row.h, folderOpen ? CYAN : PURPLE);
+                int textColor = Anim.mix(folderOpen ? WHITE : MUTED, CYAN, hov);
+                graphics.text(font, (folderOpen ? "▾ " : "▸ ") + row.section.displayName, panelX + 18, ry + 8, textColor, false);
             } else {
                 // Apartado dentro de la carpeta abierta, con sangría
                 Category cat = row.category;
