@@ -1,0 +1,42 @@
+name: Inspect API 3
+
+on:
+  push:
+    branches: ['inspect/**']
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '25'
+    - uses: gradle/actions/setup-gradle@v4
+    - name: Resolve deps
+      run: ./gradlew compileJava --no-daemon || true
+    - name: Dump
+      run: |
+        SRC=$(find $GITHUB_WORKSPACE/.gradle -name 'forge-26.2-*-sources.jar' | head -1)
+        JAR=$(find $GITHUB_WORKSPACE/.gradle -name 'forge-26.2-*.jar' ! -name '*sources*' | head -1)
+        mkdir -p /tmp/src && cd /tmp/src && unzip -q -o "$SRC" 'net/minecraftforge/client/event/*'
+        echo "::group::events list"; ls net/minecraftforge/client/event | tr '\n' ' '; echo "::endgroup::"
+        for c in RenderHighlightEvent RenderGuiLayerEvent; do
+          f=net/minecraftforge/client/event/$c.java
+          echo "::group::$c"; [ -f $f ] && grep -v -E '^\s*(\*|/\*|//|import|$)' $f | head -80; echo "::endgroup::"
+        done
+        ls net/minecraftforge/client/event | grep -i -E "highlight|outline|layer|overlay|weather|time|sky"
+        d() { echo "::group::$1 ($2)"; javap -p -cp "$JAR" "$1" 2>&1 | grep -i -E "$2" | head -${3:-25}; echo "::endgroup::"; }
+        d net.minecraft.client.multiplayer.ClientLevel "rain|thunder|weather|time|Time|clock|sky" 40
+        d net.minecraft.world.level.Level "rain|thunder|Rain|Thunder|dayTime|DayTime|gameTime|getDayTime" 30
+        d net.minecraft.client.Minecraft "getCurrentServer|isSingleplayer|getSingleplayerServer" 10
+        d net.minecraft.client.multiplayer.ServerData "ip|name"
+        d net.minecraft.client.gui.Hud "crosshair|Crosshair|extract" 40
+        d net.minecraft.client.renderer.LevelRenderer "outline|Outline|highlight|renderHitOutline|weather|Weather|rain" 30
+        d net.minecraft.client.renderer.WeatherEffectRenderer ".*" 20
+        d net.minecraft.client.renderer.SubmitNodeCollector "line|Line" 10
+        d net.minecraft.client.renderer.ShapeRenderer ".*" 20
+        d net.minecraft.client.gui.GuiGraphicsExtractor "fill|hLine|vLine|outline" 20
+        d net.minecraft.client.renderer.rendertype.RenderTypes "line|LINES" 10
+        d net.minecraft.client.renderer.state.level.BlockOutlineRenderState ".*" 10
