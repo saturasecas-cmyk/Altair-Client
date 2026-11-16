@@ -29,3 +29,10 @@ dependencies {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
+// Forge carga los mixins desde este atributo del manifiesto del JAR (no desde mods.toml).
+tasks.named('jar') {
+    manifest {
+        attributes('MixinConfigs': 'altairclient.mixins.json')
+    }
+}
