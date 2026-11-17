@@ -19,6 +19,7 @@ import com.altairclient.modules.mods.Keystrokes;
 import com.altairclient.modules.mods.PingDisplay;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.WorldInfo;
+import com.altairclient.modules.textures.ExtraTextures;
 import com.altairclient.modules.textures.HudTextures;
 import com.altairclient.modules.textures.MovementTextures;
 import com.altairclient.modules.textures.PvpTextures;
@@ -71,6 +72,7 @@ public final class AltairHud {
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.HOTBAR_AND_DECOS, () -> !HudTextures.hideVanillaHotbar());
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.CONTEXTUAL_INFO, () -> !HudTextures.hideVanillaXpBar());
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.SCOREBOARD, () -> !HudTextures.hideScoreboard());
+        event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.TAB_LIST, () -> !ExtraTextures.hideVanillaTablist());
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.BOSS_OVERLAY, () -> !HudTextures.hideBossBar());
         event.getLayeredDraw().addWithCondition(
                 FIRE_LAYER_ID,
@@ -79,6 +81,7 @@ public final class AltairHud {
                     MovementTextures.renderSpeedLines(graphics);
                     MovementTextures.renderMotionBlur(graphics);
                     HudTextures.render(graphics);
+                    ExtraTextures.render(graphics);
                 },
                 () -> !Minecraft.getInstance().gui.hud.isHidden()
         );

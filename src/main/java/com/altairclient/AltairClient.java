@@ -14,6 +14,7 @@ import com.altairclient.modules.mods.FastGame;
 import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.textures.AnimationTextures;
 import com.altairclient.modules.textures.BuildTextures;
+import com.altairclient.modules.textures.ExtraTextures;
 import com.altairclient.modules.textures.MovementTextures;
 import com.altairclient.modules.textures.PvpTextures;
 
@@ -51,6 +52,7 @@ public class AltairClient {
         MovementTextures.register();
         AnimationTextures.register();
         BuildTextures.register();
+        ExtraTextures.register();
 
         FMLClientSetupEvent.getBus(
                 context.getModBusGroup()
