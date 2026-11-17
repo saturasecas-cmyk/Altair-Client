@@ -62,6 +62,7 @@ public final class TextureModules {
             MOVEMENT + "/walking-dust",
             MOVEMENT + "/footstep-particles",
             MOVEMENT + "/small-speed-lines",
+            MOVEMENT + "/minimal-motion-blur",
             MOVEMENT + "/reduced-camera-bobbing",
             MOVEMENT + "/landing-dust",
             MOVEMENT + "/water-splash",

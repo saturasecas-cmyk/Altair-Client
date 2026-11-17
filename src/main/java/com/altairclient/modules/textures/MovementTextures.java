@@ -271,6 +271,74 @@ public final class MovementTextures {
         }
     }
 
+    // ==================== HUD: desenfoque de movimiento (aproximado) ====================
+
+    private static final TextureModules.Entry MOTION_BLUR = TextureModules.byId(TextureModules.MOVEMENT + "/minimal-motion-blur");
+    private static float blurYaw = 0.0F;
+    private static float blurPitch = 0.0F;
+    private static float blurX = 0.0F;
+    private static float blurY = 0.0F;
+    private static boolean blurInit = false;
+
+    /**
+     * Desenfoque ligero al girar la cámara. No es un desenfoque real de la imagen (eso necesita un shader):
+     * se dibujan franjas translúcidas en los bordes que crecen con la velocidad del giro.
+     */
+    public static void renderMotionBlur(GuiGraphicsExtractor graphics) {
+        if (!MOTION_BLUR.isEnabled()) {
+            blurInit = false;
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer p = mc.player;
+        if (p == null) {
+            return;
+        }
+        float yaw = p.getYRot();
+        float pitch = p.getXRot();
+        if (!blurInit) {
+            blurYaw = yaw;
+            blurPitch = pitch;
+            blurInit = true;
+            return;
+        }
+        float dy = yaw - blurYaw;
+        while (dy > 180.0F) {
+            dy -= 360.0F;
+        }
+        while (dy < -180.0F) {
+            dy += 360.0F;
+        }
+        float dp = pitch - blurPitch;
+        blurYaw = yaw;
+        blurPitch = pitch;
+        // Suavizado: sube rápido con el giro y baja poco a poco
+        blurX += (Math.min(Math.abs(dy), 40.0F) - blurX) * 0.35F;
+        blurY += (Math.min(Math.abs(dp), 40.0F) - blurY) * 0.35F;
+        int w = mc.getWindow().getGuiScaledWidth();
+        int h = mc.getWindow().getGuiScaledHeight();
+        if (blurX > 1.0F) {
+            int width = Math.round(Math.min(blurX, 20.0F) * w / 160.0F);
+            int steps = Math.max(1, width / 2);
+            for (int i = 0; i < steps; i++) {
+                int a = Math.round(34.0F * (1.0F - i / (float) steps) * Math.min(1.0F, blurX / 12.0F));
+                int c = (a << 24) | 0xFFFFFF;
+                graphics.fill(i * 2, 0, i * 2 + 2, h, c);
+                graphics.fill(w - i * 2 - 2, 0, w - i * 2, h, c);
+            }
+        }
+        if (blurY > 1.0F) {
+            int height = Math.round(Math.min(blurY, 20.0F) * h / 160.0F);
+            int steps = Math.max(1, height / 2);
+            for (int i = 0; i < steps; i++) {
+                int a = Math.round(34.0F * (1.0F - i / (float) steps) * Math.min(1.0F, blurY / 12.0F));
+                int c = (a << 24) | 0xFFFFFF;
+                graphics.fill(0, i * 2, w, i * 2 + 2, c);
+                graphics.fill(0, h - i * 2 - 2, w, h - i * 2, c);
+            }
+        }
+    }
+
     // ==================== Utilidades de partículas ====================
 
     private static double rnd(double range) {

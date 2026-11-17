@@ -77,6 +77,7 @@ public final class AltairHud {
                 (graphics, deltaTracker) -> {
                     PvpTextures.renderFire(graphics);
                     MovementTextures.renderSpeedLines(graphics);
+                    MovementTextures.renderMotionBlur(graphics);
                     HudTextures.render(graphics);
                 },
                 () -> !Minecraft.getInstance().gui.hud.isHidden()
