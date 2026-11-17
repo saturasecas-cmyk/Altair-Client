@@ -83,6 +83,9 @@ public final class PvpTextures {
 
     /** Cancela el fuego de vanilla en pantalla y apunta que hay que pintar el de Altair. */
     private static boolean onScreenEffect(RenderBlockScreenEffectEvent event) {
+        if (com.altairclient.modules.mods.NoAnimation.isEnabled() && String.valueOf(event.getOverlayType()).contains("FIRE")) {
+            return true; // No Animation: sin fuego en pantalla
+        }
         if ((LOW_FIRE.isEnabled() || TRANSPARENT_FIRE.isEnabled())
                 && String.valueOf(event.getOverlayType()).contains("FIRE")) {
             fireSeenAt = System.currentTimeMillis();

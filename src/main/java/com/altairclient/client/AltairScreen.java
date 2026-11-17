@@ -41,6 +41,7 @@ import com.altairclient.modules.mods.ToggleSneak;
 import com.altairclient.modules.mods.ToggleSprint;
 import com.altairclient.modules.mods.WorldInfo;
 import com.altairclient.modules.mods.AltairSky;
+import com.altairclient.modules.mods.NoAnimation;
 import com.altairclient.modules.textures.TextureModules;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -975,7 +976,8 @@ public final class AltairScreen extends Screen {
     }
 
     private static boolean isLinkedToMod(TextureModules.Entry tex) {
-        return TextureModules.ID_CLEAR_WATER.equals(tex.id) || TextureModules.ID_ALTAIR_SKY.equals(tex.id);
+        return TextureModules.ID_CLEAR_WATER.equals(tex.id) || TextureModules.ID_ALTAIR_SKY.equals(tex.id)
+                || TextureModules.ID_NO_ANIMATION.equals(tex.id);
     }
 
     /** Tarjeta de una textura: interruptor propio y, si tiene color, selector de la paleta de Altair. */
@@ -989,6 +991,9 @@ public final class AltairScreen extends Screen {
         if (TextureModules.ID_CLEAR_WATER.equals(tex.id)) {
             toggle = ClearWater::toggle;
             enabled = ClearWater::isEnabled;
+        } else if (TextureModules.ID_NO_ANIMATION.equals(tex.id)) {
+            toggle = NoAnimation::toggle;
+            enabled = NoAnimation::isEnabled;
         } else if (TextureModules.ID_ALTAIR_SKY.equals(tex.id)) {
             toggle = AltairSky::toggle;
             enabled = AltairSky::isEnabled;

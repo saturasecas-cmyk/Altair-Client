@@ -25,6 +25,7 @@ public final class TextureModules {
 
     /** Entradas que comparten estado con un módulo que ya existe en la carpeta Mods. */
     public static final String ID_CLEAR_WATER = PVP + "/clear-water";
+    public static final String ID_NO_ANIMATION = MISC + "/no-animation";
     public static final String ID_ALTAIR_SKY = MISC + "/altair-sky";
     public static final String ID_MINIMAL_OUTLINE = BREAKING + "/minimal-block-outline";
 
@@ -103,6 +104,7 @@ public final class TextureModules {
             ANIMATIONS + "/sprint-camera",
             PVP + "/clean-glass",
             MISC + "/altair-sky",
+            MISC + "/no-animation",
             BUILD + "/clean-wool",
             BUILD + "/smooth-concrete",
             BUILD + "/clean-glass",
@@ -315,7 +317,8 @@ public final class TextureModules {
         add(EXTRA, "Clear Pumpkin Overlay", "Máscara de calabaza simplificada.");
 
         // ==================== 8. Misc ====================
-        add(MISC, "Altair Sky", "Cielo azul marino con horizonte morado y muchísimas estrellas, también de día. Solo en el Overworld.");
+        add(MISC, "Altair Sky", "Cielo azul marino con horizonte morado y muchísimas estrellas, también de día. Solo en el Overworld. Sin sol ni luna: solo queda la luz que dan.");
+        add(MISC, "No Animation", "Reduce las animaciones: sin fuego en pantalla, sin animación del tótem, sin inclinación al recibir daño, sin distorsión de pantalla ni cambios de FOV, y el brillo de encantamiento quieto.");
     }
 
     static {

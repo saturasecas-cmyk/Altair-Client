@@ -1,5 +1,6 @@
 package com.altairclient.mixin;
 
+import com.altairclient.modules.mods.NoAnimation;
 import com.altairclient.modules.textures.PvpTextures;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,8 +17,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ScreenEffectRenderer.class)
 public abstract class ScreenEffectRendererMixin {
 
-    @Inject(method = "renderItemActivationAnimation", at = @At("HEAD"), require = 0)
+    @Inject(method = "renderItemActivationAnimation", at = @At("HEAD"), cancellable = true, require = 0)
     private void altair$shrinkTotem(PoseStack poseStack, float partialTick, SubmitNodeCollector collector, CallbackInfo ci) {
+        if (NoAnimation.isEnabled()) {
+            ci.cancel(); // No Animation: sin animación del tótem
+            return;
+        }
         float scale = PvpTextures.totemScale();
         if (scale != 1.0F) {
             poseStack.scale(scale, scale, scale);
