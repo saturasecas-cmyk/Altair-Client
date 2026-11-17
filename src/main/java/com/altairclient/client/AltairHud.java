@@ -19,6 +19,8 @@ import com.altairclient.modules.mods.Keystrokes;
 import com.altairclient.modules.mods.PingDisplay;
 import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.WorldInfo;
+import com.altairclient.modules.textures.HudTextures;
+import com.altairclient.modules.textures.MovementTextures;
 import com.altairclient.modules.textures.PvpTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -66,9 +68,17 @@ public final class AltairHud {
         // Texturas PvP: la máscara de calabaza se oculta si Transparent Pumpkin Overlay está activo,
         // y el fuego de Altair (bajo / semitransparente) sustituye al de vanilla.
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.CAMERA_OVERLAY, () -> !PvpTextures.hideCameraOverlay());
+        event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.HOTBAR_AND_DECOS, () -> !HudTextures.hideVanillaHotbar());
+        event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.CONTEXTUAL_INFO, () -> !HudTextures.hideVanillaXpBar());
+        event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.SCOREBOARD, () -> !HudTextures.hideScoreboard());
+        event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.BOSS_OVERLAY, () -> !HudTextures.hideBossBar());
         event.getLayeredDraw().addWithCondition(
                 FIRE_LAYER_ID,
-                (graphics, deltaTracker) -> PvpTextures.renderFire(graphics),
+                (graphics, deltaTracker) -> {
+                    PvpTextures.renderFire(graphics);
+                    MovementTextures.renderSpeedLines(graphics);
+                    HudTextures.render(graphics);
+                },
                 () -> !Minecraft.getInstance().gui.hud.isHidden()
         );
 

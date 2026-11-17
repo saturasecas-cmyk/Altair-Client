@@ -38,6 +38,15 @@ public final class PvpTextures {
     private static final TextureModules.Entry CRIT_PARTICLES = TextureModules.byId(TextureModules.PVP + "/critical-particles");
     private static final TextureModules.Entry MINIMAL_TOTEM = TextureModules.byId(TextureModules.PVP + "/minimal-totem");
     private static final TextureModules.Entry CLEAR_PUMPKIN = TextureModules.byId(TextureModules.PVP + "/transparent-pumpkin-overlay");
+    private static final TextureModules.Entry MINIMAL_GLINT = TextureModules.byId(TextureModules.PVP + "/minimal-enchantment-glint");
+    private static final TextureModules.Entry MIN_BREAK_PARTICLES = TextureModules.byId(TextureModules.BREAKING + "/minimal-breaking-particles");
+    private static final TextureModules.Entry SMALL_DEBRIS = TextureModules.byId(TextureModules.BREAKING + "/small-block-debris");
+    private static final TextureModules.Entry REDUCED_DUST = TextureModules.byId(TextureModules.BREAKING + "/reduced-block-dust");
+
+    /** true mientras Altair crea sus propias partículas (Movement/Walk): no se filtran ni se tiñen como las de vanilla. */
+    private static boolean selfSpawning = false;
+    /** Color (ARGB) con el que teñir la próxima partícula propia; 0 = sin teñir. */
+    private static int forcedColor = 0;
 
     private static boolean registered = false;
     /** Última vez que el fuego de vanilla quiso dibujarse en pantalla (para pintar el nuestro). */
@@ -140,9 +149,32 @@ public final class PvpTextures {
 
     // ==================== Partículas (llamado desde el mixin) ====================
 
-    /** true si esta partícula no debe crearse (menos partículas, golpes simples, críticos discretos). */
+    public static void markSelfSpawn(boolean value) {
+        selfSpawning = value;
+    }
+
+    public static void beginSelfSpawn(int argb) {
+        forcedColor = argb;
+    }
+
+    public static void endSelfSpawn() {
+        forcedColor = 0;
+    }
+
+    /** true si esta partícula no debe crearse (menos partículas, golpes simples, críticos discretos, rotura). */
     public static boolean shouldDropParticle(ParticleOptions options) {
+        if (selfSpawning) {
+            return false;
+        }
         ParticleType<?> type = options.getType();
+        if (MIN_BREAK_PARTICLES.isEnabled() && type == ParticleTypes.BLOCK) {
+            return ThreadLocalRandom.current().nextFloat() < 0.5F;
+        }
+        if (REDUCED_DUST.isEnabled()
+                && (type == ParticleTypes.FALLING_DUST || type == ParticleTypes.BLOCK_CRUMBLE
+                || type == ParticleTypes.DUST_PILLAR || type == ParticleTypes.DUST_PLUME)) {
+            return ThreadLocalRandom.current().nextFloat() < 0.6F;
+        }
         if (HIT_PARTICLES.isEnabled()
                 && (type == ParticleTypes.DAMAGE_INDICATOR || type == ParticleTypes.SWEEP_ATTACK)) {
             return true;
@@ -158,10 +190,20 @@ public final class PvpTextures {
 
     /** Tiñe la partícula recién creada con la paleta del cliente, si alguna textura lo pide. */
     public static void tintParticle(Particle particle, ParticleOptions options) {
+        ParticleType<?> type = options.getType();
+        if (SMALL_DEBRIS.isEnabled() && type == ParticleTypes.BLOCK && !selfSpawning) {
+            particle.scale(0.5F);
+        }
         if (!(particle instanceof SingleQuadParticle quad)) {
             return;
         }
-        ParticleType<?> type = options.getType();
+        if (forcedColor != 0) {
+            quad.setColor(((forcedColor >> 16) & 0xFF) / 255.0F, ((forcedColor >> 8) & 0xFF) / 255.0F, (forcedColor & 0xFF) / 255.0F);
+            return;
+        }
+        if (selfSpawning) {
+            return;
+        }
         TextureModules.Entry source = null;
         if (MINIMAL_TOTEM.isEnabled() && type == ParticleTypes.TOTEM_OF_UNDYING) {
             source = MINIMAL_TOTEM;
@@ -175,6 +217,12 @@ public final class PvpTextures {
         }
         int c = Palette.color(source.getColorIndex());
         quad.setColor(((c >> 16) & 0xFF) / 255.0F, ((c >> 8) & 0xFF) / 255.0F, (c & 0xFF) / 255.0F);
+    }
+
+    // ==================== Brillo de encantamiento (llamado desde el mixin) ====================
+
+    public static boolean minimalGlint() {
+        return MINIMAL_GLINT.isEnabled();
     }
 
     // ==================== Tótem (llamado desde el mixin) ====================

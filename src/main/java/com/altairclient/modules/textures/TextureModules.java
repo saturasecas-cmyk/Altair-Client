@@ -28,10 +28,74 @@ public final class TextureModules {
 
     /** Texturas PvP que ya tienen efecto en el juego (el resto de entradas solo están en el menú por ahora). */
     private static final java.util.Set<String> IMPLEMENTED = new java.util.HashSet<>(java.util.Arrays.asList(
-            PVP + "/short-swords", PVP + "/low-fire", PVP + "/transparent-fire", PVP + "/low-shield",
-            PVP + "/low-particles", PVP + "/clear-water", PVP + "/clear-lava", PVP + "/simple-hit-particles",
-            PVP + "/critical-particles", PVP + "/minimal-totem", PVP + "/transparent-pumpkin-overlay",
-            BREAKING + "/minimal-block-outline"
+            PVP + "/short-swords",
+            PVP + "/low-fire",
+            PVP + "/transparent-fire",
+            PVP + "/low-shield",
+            PVP + "/low-particles",
+            PVP + "/clear-water",
+            PVP + "/clear-lava",
+            PVP + "/simple-hit-particles",
+            PVP + "/critical-particles",
+            PVP + "/minimal-totem",
+            PVP + "/transparent-pumpkin-overlay",
+            PVP + "/minimal-enchantment-glint",
+            PVP + "/simple-xp-bar",
+            PVP + "/minimal-hotbar",
+            BREAKING + "/minimal-breaking-particles",
+            BREAKING + "/small-block-debris",
+            BREAKING + "/reduced-block-dust",
+            BREAKING + "/breaking-progress-bar",
+            BREAKING + "/minimal-block-outline",
+            MOVEMENT + "/sprint-particles",
+            MOVEMENT + "/jump-particles",
+            MOVEMENT + "/landing-particles",
+            MOVEMENT + "/running-dust",
+            MOVEMENT + "/walking-dust",
+            MOVEMENT + "/footstep-particles",
+            MOVEMENT + "/small-speed-lines",
+            MOVEMENT + "/reduced-camera-bobbing",
+            MOVEMENT + "/landing-dust",
+            MOVEMENT + "/water-splash",
+            MOVEMENT + "/snow-footprints",
+            MOVEMENT + "/sand-footprints",
+            WALK + "/walk-dust",
+            WALK + "/walk-smoke",
+            WALK + "/walk-sparks",
+            WALK + "/walk-hearts",
+            WALK + "/walk-stars",
+            WALK + "/walk-snow",
+            WALK + "/walk-leaves",
+            WALK + "/walk-bubbles",
+            WALK + "/walk-footprints",
+            WALK + "/walk-circles",
+            WALK + "/walk-shadow",
+            WALK + "/walk-aura",
+            WALK + "/walk-altair",
+            ANIMATIONS + "/smooth-walking",
+            ANIMATIONS + "/smooth-sprinting",
+            ANIMATIONS + "/smooth-sneaking",
+            ANIMATIONS + "/smooth-jumping",
+            ANIMATIONS + "/smooth-falling",
+            ANIMATIONS + "/smooth-landing",
+            ANIMATIONS + "/smooth-swimming",
+            ANIMATIONS + "/smooth-climbing",
+            ANIMATIONS + "/smooth-elytra",
+            ANIMATIONS + "/idle-animation",
+            ANIMATIONS + "/hand-swing",
+            ANIMATIONS + "/item-swing",
+            ANIMATIONS + "/eating-animation",
+            ANIMATIONS + "/bow-animation",
+            ANIMATIONS + "/rod-animation",
+            ANIMATIONS + "/block-animation",
+            ANIMATIONS + "/sneak-camera",
+            ANIMATIONS + "/sprint-camera",
+            EXTRA + "/hotbar-highlight",
+            EXTRA + "/low-fire-overlay",
+            EXTRA + "/clear-pumpkin-overlay",
+            EXTRA + "/clean-scoreboard",
+            EXTRA + "/minimal-bossbar",
+            "__none__"
     ));
 
     /** Color por defecto de las entradas que llevan color: el primer color de la paleta (morado). */
@@ -47,6 +111,8 @@ public final class TextureModules {
         private final boolean hasColor;
         private boolean enabled;
         private int colorIndex;
+        /** Si no es null, esta entrada comparte interruptor y color con otra (por ejemplo Low Fire Overlay con Low Fire). */
+        private Entry link;
 
         private Entry(String group, String name, String description, boolean hasColor, int colorIndex) {
             this.group = group;
@@ -58,7 +124,7 @@ public final class TextureModules {
         }
 
         public boolean isEnabled() {
-            return enabled;
+            return link != null ? link.isEnabled() : enabled;
         }
 
         /** true si la textura ya hace algo en el juego; si no, solo existe en el menú. */
@@ -67,7 +133,11 @@ public final class TextureModules {
         }
 
         public void toggle() {
-            enabled = !enabled;
+            if (link != null) {
+                link.toggle();
+            } else {
+                enabled = !enabled;
+            }
         }
 
         public boolean hasColor() {
@@ -75,11 +145,15 @@ public final class TextureModules {
         }
 
         public int getColorIndex() {
-            return colorIndex;
+            return link != null ? link.getColorIndex() : colorIndex;
         }
 
         public void setColorIndex(int index) {
-            colorIndex = Math.max(0, Math.min(Palette.MAX_INDEX, index));
+            if (link != null) {
+                link.setColorIndex(index);
+            } else {
+                colorIndex = Math.max(0, Math.min(Palette.MAX_INDEX, index));
+            }
         }
     }
 
@@ -97,12 +171,12 @@ public final class TextureModules {
         add(PVP, "Low Armor Overlay", "Armadura menos invasiva visualmente.");
         addColor(PVP, "Simple Hit Particles", "Partículas de impacto sencillas con la paleta del cliente.", DEFAULT_COLOR);
         add(PVP, "Critical Particles", "Partículas de crítico discretas (menos y más sutiles).");
-        addColor(PVP, "Minimal Enchantment Glint", "Reduce el brillo de objetos encantados con la paleta del cliente.", DEFAULT_COLOR);
+        add(PVP, "Minimal Enchantment Glint", "Quita el brillo de los objetos encantados (el brillo no se puede teñir con la paleta).");
         addColor(PVP, "Minimal Totem", "Tótem simplificado con la paleta del cliente.", DEFAULT_COLOR);
         add(PVP, "Transparent Pumpkin Overlay", "Máscara de calabaza transparente.");
         add(PVP, "Clean Glass", "Cristal más limpio.");
-        add(PVP, "Simple XP Bar", "Barra de experiencia minimalista.");
-        add(PVP, "Minimal Hotbar", "Barra de objetos simplificada.");
+        addColor(PVP, "Simple XP Bar", "Barra de experiencia minimalista con la paleta del cliente.", DEFAULT_COLOR);
+        addColor(PVP, "Minimal Hotbar", "Barra de objetos simplificada con la paleta del cliente.", DEFAULT_COLOR);
 
         // ==================== 2. Build Textures ====================
         add(BUILD, "Clean Wool", "Lana con colores uniformes.");
@@ -201,6 +275,11 @@ public final class TextureModules {
         addColor(EXTRA, "Hotbar Highlight", "Resaltado del objeto seleccionado.", DEFAULT_COLOR);
         add(EXTRA, "Low Fire Overlay", "Superposición de fuego reducida.");
         add(EXTRA, "Clear Pumpkin Overlay", "Máscara de calabaza simplificada.");
+    }
+
+    static {
+        byId(EXTRA + "/low-fire-overlay").link = byId(PVP + "/low-fire");
+        byId(EXTRA + "/clear-pumpkin-overlay").link = byId(PVP + "/transparent-pumpkin-overlay");
     }
 
     private TextureModules() {

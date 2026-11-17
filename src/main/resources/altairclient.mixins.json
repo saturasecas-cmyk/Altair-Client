@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ParticleEngineMixin",
-    "ScreenEffectRendererMixin"
+    "ScreenEffectRendererMixin",
+    "ItemLayerRenderStateMixin"
   ],
   "injectors": {
     "defaultRequire": 0
