@@ -21,9 +21,11 @@ public final class TextureModules {
     public static final String WALK = "walk";
     public static final String ANIMATIONS = "animations";
     public static final String EXTRA = "extra";
+    public static final String MISC = "misc";
 
     /** Entradas que comparten estado con un módulo que ya existe en la carpeta Mods. */
     public static final String ID_CLEAR_WATER = PVP + "/clear-water";
+    public static final String ID_ALTAIR_SKY = MISC + "/altair-sky";
     public static final String ID_MINIMAL_OUTLINE = BREAKING + "/minimal-block-outline";
 
     /** Texturas PvP que ya tienen efecto en el juego (el resto de entradas solo están en el menú por ahora). */
@@ -100,6 +102,7 @@ public final class TextureModules {
             ANIMATIONS + "/sneak-camera",
             ANIMATIONS + "/sprint-camera",
             PVP + "/clean-glass",
+            MISC + "/altair-sky",
             BUILD + "/clean-wool",
             BUILD + "/smooth-concrete",
             BUILD + "/clean-glass",
@@ -310,6 +313,9 @@ public final class TextureModules {
         addColor(EXTRA, "Hotbar Highlight", "Resaltado del objeto seleccionado.", DEFAULT_COLOR);
         add(EXTRA, "Low Fire Overlay", "Superposición de fuego reducida.");
         add(EXTRA, "Clear Pumpkin Overlay", "Máscara de calabaza simplificada.");
+
+        // ==================== 8. Misc ====================
+        add(MISC, "Altair Sky", "Cielo azul marino con horizonte morado y muchísimas estrellas, también de día. Solo en el Overworld.");
     }
 
     static {

@@ -40,6 +40,7 @@ import com.altairclient.modules.mods.ScreenshotUpload;
 import com.altairclient.modules.mods.ToggleSneak;
 import com.altairclient.modules.mods.ToggleSprint;
 import com.altairclient.modules.mods.WorldInfo;
+import com.altairclient.modules.mods.AltairSky;
 import com.altairclient.modules.textures.TextureModules;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -104,6 +105,7 @@ public final class AltairScreen extends Screen {
         TEX_WALK(Section.TEXTURES, TextureModules.WALK, "Walk Effects", "Walk", "✧"),
         TEX_ANIMATIONS(Section.TEXTURES, TextureModules.ANIMATIONS, "Movement Animations", "Animations", "↻"),
         TEX_EXTRA(Section.TEXTURES, TextureModules.EXTRA, "Extra Visual Effects", "Extra", "✦"),
+        TEX_MISC(Section.TEXTURES, TextureModules.MISC, "Misc", "Misc", "✺"),
 
         // Carpeta Settings
         SET_GENERAL(Section.SETTINGS, null, "Configuration", "Configuration", "⚙");
@@ -602,19 +604,6 @@ public final class AltairScreen extends Screen {
         ));
 
         allModules.add(new ModuleEntry(
-                "Altair Sky",
-                "Cielo estrellado",
-                "Cielo azul marino con el horizonte morado y muchísimas estrellas, también de día. Es solo visual y solo en el Overworld. Elige cuántas estrellas con - y +.",
-                Category.RENDER,
-                "\u2726",
-                () -> com.altairclient.modules.mods.AltairSky.toggle(),
-                () -> com.altairclient.modules.mods.AltairSky.isEnabled()
-        ).withSetting("Estrellas", 0, com.altairclient.modules.mods.AltairSky.DENSITY_NAMES.length - 1, 1,
-                () -> com.altairclient.modules.mods.AltairSky.getDensity(),
-                v -> com.altairclient.modules.mods.AltairSky.setDensity(v))
-                .withSettingNames(com.altairclient.modules.mods.AltairSky.DENSITY_NAMES));
-
-        allModules.add(new ModuleEntry(
                 "Custom Nametags",
                 "Nombres con estilo",
                 "Cambia el aspecto de los nombres sobre jugadores y entidades: Altair, Dorado, Neón o Marcado. Solo lo ves tú, no cambia el nombre real de nadie. Elige el estilo con - y +. Tecla opcional en Controles.",
@@ -986,7 +975,7 @@ public final class AltairScreen extends Screen {
     }
 
     private static boolean isLinkedToMod(TextureModules.Entry tex) {
-        return TextureModules.ID_CLEAR_WATER.equals(tex.id);
+        return TextureModules.ID_CLEAR_WATER.equals(tex.id) || TextureModules.ID_ALTAIR_SKY.equals(tex.id);
     }
 
     /** Tarjeta de una textura: interruptor propio y, si tiene color, selector de la paleta de Altair. */
@@ -1000,6 +989,9 @@ public final class AltairScreen extends Screen {
         if (TextureModules.ID_CLEAR_WATER.equals(tex.id)) {
             toggle = ClearWater::toggle;
             enabled = ClearWater::isEnabled;
+        } else if (TextureModules.ID_ALTAIR_SKY.equals(tex.id)) {
+            toggle = AltairSky::toggle;
+            enabled = AltairSky::isEnabled;
         } else if (TextureModules.ID_MINIMAL_OUTLINE.equals(tex.id)) {
             toggle = BlockOutline::toggle;
             enabled = BlockOutline::isEnabled;
@@ -1011,6 +1003,11 @@ public final class AltairScreen extends Screen {
                 ? tex.description
                 : tex.description + " Aún no tiene efecto en el juego: de momento solo está en el menú.";
         ModuleEntry entry = new ModuleEntry(tex.name, tex.description, full, cat, cat.icon, toggle, enabled);
+        if (TextureModules.ID_ALTAIR_SKY.equals(tex.id)) {
+            entry.withSetting("Estrellas", 0, AltairSky.DENSITY_NAMES.length - 1, 1,
+                    AltairSky::getDensity, AltairSky::setDensity)
+                    .withSettingNames(AltairSky.DENSITY_NAMES);
+        }
         if (tex.hasColor()) {
             entry.withSetting("Color", 0, Palette.MAX_INDEX, 1, colorGet, colorSet)
                     .withSettingNames(Palette.NAMES)
