@@ -23,11 +23,12 @@ jobs:
         CJ=$(echo "$JARS" | grep client-extra | head -1)
         unzip -Z1 "$CJ" > /tmp/all.txt
         FJ=$(echo "$JARS" | grep -E 'forge-26.2' | head -1)
-        echo "::group::forge events"; unzip -Z1 "$FJ" 2>/dev/null | grep -E 'net/minecraftforge/client/(event|gui)/' | grep -i -E 'nametag|ScreenEvent|RenderGui|ForgeLayeredDraw|Layer|Tooltip|Chat' | head -60; echo "::endgroup::"
-        echo "::group::forge layered"; javap -p -cp "$CP" net.minecraftforge.client.gui.overlay.ForgeLayeredDraw 2>&1 | head -50; echo "::endgroup::"
-        echo "::group::nametag"; for c in $(unzip -Z1 "$FJ" | grep -E 'RenderNameTagEvent' | sed 's/\.class//;s|/|.|g' | tr '\n' ' '); do javap -p -cp "$CP" "$c" | grep -E 'public|class'; done; echo "::endgroup::"
-        echo "::group::screen events"; for c in $(unzip -Z1 "$FJ" | grep -E 'client/event/ScreenEvent' | sed 's/\.class//;s|/|.|g' | tr '\n' ' '); do javap -p -cp "$CP" "$c" | grep -E 'public|class'; done; echo "::endgroup::"
-        echo "::group::options"; javap -p -cp "$CP" net.minecraft.client.Options | grep -i -E 'textBackground|chat|keyPlayerList|blur|menuBackground|accessibility|hideGui|screenEffect' | cut -c1-200; echo "::endgroup::"
-        echo "::group::tab"; javap -p -cp "$CP" net.minecraft.client.multiplayer.ClientPacketListener | grep -i -E 'getOnlinePlayers|getListedOnlinePlayers'; javap -p -cp "$CP" net.minecraft.client.multiplayer.PlayerInfo | grep -E 'getProfile|getTabListDisplayName|getLatency|getGameMode'; javap -p -cp "$CP" net.minecraft.client.gui.Gui | grep -i -E 'hud|tab|chat' | cut -c1-200; echo "::endgroup::"
-        echo "::group::guigraphics"; javap -p -cp "$CP" net.minecraft.client.gui.GuiGraphicsExtractor | grep -E ' (fill|text|centeredText|fillGradient|textWithBackdrop|enableScissor|pose)\(' | cut -c1-200; echo "::endgroup::"
-        echo "::group::armor/vanilla layers"; javap -p -cp "$CP" net.minecraftforge.client.gui.overlay.ForgeLayeredDraw | grep -E 'static final' ; echo "::endgroup::"
+        unzip -Z1 "$CJ" | grep -i -E 'renderer/(SkyRenderer|LevelRenderer|state/.*Sky)|attribute/(EnvironmentAttribute|Environment)|ClientLevel|dimension/DimensionType|clock' | head -40
+        echo "::group::sky classes"; unzip -Z1 "$CJ" | grep -E 'net/minecraft/client/renderer/(Sky|state/level/Sky)|net/minecraft/world/attribute/' | head -60; echo "::endgroup::"
+        echo "::group::SkyRenderer"; javap -p -cp "$CP" net.minecraft.client.renderer.SkyRenderer 2>&1 | cut -c1-260; echo "::endgroup::"
+        echo "::group::SkyRenderState"; javap -p -cp "$CP" net.minecraft.client.renderer.state.level.SkyRenderState 2>&1 | cut -c1-200; echo "::endgroup::"
+        echo "::group::EnvAttrs"; javap -p -cp "$CP" net.minecraft.world.attribute.EnvironmentAttributes 2>&1 | grep -i -E 'sky|star|fog|cloud|sun|moon' | cut -c1-200; echo "::endgroup::"
+        echo "::group::forge level events"; unzip -Z1 "$FJ" | grep -E 'client/event/(RenderLevel|ViewportEvent|ComputeFog|RenderSky|CloudEvent|Sky)' | head -20; echo "::endgroup::"
+        echo "::group::viewport"; javap -p -cp "$CP" 'net.minecraftforge.client.event.ViewportEvent$ComputeFogColor' 2>&1 | grep public; echo "::endgroup::"
+        echo "::group::stage"; javap -p -cp "$CP" 'net.minecraftforge.client.event.RenderLevelStageEvent' 2>&1 | head -30; unzip -Z1 "$FJ" | grep -E 'RenderLevelStageEvent' ; echo "::endgroup::"
+        echo "::group::bg env attr"; javap -p -cp "$CP" net.minecraft.client.renderer.LevelRenderer 2>&1 | grep -i -E 'sky|star' | cut -c1-220; javap -p -cp "$CP" net.minecraft.client.renderer.fog.FogRenderer 2>&1 | head -30 | cut -c1-200; echo "::endgroup::"
