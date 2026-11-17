@@ -53,6 +53,7 @@ public class AltairClient {
         MovementTextures.register();
         AnimationTextures.register();
         BuildTextures.register();
+        com.altairclient.modules.mods.AltairSky.register();
         ExtraTextures.register();
 
         FMLClientSetupEvent.getBus(

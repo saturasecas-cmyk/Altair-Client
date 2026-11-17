@@ -6,7 +6,8 @@
   "client": [
     "ParticleEngineMixin",
     "ScreenEffectRendererMixin",
-    "ItemLayerRenderStateMixin"
+    "ItemLayerRenderStateMixin",
+    "SkyRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 0

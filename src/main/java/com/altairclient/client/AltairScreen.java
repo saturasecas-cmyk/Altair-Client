@@ -602,6 +602,19 @@ public final class AltairScreen extends Screen {
         ));
 
         allModules.add(new ModuleEntry(
+                "Altair Sky",
+                "Cielo estrellado",
+                "Cielo azul marino con el horizonte morado y muchísimas estrellas, también de día. Es solo visual y solo en el Overworld. Elige cuántas estrellas con - y +.",
+                Category.RENDER,
+                "\u2726",
+                () -> com.altairclient.modules.mods.AltairSky.toggle(),
+                () -> com.altairclient.modules.mods.AltairSky.isEnabled()
+        ).withSetting("Estrellas", 0, com.altairclient.modules.mods.AltairSky.DENSITY_NAMES.length - 1, 1,
+                () -> com.altairclient.modules.mods.AltairSky.getDensity(),
+                v -> com.altairclient.modules.mods.AltairSky.setDensity(v))
+                .withSettingNames(com.altairclient.modules.mods.AltairSky.DENSITY_NAMES));
+
+        allModules.add(new ModuleEntry(
                 "Custom Nametags",
                 "Nombres con estilo",
                 "Cambia el aspecto de los nombres sobre jugadores y entidades: Altair, Dorado, Neón o Marcado. Solo lo ves tú, no cambia el nombre real de nadie. Elige el estilo con - y +. Tecla opcional en Controles.",
