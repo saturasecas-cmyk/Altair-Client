@@ -90,6 +90,26 @@ public final class TextureModules {
             ANIMATIONS + "/block-animation",
             ANIMATIONS + "/sneak-camera",
             ANIMATIONS + "/sprint-camera",
+            PVP + "/clean-glass",
+            BUILD + "/clean-wool",
+            BUILD + "/smooth-concrete",
+            BUILD + "/clean-glass",
+            BUILD + "/borderless-glass",
+            BUILD + "/clean-planks",
+            BUILD + "/simple-stone",
+            BUILD + "/clean-bricks",
+            BUILD + "/smooth-quartz",
+            BUILD + "/clean-terracotta",
+            BUILD + "/minimal-logs",
+            BUILD + "/clean-leaves",
+            BUILD + "/simple-doors",
+            BUILD + "/simple-trapdoors",
+            BUILD + "/clean-slabs",
+            BUILD + "/clean-stairs",
+            BUILD + "/simple-bed-textures",
+            BUILD + "/clean-ores",
+            BUILD + "/minimal-redstone",
+            BUILD + "/clean-buttons",
             EXTRA + "/hotbar-highlight",
             EXTRA + "/low-fire-overlay",
             EXTRA + "/clear-pumpkin-overlay",
@@ -278,6 +298,7 @@ public final class TextureModules {
     }
 
     static {
+        byId(PVP + "/clean-glass").link = byId(BUILD + "/clean-glass");
         byId(EXTRA + "/low-fire-overlay").link = byId(PVP + "/low-fire");
         byId(EXTRA + "/clear-pumpkin-overlay").link = byId(PVP + "/transparent-pumpkin-overlay");
     }
