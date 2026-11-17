@@ -1,5 +1,6 @@
 package com.altairclient.modules.textures;
 
+import com.altairclient.client.Palette;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -139,11 +140,25 @@ public final class BuildTextures {
 
     // ==================== Tick ====================
 
+    private static final String K = TextureModules.BREAKING;
+    private static final String[] CRACK_IDS = {K + "/clean-block-crack", K + "/thin-block-crack", K + "/dark-block-crack",
+            K + "/white-block-crack", K + "/colored-block-crack", K + "/clean-breaking-overlay",
+            K + "/smooth-breaking-animation", K + "/static-block-crack"};
+
     private static String signature() {
         StringBuilder sb = new StringBuilder();
         for (TextureModules.Entry e : TextureModules.group(B)) {
             if (e.isEnabled()) {
                 sb.append(e.id).append(';');
+            }
+        }
+        for (String id : CRACK_IDS) {
+            TextureModules.Entry e = TextureModules.byId(id);
+            if (e != null && e.isEnabled()) {
+                sb.append(id).append(';');
+                if (e.hasColor()) {
+                    sb.append('#').append(e.getColorIndex()).append(';');
+                }
             }
         }
         return sb.toString();
@@ -273,6 +288,8 @@ public final class BuildTextures {
                 }
             }
 
+            generateCracks(blockTextures, dir, enabled);
+
             // Camas (si esta versión las trae como textura suelta)
             if (enabled.contains(B + "/simple-bed-textures")) {
                 for (Map.Entry<String, IoSupplier<InputStream>> e : list(vanilla, "textures/entity/bed").entrySet()) {
@@ -308,6 +325,106 @@ public final class BuildTextures {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    // ==================== Grietas al romper (Breaking Effects) ====================
+
+    private static void generateCracks(Map<String, IoSupplier<InputStream>> blockTextures, Path dir, Set<String> enabled)
+            throws IOException {
+        boolean any = false;
+        for (String id : CRACK_IDS) {
+            any |= enabled.contains(id);
+        }
+        if (!any) {
+            return;
+        }
+        int color = Palette.color(TextureModules.byId(K + "/colored-block-crack").getColorIndex()) & 0x00FFFFFF;
+        for (int stage = 0; stage < 10; stage++) {
+            // Static Block Crack: todas las etapas usan la misma grieta (la de la mitad)
+            int srcStage = enabled.contains(K + "/static-block-crack") ? 4 : stage;
+            IoSupplier<InputStream> src = blockTextures.get("textures/block/destroy_stage_" + srcStage + ".png");
+            if (src == null) {
+                continue;
+            }
+            final int s = stage;
+            Op op = img -> {
+                if (enabled.contains(K + "/clean-block-crack")) {
+                    crisp(img);
+                }
+                if (enabled.contains(K + "/thin-block-crack")) {
+                    thin(img);
+                }
+                if (enabled.contains(K + "/clean-breaking-overlay")) {
+                    scaleAlpha(img, 0.6F);
+                }
+                if (enabled.contains(K + "/smooth-breaking-animation")) {
+                    scaleAlpha(img, 0.3F + 0.7F * (s / 9.0F));
+                }
+                if (enabled.contains(K + "/dark-block-crack")) {
+                    tintCrack(img, 0x000000);
+                }
+                if (enabled.contains(K + "/white-block-crack")) {
+                    tintCrack(img, 0xFFFFFF);
+                }
+                if (enabled.contains(K + "/colored-block-crack")) {
+                    tintCrack(img, color);
+                }
+            };
+            transform(src, op, dir.resolve("assets/" + MC + "/textures/block/destroy_stage_" + stage + ".png"));
+        }
+    }
+
+    /** Alpha a todo o nada: grietas nítidas, sin semitransparencias. */
+    private static void crisp(BufferedImage img) {
+        for (int y = 0; y < img.getHeight(); y++) {
+            for (int x = 0; x < img.getWidth(); x++) {
+                int argb = img.getRGB(x, y);
+                int a = (argb >>> 24) >= 100 ? 255 : 0;
+                img.setRGB(x, y, (a << 24) | (argb & 0x00FFFFFF));
+            }
+        }
+    }
+
+    /** Deja solo el contorno de las grietas: los píxeles rodeados por otros opacos se borran. */
+    private static void thin(BufferedImage img) {
+        int w = img.getWidth();
+        int h = img.getHeight();
+        int[] alpha = new int[w * h];
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                alpha[y * w + x] = img.getRGB(x, y) >>> 24;
+            }
+        }
+        for (int y = 1; y < h - 1; y++) {
+            for (int x = 1; x < w - 1; x++) {
+                if (alpha[y * w + x] > 0 && alpha[y * w + x - 1] > 0 && alpha[y * w + x + 1] > 0
+                        && alpha[(y - 1) * w + x] > 0 && alpha[(y + 1) * w + x] > 0) {
+                    img.setRGB(x, y, img.getRGB(x, y) & 0x00FFFFFF);
+                }
+            }
+        }
+    }
+
+    private static void scaleAlpha(BufferedImage img, float f) {
+        for (int y = 0; y < img.getHeight(); y++) {
+            for (int x = 0; x < img.getWidth(); x++) {
+                int argb = img.getRGB(x, y);
+                int a = Math.min(255, Math.round((argb >>> 24) * f));
+                img.setRGB(x, y, (a << 24) | (argb & 0x00FFFFFF));
+            }
+        }
+    }
+
+    /** Cambia el color de la grieta conservando su transparencia. */
+    private static void tintCrack(BufferedImage img, int rgb) {
+        for (int y = 0; y < img.getHeight(); y++) {
+            for (int x = 0; x < img.getWidth(); x++) {
+                int a = img.getRGB(x, y) >>> 24;
+                if (a > 0) {
+                    img.setRGB(x, y, (a << 24) | (rgb & 0x00FFFFFF));
+                }
+            }
         }
     }
 
