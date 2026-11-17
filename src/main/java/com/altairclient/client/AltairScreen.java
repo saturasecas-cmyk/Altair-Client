@@ -75,7 +75,8 @@ public final class AltairScreen extends Screen {
     /** Las dos carpetas de la barra izquierda: al abrir una salen sus apartados. */
     public enum Section {
         MODS("Mods", "Módulo"),
-        TEXTURES("Textures", "Textura");
+        TEXTURES("Textures", "Textura"),
+        SETTINGS("Settings", "Setting");
 
         final String displayName;
         /** Cómo se llama cada elemento de la carpeta en el panel de detalles. */
@@ -102,7 +103,10 @@ public final class AltairScreen extends Screen {
         TEX_MOVEMENT(Section.TEXTURES, TextureModules.MOVEMENT, "Movement Effects", "Movement", "»"),
         TEX_WALK(Section.TEXTURES, TextureModules.WALK, "Walk Effects", "Walk", "✧"),
         TEX_ANIMATIONS(Section.TEXTURES, TextureModules.ANIMATIONS, "Movement Animations", "Animations", "↻"),
-        TEX_EXTRA(Section.TEXTURES, TextureModules.EXTRA, "Extra Visual Effects", "Extra", "✦");
+        TEX_EXTRA(Section.TEXTURES, TextureModules.EXTRA, "Extra Visual Effects", "Extra", "✦"),
+
+        // Carpeta Settings
+        SET_GENERAL(Section.SETTINGS, null, "Configuration", "Configuration", "⚙");
 
         final Section section;
         /** Clave del apartado en {@link TextureModules}; null en la carpeta Mods. */
@@ -125,7 +129,7 @@ public final class AltairScreen extends Screen {
     private static final class ModuleEntry {
         final String name;
         final String shortDesc;
-        final String fullDesc;
+        String fullDesc;
         final Category category;
         final String icon;
         final Runnable onToggle;
@@ -837,9 +841,135 @@ public final class AltairScreen extends Screen {
             }
         }
 
+        // ==================== SETTINGS FOLDER (English) ====================
+        allModules.add(new ModuleEntry(
+                "Auto-save",
+                "Save automatically",
+                "Saves your enabled modules, their settings, the texture toggles and the HUD positions every few seconds, when you close the menu and when you close the game. They are restored the next time you start. When it is off, only \"Save now\" writes the file.",
+                Category.SET_GENERAL,
+                "\u2699",
+                AltairConfig::toggleAutoSave,
+                AltairConfig::isAutoSave
+        ));
+        allModules.add(actionEntry("Save now", "Write the config file",
+                "Saves everything right now to config/altairclient-modules.json in your Minecraft folder. Click the switch to run it.",
+                AltairConfig::saveNow));
+        allModules.add(actionEntry("Load saved", "Restore the saved config",
+                "Reads config/altairclient-modules.json and applies it: modules, settings, texture toggles and HUD positions. Click the switch to run it.",
+                AltairConfig::loadNow));
+        allModules.add(actionEntry("Disable all", "Turn every module off",
+                "Turns off every module and texture that is currently on. Your saved file is only changed by the next save. Click the switch to run it.",
+                () -> "Disabled " + disableAll() + " modules"));
+
         if (!allModules.isEmpty()) {
             selectedModule = allModules.get(0);
         }
+    }
+
+    /** A card in Settings that runs an action when its switch is clicked and shows the result in its description. */
+    private static ModuleEntry actionEntry(String name, String shortDesc, String desc,
+                                           java.util.function.Supplier<String> action) {
+        ModuleEntry[] ref = new ModuleEntry[1];
+        ref[0] = new ModuleEntry(name, shortDesc, desc, Category.SET_GENERAL, "\u2699",
+                () -> ref[0].fullDesc = desc + "  Result: " + action.get(), () -> false);
+        return ref[0];
+    }
+
+    // ==================== Saved state (used by AltairConfig) ====================
+
+    /** Modules that are actions or momentary views, not states: they are never saved or restored. */
+    private static final java.util.Set<String> NOT_SAVED = java.util.Set.of(
+            "Freecam", "Smooth Zoom", "Perspective Mod", "Freelook", "Fullbright", "Screenshot", "Screenshot Upload");
+
+    private static AltairScreen model;
+
+    private static synchronized AltairScreen model() {
+        if (model == null) {
+            model = new AltairScreen();
+        }
+        return model;
+    }
+
+    private static String stateKey(ModuleEntry m) {
+        return m.category.displayName + "/" + m.name;
+    }
+
+    private static boolean isSaved(ModuleEntry m) {
+        return m.category.section != Section.SETTINGS && !NOT_SAVED.contains(m.name);
+    }
+
+    public static com.google.gson.JsonObject exportState() {
+        com.google.gson.JsonObject out = new com.google.gson.JsonObject();
+        for (ModuleEntry m : model().allModules) {
+            if (!isSaved(m)) {
+                continue;
+            }
+            com.google.gson.JsonObject o = new com.google.gson.JsonObject();
+            o.addProperty("enabled", m.isEnabled());
+            if (m.hasSetting()) {
+                o.addProperty("setting", m.settingGetter.getAsInt());
+            }
+            if (!m.extras.isEmpty()) {
+                com.google.gson.JsonArray arr = new com.google.gson.JsonArray();
+                for (ModuleEntry.Extra e : m.extras) {
+                    arr.add(e.getter.getAsInt());
+                }
+                o.add("extras", arr);
+            }
+            out.add(stateKey(m), o);
+        }
+        return out;
+    }
+
+    /** Applies a saved state. Returns how many modules changed their on/off state. */
+    public static int importState(com.google.gson.JsonObject state) {
+        int changed = 0;
+        for (ModuleEntry m : model().allModules) {
+            if (!isSaved(m)) {
+                continue;
+            }
+            com.google.gson.JsonElement el = state.get(stateKey(m));
+            if (el == null || !el.isJsonObject()) {
+                continue;
+            }
+            try {
+                com.google.gson.JsonObject o = el.getAsJsonObject();
+                if (o.has("setting") && m.hasSetting()) {
+                    m.settingSetter.accept(o.get("setting").getAsInt());
+                }
+                if (o.has("extras") && o.get("extras").isJsonArray()) {
+                    com.google.gson.JsonArray arr = o.getAsJsonArray("extras");
+                    for (int i = 0; i < m.extras.size() && i < arr.size(); i++) {
+                        m.extras.get(i).setter.accept(arr.get(i).getAsInt());
+                    }
+                }
+                if (o.has("enabled") && o.get("enabled").getAsBoolean() != m.isEnabled()) {
+                    m.toggle();
+                    changed++;
+                }
+            } catch (RuntimeException ex) {
+                com.altairclient.AltairClient.LOGGER.warn("[Altair] Could not restore {}", stateKey(m), ex);
+            }
+        }
+        return changed;
+    }
+
+    /** Turns off every saved-type module that is on. Returns how many were turned off. */
+    public static int disableAll() {
+        int n = 0;
+        for (ModuleEntry m : model().allModules) {
+            if (isSaved(m) && m.isEnabled()) {
+                m.toggle();
+                n++;
+            }
+        }
+        return n;
+    }
+
+    @Override
+    public void removed() {
+        super.removed();
+        AltairConfig.autoSaveNow();
     }
 
     private static boolean isLinkedToMod(TextureModules.Entry tex) {

@@ -48,6 +48,40 @@ public final class AltairHudEditorScreen extends Screen {
         void render(GuiGraphicsExtractor graphics);
     }
 
+    private static AltairHudEditorScreen model;
+
+    private static synchronized AltairHudEditorScreen model() {
+        if (model == null) {
+            model = new AltairHudEditorScreen(null);
+        }
+        return model;
+    }
+
+    /** Positions of every HUD element, for the saved config. */
+    public static com.google.gson.JsonObject exportPositions() {
+        com.google.gson.JsonObject out = new com.google.gson.JsonObject();
+        for (HudTarget t : model().targets) {
+            com.google.gson.JsonObject o = new com.google.gson.JsonObject();
+            o.addProperty("x", t.getX());
+            o.addProperty("y", t.getY());
+            out.add(t.getName(), o);
+        }
+        return out;
+    }
+
+    public static void importPositions(com.google.gson.JsonObject saved) {
+        for (HudTarget t : model().targets) {
+            com.google.gson.JsonElement el = saved.get(t.getName());
+            if (el != null && el.isJsonObject()) {
+                com.google.gson.JsonObject o = el.getAsJsonObject();
+                if (o.has("x") && o.has("y")) {
+                    t.setX(o.get("x").getAsInt());
+                    t.setY(o.get("y").getAsInt());
+                }
+            }
+        }
+    }
+
     private final Screen parentScreen;
     private final List<HudTarget> targets = new ArrayList<>();
 
