@@ -109,12 +109,12 @@ public final class TitleBackground {
         } else if (Minecraft.getInstance().level == null
                 && (screen instanceof OptionsScreen || screen instanceof SelectWorldScreen
                 || screen instanceof JoinMultiplayerScreen)) {
-            drawStarfield(event.getGuiGraphics(), screen.width, screen.height);
+            drawStarfield(event.getGuiGraphics(), screen.width, screen.height, 1.0F);
         }
     }
 
     /** Cielo de foto nocturna: azul marino, neblina azulada abajo a la derecha y estrellas que derivan despacio. */
-    private static void drawStarfield(GuiGraphicsExtractor g, int w, int h) {
+    public static void drawStarfield(GuiGraphicsExtractor g, int w, int h, float alpha) {
         float t = (System.currentTimeMillis() % 3_600_000L) / 1000.0F;
 
         final int cell = 6;
@@ -127,7 +127,7 @@ public final class TitleBackground {
                 float haze = (d - 0.72F) / 0.45F + 0.05F * (float) Math.sin(t * 0.25F + u * 2.5F);
                 haze = Math.max(0.0F, Math.min(1.0F, haze));
                 haze *= haze;
-                g.fill(x, y, x + cell, y + cell, haze > 0.01F ? Anim.mix(base, 0xFF4B4C86, haze * 0.9F) : base);
+                g.fill(x, y, x + cell, y + cell, Anim.scaleAlpha(haze > 0.01F ? Anim.mix(base, 0xFF4B4C86, haze * 0.9F) : base, alpha));
             }
         }
 
@@ -139,10 +139,10 @@ public final class TitleBackground {
             int y = Math.floorMod((int) py, h);
             float tw = 0.65F + 0.35F * (float) Math.sin(t * FSPEED[i] + FPHASE[i]);
             int size = FLAYER[i] == 2 && FBRIGHT[i] > 0.7F ? 2 : 1;
-            g.fill(x, y, x + size, y + size, Anim.scaleAlpha(FCOLOR[i], FBRIGHT[i] * tw));
+            g.fill(x, y, x + size, y + size, Anim.scaleAlpha(FCOLOR[i], FBRIGHT[i] * tw * alpha));
         }
 
-        drawShootingStars(g, w, h, t);
+        drawShootingStars(g, w, h, t, alpha);
     }
 
     /** Dibuja el logo Altair Edition en lugar del de Minecraft. Devuelve false si está desactivado (se usa el de vanilla). */
@@ -201,11 +201,11 @@ public final class TitleBackground {
             g.fill(x, y - 4, x + 1, y + 4, arm);
         }
 
-        drawShootingStars(g, w, h, t);
+        drawShootingStars(g, w, h, t, 1.0F);
         drawTerrain(g, w, h);
     }
 
-    private static void drawShootingStars(GuiGraphicsExtractor g, int w, int h, float t) {
+    private static void drawShootingStars(GuiGraphicsExtractor g, int w, int h, float t, float alphaScale) {
         final float dur = 1.3F;
         for (int slot = 0; slot < 3; slot++) {
             float period = 7.0F + slot * 2.3F;
@@ -227,7 +227,7 @@ public final class TitleBackground {
                 float back = i * 2.5F;
                 int x = (int) (startX + dx * (travel - back));
                 int y = (int) (startY + dy * (travel - back));
-                float a = fade * (1.0F - i / 22.0F);
+                float a = fade * (1.0F - i / 22.0F) * alphaScale;
                 int size = i < 3 ? 2 : 1;
                 g.fill(x, y, x + size, y + size, Anim.scaleAlpha(i < 3 ? 0xFFFFFFFF : 0xFFBFD8FF, a));
             }

@@ -9,7 +9,9 @@
     "ItemLayerRenderStateMixin",
     "SkyRendererMixin",
     "LogoRendererMixin",
-    "CameraMixin"
+    "CameraMixin",
+    "LoadingOverlayMixin",
+    "LevelLoadingScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 0
