@@ -854,6 +854,15 @@ public final class AltairScreen extends Screen {
                 AltairConfig::toggleAutoSave,
                 AltairConfig::isAutoSave
         ));
+        allModules.add(new ModuleEntry(
+                "Title Background",
+                "Starry main menu",
+                "Replaces the Minecraft title screen background with the Altair night sky: deep blue and purple, twinkling stars, shooting stars and a dark hill silhouette. Turn it off to get the normal panorama back.",
+                Category.SET_GENERAL,
+                "\u2726",
+                AltairConfig::toggleTitleBackground,
+                AltairConfig::isTitleBackground
+        ));
         allModules.add(actionEntry("Save now", "Write the config file",
                 "Saves everything right now to config/altairclient-modules.json in your Minecraft folder. Click the switch to run it.",
                 AltairConfig::saveNow));

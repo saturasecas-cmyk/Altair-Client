@@ -39,6 +39,7 @@ public class AltairClient {
 
         AltairKeyHandler.register();
         com.altairclient.client.AltairConfig.register();
+        com.altairclient.client.TitleBackground.register();
         AltairHud.register();
         NametagHandler.register();
         ChatBubbleHandler.register();

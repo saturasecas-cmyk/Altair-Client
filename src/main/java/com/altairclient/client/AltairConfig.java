@@ -30,6 +30,7 @@ public final class AltairConfig {
     private static boolean registered = false;
     private static boolean loaded = false;
     private static boolean autoSave = true;
+    private static boolean titleBackground = true;
     private static String lastWritten = "";
     private static int ticks = 0;
 
@@ -53,6 +54,15 @@ public final class AltairConfig {
 
     public static boolean isAutoSave() {
         return autoSave;
+    }
+
+    public static boolean isTitleBackground() {
+        return titleBackground;
+    }
+
+    public static void toggleTitleBackground() {
+        titleBackground = !titleBackground;
+        autoSaveNow();
     }
 
     public static void toggleAutoSave() {
@@ -109,6 +119,7 @@ public final class AltairConfig {
             JsonObject root = new JsonObject();
             root.addProperty("version", 1);
             root.addProperty("autoSave", autoSave);
+            root.addProperty("titleBackground", titleBackground);
             root.add("modules", com.altairclient.client.AltairScreen.exportState());
             root.add("hud", AltairHudEditorScreen.exportPositions());
             String text = GSON.toJson(root);
@@ -139,6 +150,10 @@ public final class AltairConfig {
             JsonElement auto = root.get("autoSave");
             if (auto != null && auto.isJsonPrimitive()) {
                 autoSave = auto.getAsBoolean();
+            }
+            JsonElement title = root.get("titleBackground");
+            if (title != null && title.isJsonPrimitive()) {
+                titleBackground = title.getAsBoolean();
             }
             int changed = 0;
             JsonElement modules = root.get("modules");

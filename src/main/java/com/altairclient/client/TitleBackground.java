@@ -1,0 +1,159 @@
+package com.altairclient.client;
+
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraftforge.client.event.ScreenEvent;
+
+import java.util.Random;
+
+/**
+ * Fondo del menú principal: cielo nocturno azul marino y morado, muchas estrellas que parpadean,
+ * estrellas fugaces y una silueta de terreno con árboles. Se dibuja entero con código (sin imágenes).
+ */
+public final class TitleBackground {
+
+    private static final int STARS = 300;
+    private static final int BIG_STARS = 12;
+    private static final int[] STAR_COLORS = {0xFFFFFFFF, 0xFFCFE0FF, 0xFFD8C8FF, 0xFFBFD8FF};
+
+    private static final float[] SX = new float[STARS];
+    private static final float[] SY = new float[STARS];
+    private static final float[] SPHASE = new float[STARS];
+    private static final float[] SSPEED = new float[STARS];
+    private static final int[] SCOLOR = new int[STARS];
+    private static final float[] BX = new float[BIG_STARS];
+    private static final float[] BY = new float[BIG_STARS];
+    private static final float[] BPHASE = new float[BIG_STARS];
+
+    private static boolean registered = false;
+
+    static {
+        Random r = new Random(26_2_0L);
+        for (int i = 0; i < STARS; i++) {
+            SX[i] = r.nextFloat();
+            SY[i] = r.nextFloat() * 0.85F;
+            SPHASE[i] = r.nextFloat() * 6.2831F;
+            SSPEED[i] = 0.6F + r.nextFloat() * 2.0F;
+            SCOLOR[i] = STAR_COLORS[r.nextInt(STAR_COLORS.length)];
+        }
+        for (int i = 0; i < BIG_STARS; i++) {
+            BX[i] = r.nextFloat();
+            BY[i] = r.nextFloat() * 0.6F;
+            BPHASE[i] = r.nextFloat() * 6.2831F;
+        }
+    }
+
+    private TitleBackground() {
+    }
+
+    public static void register() {
+        if (!registered) {
+            registered = true;
+            ScreenEvent.BackgroundRendered.BUS.addListener(TitleBackground::onBackground);
+        }
+    }
+
+    private static void onBackground(ScreenEvent.BackgroundRendered event) {
+        if (!AltairConfig.isTitleBackground() || !(event.getScreen() instanceof TitleScreen)) {
+            return;
+        }
+        draw(event.getGuiGraphics(), event.getScreen().width, event.getScreen().height);
+    }
+
+    private static int hash(long v) {
+        long x = v * 0x9E3779B97F4A7C15L;
+        x ^= x >>> 29;
+        x *= 0xBF58476D1CE4E5B9L;
+        x ^= x >>> 32;
+        return (int) (x & 0x7FFFFFFF);
+    }
+
+    private static void draw(GuiGraphicsExtractor g, int w, int h) {
+        long ms = System.currentTimeMillis();
+        float t = (ms % 3_600_000L) / 1000.0F;
+
+        // Cielo: azul marino arriba, azul intenso en medio y morado cerca del horizonte
+        final int top = 0xFF040821;
+        final int mid = 0xFF0B1244;
+        final int low = 0xFF2B1A5E;
+        for (int y = 0; y < h; y += 3) {
+            float f = y / (float) h;
+            int c = f < 0.6F ? Anim.mix(top, mid, f / 0.6F) : Anim.mix(mid, low, (f - 0.6F) / 0.4F);
+            g.fill(0, y, w, Math.min(h, y + 3), c);
+        }
+
+        // Estrellas pequeñas con parpadeo
+        for (int i = 0; i < STARS; i++) {
+            float tw = 0.5F + 0.5F * (float) Math.sin(t * SSPEED[i] + SPHASE[i]);
+            int x = (int) (SX[i] * w);
+            int y = (int) (SY[i] * h);
+            int size = (i % 9 == 0) ? 2 : 1;
+            g.fill(x, y, x + size, y + size, Anim.scaleAlpha(SCOLOR[i], 0.25F + 0.75F * tw));
+        }
+
+        // Estrellas grandes en cruz
+        for (int i = 0; i < BIG_STARS; i++) {
+            float tw = 0.55F + 0.45F * (float) Math.sin(t * 1.3F + BPHASE[i]);
+            int x = (int) (BX[i] * w);
+            int y = (int) (BY[i] * h);
+            int c = Anim.scaleAlpha(0xFFFFFFFF, tw);
+            int arm = Anim.scaleAlpha(0xFFBFD8FF, tw * 0.7F);
+            g.fill(x - 1, y - 1, x + 1, y + 1, c);
+            g.fill(x - 4, y, x + 4, y + 1, arm);
+            g.fill(x, y - 4, x + 1, y + 4, arm);
+        }
+
+        drawShootingStars(g, w, h, t);
+        drawTerrain(g, w, h);
+    }
+
+    private static void drawShootingStars(GuiGraphicsExtractor g, int w, int h, float t) {
+        final float dur = 1.3F;
+        for (int slot = 0; slot < 3; slot++) {
+            float period = 7.0F + slot * 2.3F;
+            float shifted = t + slot * 3.1F;
+            float local = shifted % period;
+            if (local >= dur) {
+                continue;
+            }
+            long cycle = (long) (shifted / period);
+            int hs = hash(cycle * 31L + slot);
+            float startX = w * (0.45F + 0.55F * ((hs & 0xFFFF) / 65535.0F));
+            float startY = h * (0.03F + 0.30F * (((hs >> 8) & 0xFFFF) / 65535.0F));
+            float p = local / dur;
+            float fade = (float) Math.sin(Math.PI * p);
+            float travel = w * 0.5F * p;
+            float dx = -1.0F;
+            float dy = 0.42F;
+            for (int i = 0; i < 22; i++) {
+                float back = i * 2.5F;
+                int x = (int) (startX + dx * (travel - back));
+                int y = (int) (startY + dy * (travel - back));
+                float a = fade * (1.0F - i / 22.0F);
+                int size = i < 3 ? 2 : 1;
+                g.fill(x, y, x + size, y + size, Anim.scaleAlpha(i < 3 ? 0xFFFFFFFF : 0xFFBFD8FF, a));
+            }
+        }
+    }
+
+    private static void drawTerrain(GuiGraphicsExtractor g, int w, int h) {
+        final int cell = 4;
+        // Colinas del fondo, con árboles
+        for (int x = 0; x < w; x += cell) {
+            float hy = h * (0.80F + 0.04F * (float) Math.sin(x * 0.011F) + 0.025F * (float) Math.sin(x * 0.027F + 1.3F));
+            int top = Math.round(hy / cell) * cell;
+            g.fill(x, top, x + cell, h, 0xFF080C26);
+            if (hash(x / cell) % 13 == 0) {
+                g.fill(x + 1, top - 7, x + 3, top, 0xFF05081C);
+                g.fill(x - 3, top - 15, x + 7, top - 6, 0xFF05081C);
+                g.fill(x - 1, top - 19, x + 5, top - 14, 0xFF05081C);
+            }
+        }
+        // Primer plano, más oscuro
+        for (int x = 0; x < w; x += cell) {
+            float hy = h * (0.91F + 0.03F * (float) Math.sin(x * 0.017F + 0.5F) + 0.015F * (float) Math.sin(x * 0.05F));
+            int top = Math.round(hy / cell) * cell;
+            g.fill(x, top, x + cell, h, 0xFF03050E);
+        }
+    }
+}
