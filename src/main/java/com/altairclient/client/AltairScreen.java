@@ -605,6 +605,19 @@ public final class AltairScreen extends Screen {
         ));
 
         allModules.add(new ModuleEntry(
+                "Ultra Optimizer",
+                "Más FPS, menos carga",
+                "Baja lo que el juego tiene que dibujar: sin sombras de entidades ni oclusión ambiental, nubes simples (o sin nubes), menos partículas, menos distancia de dibujado y de entidades, y no se dibujan las criaturas que están muy por debajo de ti. Elige el nivel con - y +. Al apagarlo vuelven tus ajustes de vídeo.",
+                Category.MISC,
+                "\u26A1",
+                () -> com.altairclient.modules.mods.UltraOptimizer.toggle(),
+                () -> com.altairclient.modules.mods.UltraOptimizer.isEnabled()
+        ).withSetting("Nivel", 0, com.altairclient.modules.mods.UltraOptimizer.LEVEL_NAMES.length - 1, 1,
+                () -> com.altairclient.modules.mods.UltraOptimizer.getLevel(),
+                v -> com.altairclient.modules.mods.UltraOptimizer.setLevel(v))
+                .withSettingNames(com.altairclient.modules.mods.UltraOptimizer.LEVEL_NAMES));
+
+        allModules.add(new ModuleEntry(
                 "Custom Nametags",
                 "Nombres con estilo",
                 "Cambia el aspecto de los nombres sobre jugadores y entidades: Altair, Dorado, Neón o Marcado. Solo lo ves tú, no cambia el nombre real de nadie. Elige el estilo con - y +. Tecla opcional en Controles.",
