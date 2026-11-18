@@ -303,6 +303,9 @@ public final class AltairScreen extends Screen {
 
     /** Filas de la barra izquierda con su posición, sin aplicar el scroll. Sirve para dibujar y para los clics. */
     private List<SideRow> sidebarRows(int firstY) {
+        if (rowsCache != null && rowsCacheY == firstY && rowsCacheSection == openSection) {
+            return rowsCache;
+        }
         List<SideRow> rows = new ArrayList<>();
         int y = firstY;
         for (Section sec : Section.values()) {
@@ -317,8 +320,36 @@ public final class AltairScreen extends Screen {
                 }
             }
         }
+        rowsCache = rows;
+        rowsCacheY = firstY;
+        rowsCacheSection = openSection;
         return rows;
     }
+
+    private List<SideRow> rowsCache;
+    private int rowsCacheY = Integer.MIN_VALUE;
+    private Section rowsCacheSection;
+
+    // Cache de textos partidos en lineas: font.split es caro y las descripciones no cambian.
+    private final java.util.HashMap<String, List<FormattedCharSequence>> splitCache = new java.util.HashMap<>();
+
+    private List<FormattedCharSequence> splitCached(String text, int width) {
+        String key = width + "|" + text;
+        List<FormattedCharSequence> lines = splitCache.get(key);
+        if (lines == null) {
+            lines = font.split(Component.literal(text), width);
+            if (splitCache.size() > 512) {
+                splitCache.clear();
+            }
+            splitCache.put(key, lines);
+        }
+        return lines;
+    }
+
+    // Cache de la lista visible: solo se recalcula si cambia la categoria o la busqueda.
+    private List<ModuleEntry> visibleCache;
+    private Category visibleCat;
+    private String visibleQuery;
 
     private int panelX;
     private int panelY;
@@ -1143,6 +1174,17 @@ public final class AltairScreen extends Screen {
 
     /** Con búsqueda activa filtra en todas las categorías; si no, muestra la categoría actual. */
     private List<ModuleEntry> getVisibleModules() {
+        if (visibleCache != null && visibleCat == currentCategory && searchQuery.equals(visibleQuery)) {
+            return visibleCache;
+        }
+        List<ModuleEntry> fresh = computeVisibleModules();
+        visibleCache = fresh;
+        visibleCat = currentCategory;
+        visibleQuery = searchQuery;
+        return fresh;
+    }
+
+    private List<ModuleEntry> computeVisibleModules() {
         if (searchQuery.isEmpty()) {
             return getModulesForCategory(currentCategory);
         }
@@ -1331,7 +1373,7 @@ public final class AltairScreen extends Screen {
             graphics.fill(rightPanelX + 14, iconBoxY + 31, panelX + panelWidth - 14, iconBoxY + 32, BORDER_COLOR);
 
             int descY = iconBoxY + 40;
-            List<FormattedCharSequence> wrappedLines = font.split(Component.literal(selectedModule.fullDesc), rightPanelWidth - 28);
+            List<FormattedCharSequence> wrappedLines = splitCached(selectedModule.fullDesc, rightPanelWidth - 28);
             for (FormattedCharSequence line : wrappedLines) {
                 if (descY + 10 > panelY + panelHeight - (selectedModule.hasSetting() ? 105 + 20 * selectedModule.extras.size() : 65)) break;
                 graphics.text(font, line, rightPanelX + 14, descY, MUTED, false);
@@ -1483,7 +1525,7 @@ public final class AltairScreen extends Screen {
                 graphics.fill(cx + 9, cy + cardHeight - 17, cx + 17, cy + cardHeight - 9, accent);
             }
 
-            List<FormattedCharSequence> descLines = font.split(Component.literal(entry.shortDesc), textWidth);
+            List<FormattedCharSequence> descLines = splitCached(entry.shortDesc, textWidth);
             for (int l = 0; l < Math.min(2, descLines.size()); l++) {
                 graphics.text(font, descLines.get(l), cx + 8, cy + 23 + l * 11, MUTED, false);
             }
