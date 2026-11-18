@@ -25,6 +25,7 @@ public final class TextureModules {
 
     /** Entradas que comparten estado con un módulo que ya existe en la carpeta Mods. */
     public static final String ID_CLEAR_WATER = PVP + "/clear-water";
+    public static final String ID_ALTAIR_RAIN = MISC + "/altair-rain";
     public static final String ID_NO_ANIMATION = MISC + "/no-animation";
     public static final String ID_ALTAIR_SKY = MISC + "/altair-sky";
     public static final String ID_MINIMAL_OUTLINE = BREAKING + "/minimal-block-outline";
@@ -104,6 +105,7 @@ public final class TextureModules {
             ANIMATIONS + "/sprint-camera",
             PVP + "/clean-glass",
             MISC + "/altair-sky",
+            MISC + "/altair-rain",
             MISC + "/no-animation",
             BUILD + "/clean-wool",
             BUILD + "/smooth-concrete",
@@ -318,6 +320,7 @@ public final class TextureModules {
 
         // ==================== 8. Misc ====================
         add(MISC, "Altair Sky", "Cielo azul marino con horizonte morado y muchísimas estrellas, también de día. Solo en el Overworld. Sin sol ni luna: solo queda la luz que dan.");
+        addColor(MISC, "Altair Rain", "Cuando llueve, gotas y salpicaduras con la paleta del cliente, más gotas de colores a tu alrededor y chispas de luz de estrella en el suelo. Se suma a la lluvia normal.", 8);
         add(MISC, "No Animation", "Reduce las animaciones: sin fuego en pantalla, sin animación del tótem, sin inclinación al recibir daño, sin distorsión de pantalla ni cambios de FOV, y el brillo de encantamiento quieto.");
     }
 

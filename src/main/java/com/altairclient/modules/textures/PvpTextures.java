@@ -207,6 +207,11 @@ public final class PvpTextures {
         if (selfSpawning) {
             return;
         }
+        if (AltairRain.tintsVanilla(type)) {
+            int rc = AltairRain.color();
+            quad.setColor(((rc >> 16) & 0xFF) / 255.0F, ((rc >> 8) & 0xFF) / 255.0F, (rc & 0xFF) / 255.0F);
+            return;
+        }
         TextureModules.Entry source = null;
         if (MINIMAL_TOTEM.isEnabled() && type == ParticleTypes.TOTEM_OF_UNDYING) {
             source = MINIMAL_TOTEM;
