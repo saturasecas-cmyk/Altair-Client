@@ -31,6 +31,7 @@ public final class AltairConfig {
     private static boolean loaded = false;
     private static boolean autoSave = true;
     private static boolean titleBackground = true;
+    private static boolean tabFleur = true;
     private static String lastWritten = "";
     private static int ticks = 0;
 
@@ -58,6 +59,15 @@ public final class AltairConfig {
 
     public static boolean isTitleBackground() {
         return titleBackground;
+    }
+
+    public static boolean isTabFleur() {
+        return tabFleur;
+    }
+
+    public static void toggleTabFleur() {
+        tabFleur = !tabFleur;
+        autoSaveNow();
     }
 
     public static void toggleTitleBackground() {
@@ -120,6 +130,7 @@ public final class AltairConfig {
             root.addProperty("version", 1);
             root.addProperty("autoSave", autoSave);
             root.addProperty("titleBackground", titleBackground);
+            root.addProperty("tabFleur", tabFleur);
             root.add("modules", com.altairclient.client.AltairScreen.exportState());
             root.add("hud", AltairHudEditorScreen.exportPositions());
             String text = GSON.toJson(root);
@@ -154,6 +165,10 @@ public final class AltairConfig {
             JsonElement title = root.get("titleBackground");
             if (title != null && title.isJsonPrimitive()) {
                 titleBackground = title.getAsBoolean();
+            }
+            JsonElement fleur = root.get("tabFleur");
+            if (fleur != null && fleur.isJsonPrimitive()) {
+                tabFleur = fleur.getAsBoolean();
             }
             int changed = 0;
             JsonElement modules = root.get("modules");

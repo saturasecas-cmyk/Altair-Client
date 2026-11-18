@@ -906,6 +906,15 @@ public final class AltairScreen extends Screen {
                 AltairConfig::toggleTitleBackground,
                 AltairConfig::isTitleBackground
         ));
+        allModules.add(new ModuleEntry(
+                "Tab Fleur-de-lis",
+                "Mark Altair users",
+                "Shows a fleur-de-lis before the name of every player who uses Altair Client in the TAB player list. You are always marked. Other players only appear once they are detected as Altair users.",
+                Category.SET_GENERAL,
+                "\u269C",
+                AltairConfig::toggleTabFleur,
+                AltairConfig::isTabFleur
+        ));
         allModules.add(actionEntry("Save now", "Write the config file",
                 "Saves everything right now to config/altairclient-modules.json in your Minecraft folder. Click the switch to run it.",
                 AltairConfig::saveNow));

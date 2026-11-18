@@ -11,7 +11,8 @@
     "LogoRendererMixin",
     "CameraMixin",
     "LoadingOverlayMixin",
-    "LevelLoadingScreenMixin"
+    "LevelLoadingScreenMixin",
+    "PlayerTabOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 0
