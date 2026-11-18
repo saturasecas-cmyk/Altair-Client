@@ -22,9 +22,6 @@ jobs:
         CP=$(echo "$JARS" | tr '\n' ':')
         CJ=$(echo "$JARS" | grep client-extra | head -1)
         unzip -Z1 "$CJ" > /tmp/all.txt
-        FJ=$(echo "$JARS" | grep -E 'forge-26.2' | head -1)
-        echo "::group::options"; javap -p -cp "$CP" net.minecraft.client.Options | grep -E 'public net.minecraft.client.OptionInstance' | cut -c1-230; echo "::endgroup::"
-        echo "::group::enums"; javap -p -cp "$CP" net.minecraft.client.CloudStatus net.minecraft.client.ParticleStatus net.minecraft.client.GraphicsStatus 2>&1 | grep -E 'static final|class|enum' | cut -c1-200; echo "::endgroup::"
-        echo "::group::entity events"; unzip -Z1 "$FJ" | grep -E 'client/event/(Render|Entity)' | grep -v '\$' | head -40; echo "::endgroup::"
-        echo "::group::renderlivingevent"; for c in $(unzip -Z1 "$FJ" | grep -E 'client/event/(RenderLivingEvent|RenderNameTagEvent|RenderLevelStageEvent)' | sed 's/\.class//;s|/|.|g' | head -12); do echo "## $c"; javap -p -cp "$CP" "$c" | grep -E 'public' | cut -c1-200; done; echo "::endgroup::"
-        echo "::group::entity dispatcher"; javap -p -cp "$CP" net.minecraft.client.renderer.entity.EntityRenderDispatcher | grep -E 'shouldRender|extractEntity|distanceToSqr|submit' | cut -c1-240; javap -p -cp "$CP" net.minecraft.client.renderer.LevelRenderer | grep -E 'shouldRender|extractVisibleEntities|isEntityVisible|cull|Visible' | cut -c1-240; javap -p -cp "$CP" net.minecraft.client.renderer.entity.EntityRenderer | grep -E 'shouldRender' | cut -c1-240; echo "::endgroup::"
+        echo "::group::screens"; unzip -Z1 "$CJ" | grep -E 'net/minecraft/client/gui/screens/.*(Loading|Progress|Receiving|Connect|Generic|Download|Level).*\.class' | grep -v '\$' | head -30; unzip -Z1 "$CJ" | grep -E 'client/gui/screens/LoadingOverlay|client/gui/screens/Overlay|Overlay.class' | head; echo "::endgroup::"
+        for c in net.minecraft.client.gui.screens.LevelLoadingScreen net.minecraft.client.gui.screens.LoadingOverlay net.minecraft.client.gui.screens.ProgressScreen net.minecraft.client.gui.screens.ReceivingLevelScreen; do echo "::group::$c"; javap -p -cp "$CP" $c 2>&1 | cut -c1-230; echo "::endgroup::"; done
+        echo "::group::loading overlay code"; javap -p -c -cp "$CP" net.minecraft.client.gui.screens.LoadingOverlay 2>&1 | grep -E 'extractRenderState|getfield|putfield|invoke.*(setOverlay|clearColor|fill|blit)' | head -50 | cut -c1-200; echo "::endgroup::"
