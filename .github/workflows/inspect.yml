@@ -22,8 +22,7 @@ jobs:
         CP=$(echo "$JARS" | tr '\n' ':')
         CJ=$(echo "$JARS" | grep client-extra | head -1)
         unzip -Z1 "$CJ" > /tmp/all.txt
-        echo "::group::camera"; javap -p -cp "$CP" net.minecraft.client.Camera | cut -c1-240; echo "::endgroup::"
-        echo "::group::camera code"; javap -p -c -cp "$CP" net.minecraft.client.Camera | awk '/public void (setup|update)\(/{f=1} f' | grep -E 'public|invoke|getstatic|ComputeCameraAngles|Event' | head -120 | cut -c1-230; echo "::endgroup::"
-        echo "::group::mouse"; javap -p -cp "$CP" net.minecraft.client.MouseHandler | grep -i -E 'turn|accumul|handle' | cut -c1-200; javap -p -c -cp "$CP" net.minecraft.client.MouseHandler | awk '/void turnPlayer/{f=1} f' | grep -E 'invoke|void' | head -25 | cut -c1-220; echo "::endgroup::"
-        echo "::group::entity rot"; javap -p -cp "$CP" net.minecraft.world.entity.Entity | grep -E 'Rot|turn' | cut -c1-200; echo "::endgroup::"
-        echo "::group::cameraentity"; javap -p -cp "$CP" net.minecraft.client.Minecraft | grep -i -E 'cameraEntity|getCameraEntity|setCameraEntity' | cut -c1-200; javap -p -cp "$CP" net.minecraft.client.renderer.GameRenderer | grep -i -E 'camera|mainCamera|getMainCamera' | cut -c1-200; echo "::endgroup::"
+        echo "::group::weather classes"; unzip -Z1 "$CJ" | grep -i -E 'weather|rain' | head -30; echo "::endgroup::"
+        echo "::group::weather renderer"; for c in $(unzip -Z1 "$CJ" | grep -E 'renderer/(WeatherEffectRenderer|state/level/WeatherRenderState|.*Weather.*)\.class' | grep -v '\$' | sed 's/\.class//;s|/|.|g' | head -4); do javap -p -cp "$CP" "$c" | cut -c1-240; done; echo "::endgroup::"
+        echo "::group::level weather"; javap -p -cp "$CP" net.minecraft.client.multiplayer.ClientLevel | grep -i -E 'rain|thunder|weather' | cut -c1-200; javap -p -cp "$CP" net.minecraft.client.renderer.LevelRenderer | grep -i -E 'weather|rain' | cut -c1-200; echo "::endgroup::"
+        echo "::group::particle types"; javap -p -constants -cp "$CP" net.minecraft.core.particles.ParticleTypes | grep -i -E 'rain|splash|dust|end_rod|glow|firework|electric|wax|spark|dripping_obsidian|reverse_portal|happy' | cut -c1-200; echo "::endgroup::"
