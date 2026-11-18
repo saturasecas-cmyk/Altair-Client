@@ -857,7 +857,7 @@ public final class AltairScreen extends Screen {
         allModules.add(new ModuleEntry(
                 "Title Background",
                 "Starry main menu",
-                "Replaces the Minecraft title screen with the Altair look: the Altair Edition logo and a night sky in deep blue and purple with twinkling stars, shooting stars and a dark hill silhouette. Turn it off to get the normal title screen back.",
+                "Replaces the Minecraft title screen with the Altair look: the Altair Edition logo and a night sky in deep blue and purple with twinkling stars, shooting stars and a dark hill silhouette. The Options, Singleplayer and Multiplayer screens get a starry night-photo background with slowly drifting stars. Turn it off to get the normal screens back.",
                 Category.SET_GENERAL,
                 "\u2726",
                 AltairConfig::toggleTitleBackground,

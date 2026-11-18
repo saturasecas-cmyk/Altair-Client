@@ -1,6 +1,11 @@
 package com.altairclient.client;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
+import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -33,6 +38,18 @@ public final class TitleBackground {
     private static final int LOGO_TEX_H = 172;
     private static final int LOGO_DRAW_W = 232;
 
+    // Campo de estrellas de las pantallas Opciones / Un jugador / Multijugador
+    private static final int FIELD_STARS = 700;
+    private static final float[] FX = new float[FIELD_STARS];
+    private static final float[] FY = new float[FIELD_STARS];
+    private static final float[] FPHASE = new float[FIELD_STARS];
+    private static final float[] FSPEED = new float[FIELD_STARS];
+    private static final float[] FBRIGHT = new float[FIELD_STARS];
+    private static final int[] FLAYER = new int[FIELD_STARS];
+    private static final int[] FCOLOR = new int[FIELD_STARS];
+    /** Velocidad de deriva (px por segundo) de cada capa: las cercanas se mueven más rápido. */
+    private static final float[] LAYER_SPEED = {2.5F, 5.0F, 9.0F};
+
     private static boolean registered = false;
 
     static {
@@ -51,6 +68,27 @@ public final class TitleBackground {
         }
     }
 
+    static {
+        Random r = new Random(7_1_8L);
+        for (int i = 0; i < FIELD_STARS; i++) {
+            float x = r.nextFloat();
+            float y = r.nextFloat();
+            if (r.nextFloat() < 0.4F) {
+                // Una franja diagonal más densa, como la Vía Láctea de la foto
+                x = r.nextFloat();
+                y = Math.max(0.0F, Math.min(1.0F, 0.1F + 0.6F * x + (float) r.nextGaussian() * 0.07F));
+            }
+            FX[i] = x;
+            FY[i] = y;
+            FPHASE[i] = r.nextFloat() * 6.2831F;
+            FSPEED[i] = 0.5F + r.nextFloat() * 1.8F;
+            float roll = r.nextFloat();
+            FLAYER[i] = roll < 0.55F ? 0 : (roll < 0.87F ? 1 : 2);
+            FBRIGHT[i] = 0.3F + r.nextFloat() * 0.7F;
+            FCOLOR[i] = STAR_COLORS[r.nextInt(STAR_COLORS.length)];
+        }
+    }
+
     private TitleBackground() {
     }
 
@@ -62,10 +100,49 @@ public final class TitleBackground {
     }
 
     private static void onBackground(ScreenEvent.BackgroundRendered event) {
-        if (!AltairConfig.isTitleBackground() || !(event.getScreen() instanceof TitleScreen)) {
+        if (!AltairConfig.isTitleBackground()) {
             return;
         }
-        draw(event.getGuiGraphics(), event.getScreen().width, event.getScreen().height);
+        Screen screen = event.getScreen();
+        if (screen instanceof TitleScreen) {
+            draw(event.getGuiGraphics(), screen.width, screen.height);
+        } else if (Minecraft.getInstance().level == null
+                && (screen instanceof OptionsScreen || screen instanceof SelectWorldScreen
+                || screen instanceof JoinMultiplayerScreen)) {
+            drawStarfield(event.getGuiGraphics(), screen.width, screen.height);
+        }
+    }
+
+    /** Cielo de foto nocturna: azul marino, neblina azulada abajo a la derecha y estrellas que derivan despacio. */
+    private static void drawStarfield(GuiGraphicsExtractor g, int w, int h) {
+        float t = (System.currentTimeMillis() % 3_600_000L) / 1000.0F;
+
+        final int cell = 6;
+        for (int y = 0; y < h; y += cell) {
+            float v = y / (float) h;
+            for (int x = 0; x < w; x += cell) {
+                float u = x / (float) w;
+                float d = u * 0.55F + v * 0.75F;
+                int base = Anim.mix(0xFF020517, 0xFF0A1850, Math.max(0.0F, Math.min(1.0F, d / 0.8F)));
+                float haze = (d - 0.72F) / 0.45F + 0.05F * (float) Math.sin(t * 0.25F + u * 2.5F);
+                haze = Math.max(0.0F, Math.min(1.0F, haze));
+                haze *= haze;
+                g.fill(x, y, x + cell, y + cell, haze > 0.01F ? Anim.mix(base, 0xFF4B4C86, haze * 0.9F) : base);
+            }
+        }
+
+        for (int i = 0; i < FIELD_STARS; i++) {
+            float speed = LAYER_SPEED[FLAYER[i]];
+            float px = FX[i] * w - t * speed;
+            float py = FY[i] * h + t * speed * 0.25F;
+            int x = Math.floorMod((int) px, w);
+            int y = Math.floorMod((int) py, h);
+            float tw = 0.65F + 0.35F * (float) Math.sin(t * FSPEED[i] + FPHASE[i]);
+            int size = FLAYER[i] == 2 && FBRIGHT[i] > 0.7F ? 2 : 1;
+            g.fill(x, y, x + size, y + size, Anim.scaleAlpha(FCOLOR[i], FBRIGHT[i] * tw));
+        }
+
+        drawShootingStars(g, w, h, t);
     }
 
     /** Dibuja el logo Altair Edition en lugar del de Minecraft. Devuelve false si está desactivado (se usa el de vanilla). */
