@@ -1,7 +1,10 @@
 package com.altairclient.client;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.ScreenEvent;
 
 import java.util.Random;
@@ -24,6 +27,11 @@ public final class TitleBackground {
     private static final float[] BX = new float[BIG_STARS];
     private static final float[] BY = new float[BIG_STARS];
     private static final float[] BPHASE = new float[BIG_STARS];
+
+    private static final Identifier LOGO = Identifier.fromNamespaceAndPath("altairclient", "textures/gui/title/altair_logo.png");
+    private static final int LOGO_TEX_W = 768;
+    private static final int LOGO_TEX_H = 172;
+    private static final int LOGO_DRAW_W = 232;
 
     private static boolean registered = false;
 
@@ -58,6 +66,19 @@ public final class TitleBackground {
             return;
         }
         draw(event.getGuiGraphics(), event.getScreen().width, event.getScreen().height);
+    }
+
+    /** Dibuja el logo Altair Edition en lugar del de Minecraft. Devuelve false si está desactivado (se usa el de vanilla). */
+    public static boolean drawLogo(GuiGraphicsExtractor g, int screenWidth, float alpha, int y) {
+        if (!AltairConfig.isTitleBackground()) {
+            return false;
+        }
+        int drawH = Math.round(LOGO_DRAW_W * LOGO_TEX_H / (float) LOGO_TEX_W);
+        int color = (Math.max(0, Math.min(255, Math.round(alpha * 255.0F))) << 24) | 0xFFFFFF;
+        RenderPipeline pipeline = RenderPipelines.GUI_TEXTURED;
+        g.blit(pipeline, LOGO, screenWidth / 2 - LOGO_DRAW_W / 2, y, 0.0F, 0.0F, LOGO_DRAW_W, drawH,
+                LOGO_TEX_W, LOGO_TEX_H, LOGO_TEX_W, LOGO_TEX_H, color);
+        return true;
     }
 
     private static int hash(long v) {
