@@ -22,8 +22,8 @@ jobs:
         CP=$(echo "$JARS" | tr '\n' ':')
         CJ=$(echo "$JARS" | grep client-extra | head -1)
         unzip -Z1 "$CJ" > /tmp/all.txt
-        echo "::group::logo"; javap -p -cp "$CP" net.minecraft.client.gui.components.LogoRenderer 2>&1 | cut -c1-260; echo "::endgroup::"
-        echo "::group::title"; javap -p -c -cp "$CP" net.minecraft.client.gui.screens.TitleScreen 2>&1 | grep -E 'LogoRenderer|logo|Logo' | cut -c1-240; javap -p -cp "$CP" net.minecraft.client.gui.screens.TitleScreen | cut -c1-240; echo "::endgroup::"
-        echo "::group::blit"; javap -p -cp "$CP" net.minecraft.client.gui.GuiGraphicsExtractor | grep -E ' (blit|blitSprite|innerBlit)\(' | cut -c1-300; echo "::endgroup::"
-        echo "::group::consts"; javap -p -constants -cp "$CP" net.minecraft.client.gui.components.LogoRenderer | grep -E 'static final' | cut -c1-240; echo "::endgroup::"
-        echo "::group::pipelines"; javap -p -cp "$CP" net.minecraft.client.renderer.RenderPipelines | grep -i -E 'GUI_TEXTURED' | cut -c1-200; echo "::endgroup::"
+        echo "::group::camera"; javap -p -cp "$CP" net.minecraft.client.Camera | cut -c1-240; echo "::endgroup::"
+        echo "::group::camera code"; javap -p -c -cp "$CP" net.minecraft.client.Camera | awk '/public void (setup|update)\(/{f=1} f' | grep -E 'public|invoke|getstatic|ComputeCameraAngles|Event' | head -120 | cut -c1-230; echo "::endgroup::"
+        echo "::group::mouse"; javap -p -cp "$CP" net.minecraft.client.MouseHandler | grep -i -E 'turn|accumul|handle' | cut -c1-200; javap -p -c -cp "$CP" net.minecraft.client.MouseHandler | awk '/void turnPlayer/{f=1} f' | grep -E 'invoke|void' | head -25 | cut -c1-220; echo "::endgroup::"
+        echo "::group::entity rot"; javap -p -cp "$CP" net.minecraft.world.entity.Entity | grep -E 'Rot|turn' | cut -c1-200; echo "::endgroup::"
+        echo "::group::cameraentity"; javap -p -cp "$CP" net.minecraft.client.Minecraft | grep -i -E 'cameraEntity|getCameraEntity|setCameraEntity' | cut -c1-200; javap -p -cp "$CP" net.minecraft.client.renderer.GameRenderer | grep -i -E 'camera|mainCamera|getMainCamera' | cut -c1-200; echo "::endgroup::"
