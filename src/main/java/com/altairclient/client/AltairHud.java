@@ -82,6 +82,7 @@ public final class AltairHud {
                     MovementTextures.renderMotionBlur(graphics);
                     HudTextures.render(graphics);
                     ExtraTextures.render(graphics);
+                    com.altairclient.modules.mods.DynamicIsland.render(graphics);
                 },
                 () -> !Minecraft.getInstance().gui.hud.isHidden()
         );

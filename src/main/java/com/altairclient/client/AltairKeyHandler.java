@@ -2,6 +2,7 @@ package com.altairclient.client;
 
 import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.CPSCounter;
+import com.altairclient.modules.mods.DynamicIsland;
 import com.altairclient.modules.mods.BlockOutline;
 import com.altairclient.modules.mods.CustomCrosshair;
 import com.altairclient.modules.mods.TimeChanger;
@@ -106,6 +107,32 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
+    // Dynamic Island: expandir/cerrar, pausa y siguiente canción.
+    public static final KeyMapping ISLAND_KEY = new KeyMapping(
+            "key.altairclient.island",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_J,
+            CATEGORY
+    );
+    public static final KeyMapping ISLAND_PLAY_KEY = new KeyMapping(
+            "key.altairclient.island_play",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_UNKNOWN,
+            CATEGORY
+    );
+    public static final KeyMapping ISLAND_NEXT_KEY = new KeyMapping(
+            "key.altairclient.island_next",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_UNKNOWN,
+            CATEGORY
+    );
+    public static final KeyMapping ISLAND_PREV_KEY = new KeyMapping(
+            "key.altairclient.island_prev",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_UNKNOWN,
+            CATEGORY
+    );
+
     // Sin tecla por defecto: activa/desactiva Fullbright.
     public static final KeyMapping FULLBRIGHT_KEY = new KeyMapping(
             "key.altairclient.fullbright",
@@ -184,6 +211,10 @@ public final class AltairKeyHandler {
         event.register(SCREENSHOT_KEY);
         event.register(SCREENSHOT_UPLOAD_KEY);
         event.register(FREELOOK_KEY);
+        event.register(ISLAND_KEY);
+        event.register(ISLAND_PLAY_KEY);
+        event.register(ISLAND_NEXT_KEY);
+        event.register(ISLAND_PREV_KEY);
         event.register(FULLBRIGHT_KEY);
         event.register(NAMETAGS_KEY);
         event.register(CHAT_BUBBLES_KEY);
@@ -264,6 +295,19 @@ public final class AltairKeyHandler {
 
         while (SCREENSHOT_KEY.consumeClick()) {
             ScreenshotModule.request();
+        }
+
+        while (ISLAND_KEY.consumeClick()) {
+            DynamicIsland.toggleExpanded();
+        }
+        while (ISLAND_PLAY_KEY.consumeClick()) {
+            DynamicIsland.playPause();
+        }
+        while (ISLAND_NEXT_KEY.consumeClick()) {
+            DynamicIsland.next();
+        }
+        while (ISLAND_PREV_KEY.consumeClick()) {
+            DynamicIsland.previous();
         }
 
         while (FREELOOK_KEY.consumeClick()) {

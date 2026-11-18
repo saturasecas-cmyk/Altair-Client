@@ -57,6 +57,7 @@ public class AltairClient {
         com.altairclient.modules.mods.AltairSky.register();
         com.altairclient.modules.mods.NoAnimation.register();
         com.altairclient.modules.mods.UltraOptimizer.register();
+        com.altairclient.modules.mods.DynamicIsland.register();
         com.altairclient.modules.textures.AltairRain.register();
         ExtraTextures.register();
 

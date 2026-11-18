@@ -605,6 +605,16 @@ public final class AltairScreen extends Screen {
         ));
 
         allModules.add(new ModuleEntry(
+                "Dynamic Island",
+                "Música en la parte de arriba",
+                "Una píldora arriba al centro con la música que suena en tu PC. Con un menú abierto (p. ej. el chat) haz clic en ella, o usa su tecla, para expandirla: título, artista, barra de progreso, pausa y siguiente/anterior. Windows: lee los controles multimedia del sistema; Linux: necesita playerctl. Las notificaciones del PC (Discord, etc.) no se pueden leer desde Minecraft.",
+                Category.MISC,
+                "\u266A",
+                () -> com.altairclient.modules.mods.DynamicIsland.toggle(),
+                () -> com.altairclient.modules.mods.DynamicIsland.isEnabled()
+        ));
+
+        allModules.add(new ModuleEntry(
                 "Ultra Optimizer",
                 "Más FPS, menos carga",
                 "Baja lo que el juego tiene que dibujar: sin sombras de entidades ni oclusión ambiental, nubes simples (o sin nubes), menos partículas, menos distancia de dibujado y de entidades, y no se dibujan las criaturas que están muy por debajo de ti. Elige el nivel con - y +. Al apagarlo vuelven tus ajustes de vídeo.",
