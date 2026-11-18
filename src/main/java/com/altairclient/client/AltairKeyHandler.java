@@ -217,7 +217,7 @@ public final class AltairKeyHandler {
         if (FreecamHandler.absorbRotation()) {
             event.setYaw(FreecamHandler.getCameraYaw());
             event.setPitch(FreecamHandler.getCameraPitch());
-        } else if (PerspectiveHandler.absorb()) {
+        } else if (!PerspectiveHandler.isCameraMixinActive() && PerspectiveHandler.absorb()) {
             event.setYaw(event.getYaw() + PerspectiveHandler.getYawOffset());
             event.setPitch(event.getPitch() + PerspectiveHandler.getPitchOffset());
         }

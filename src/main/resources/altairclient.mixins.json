@@ -8,7 +8,8 @@
     "ScreenEffectRendererMixin",
     "ItemLayerRenderStateMixin",
     "SkyRendererMixin",
-    "LogoRendererMixin"
+    "LogoRendererMixin",
+    "CameraMixin"
   ],
   "injectors": {
     "defaultRequire": 0

@@ -3,6 +3,7 @@ package com.altairclient.modules.mods;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
 
 /**
  * Perspective Mod: mientras mantienes la tecla, la cámara pasa a tercera persona y el
@@ -47,6 +48,50 @@ public final class PerspectiveHandler {
 
     public static void setKeyDown(boolean value) {
         keyDown = value;
+    }
+
+    /** true cuando CameraMixin ya está moviendo la cámara (entonces no se usa el evento de cámara). */
+    private static boolean cameraMixinActive = false;
+    private static boolean rotationSwapped = false;
+
+    public static boolean isCameraMixinActive() {
+        return cameraMixinActive;
+    }
+
+    /**
+     * Lo llama CameraMixin justo antes de calcular la posición de la cámara: absorbe el giro del ratón
+     * y deja puesta en el jugador la rotación de la cámara orbital para que la cámara orbite de verdad.
+     */
+    public static void beginCamera(Entity cameraEntity) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || cameraEntity != player) {
+            return;
+        }
+        cameraMixinActive = true;
+        if (!absorb()) {
+            return;
+        }
+        player.setYRot(camYaw);
+        player.setXRot(camPitch);
+        player.yRotO = camYaw;
+        player.xRotO = camPitch;
+        rotationSwapped = true;
+    }
+
+    /** Devuelve al jugador su rotación real tras calcular la cámara. */
+    public static void endCamera(Entity cameraEntity) {
+        if (!rotationSwapped) {
+            return;
+        }
+        rotationSwapped = false;
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) {
+            return;
+        }
+        player.setYRot(lockedYaw);
+        player.setXRot(lockedPitch);
+        player.yRotO = lockedYaw;
+        player.xRotO = lockedPitch;
     }
 
     public static float getYawOffset() {
