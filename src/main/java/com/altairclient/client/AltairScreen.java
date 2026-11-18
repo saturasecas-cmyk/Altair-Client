@@ -618,6 +618,26 @@ public final class AltairScreen extends Screen {
                 .withSettingNames(com.altairclient.modules.mods.UltraOptimizer.LEVEL_NAMES));
 
         allModules.add(new ModuleEntry(
+                "Hide Boss Bar",
+                "Quita la barra de jefe",
+                "Oculta las barras de jefe de arriba de la pantalla (las del Wither, el Dragón o las de los servidores).",
+                Category.RENDER,
+                "\u25AC",
+                () -> com.altairclient.modules.mods.HudHider.toggleBossBar(),
+                () -> com.altairclient.modules.mods.HudHider.isBossBarHidden()
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Hide Scoreboard",
+                "Quita la tabla lateral",
+                "Oculta la tabla de puntuación que sale a la derecha de la pantalla en muchos servidores.",
+                Category.RENDER,
+                "\u25A4",
+                () -> com.altairclient.modules.mods.HudHider.toggleScoreboard(),
+                () -> com.altairclient.modules.mods.HudHider.isScoreboardHidden()
+        ));
+
+        allModules.add(new ModuleEntry(
                 "Custom Nametags",
                 "Nombres con estilo",
                 "Cambia el aspecto de los nombres sobre jugadores y entidades: Altair, Dorado, Neón o Marcado. Solo lo ves tú, no cambia el nombre real de nadie. Elige el estilo con - y +. Tecla opcional en Controles.",

@@ -36,11 +36,11 @@ public final class HudTextures {
     }
 
     public static boolean hideScoreboard() {
-        return CLEAN_SCOREBOARD.isEnabled();
+        return CLEAN_SCOREBOARD.isEnabled() || com.altairclient.modules.mods.HudHider.isScoreboardHidden();
     }
 
     public static boolean hideBossBar() {
-        return MIN_BOSSBAR.isEnabled();
+        return MIN_BOSSBAR.isEnabled() || com.altairclient.modules.mods.HudHider.isBossBarHidden();
     }
 
     /** Dibuja todo lo de este apartado en el HUD. */
