@@ -1,0 +1,24 @@
+name: Inspect Buttons
+
+on:
+  push:
+    branches: ['inspect/buttons']
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '25'
+    - uses: gradle/actions/setup-gradle@v4
+    - name: Resolve deps
+      run: ./gradlew compileJava --no-daemon || true
+    - name: Dump
+      run: |
+        JARS=$(find $GITHUB_WORKSPACE/.gradle ~/.gradle -name '*.jar' ! -name '*sources*' 2>/dev/null | grep -E 'client-extra|forge-26.2|fastutil|joml|slf4j|asm|datafixer|brigadier|guava|gson|lwjgl|netty|commons' )
+        CP=$(echo "$JARS" | tr '\n' ':')
+        for c in net.minecraft.client.gui.components.AbstractButton net.minecraft.client.gui.components.Button net.minecraft.client.gui.components.AbstractWidget net.minecraft.client.gui.components.SpriteIconButton; do echo "::group::$c"; javap -p -cp "$CP" $c 2>&1 | grep -v "lambda\|static final" | cut -c1-250; echo "::endgroup::"; done
+        echo "::group::AbstractButton code"; javap -p -c -cp "$CP" net.minecraft.client.gui.components.AbstractButton 2>&1 | grep -E '^  [a-z].*\(|invoke' | cut -c1-230 | head -60; echo "::endgroup::"
