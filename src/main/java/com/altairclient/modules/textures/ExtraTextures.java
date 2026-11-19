@@ -96,7 +96,9 @@ public final class ExtraTextures {
         }
 
         OptionInstance<Integer> blur = mc.options.menuBackgroundBlurriness();
-        if (INVENTORY.isEnabled()) {
+        if (com.altairclient.client.AltairScreen.blurActive) {
+            // el menu de Altair mantiene su propio desenfoque
+        } else if (INVENTORY.isEnabled()) {
             if (savedBlur == null) {
                 savedBlur = blur.get();
             }

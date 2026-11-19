@@ -1093,6 +1093,7 @@ public final class AltairScreen extends Screen {
     @Override
     public void removed() {
         super.removed();
+        restoreBlur();
         AltairConfig.autoSaveNow();
     }
 
@@ -1145,6 +1146,7 @@ public final class AltairScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        raiseBlur();
 
         panelWidth = Math.min(660, width - 20);
         panelHeight = Math.min(380, height - 20);
@@ -1168,6 +1170,36 @@ public final class AltairScreen extends Screen {
         searchBox.setValue(searchQuery);
         searchBox.setResponder(this::onSearchChanged);
         addWidget(searchBox);
+    }
+
+    // ==================== Fondo desenfocado ====================
+
+    /** Mientras el menu esta abierto, ExtraTextures no debe quitar el desenfoque. */
+    public static volatile boolean blurActive = false;
+    private static Integer savedBlur = null;
+
+    /** Sube el desenfoque del fondo del juego mientras el menu esta abierto (el menu en si se ve nitido). */
+    private void raiseBlur() {
+        if (minecraft == null || blurActive) {
+            return;
+        }
+        net.minecraft.client.OptionInstance<Integer> blur = minecraft.options.menuBackgroundBlurriness();
+        savedBlur = blur.get();
+        blurActive = true;
+        if (savedBlur < 8) {
+            blur.set(8);
+        }
+    }
+
+    private void restoreBlur() {
+        if (!blurActive) {
+            return;
+        }
+        blurActive = false;
+        if (minecraft != null && savedBlur != null) {
+            minecraft.options.menuBackgroundBlurriness().set(savedBlur);
+        }
+        savedBlur = null;
     }
 
     private void selectCategory(Category cat) {
