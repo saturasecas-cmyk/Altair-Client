@@ -1274,6 +1274,14 @@ public final class AltairScreen extends Screen {
         int winBtnY = panelY + 10;
         int winCloseX = panelX + panelWidth - 24;
         boolean closeHover = mouseX >= winCloseX && mouseX <= winCloseX + 14 && mouseY >= winBtnY && mouseY <= winBtnY + 14;
+        // Engranaje de ajustes (abre Settings)
+        int gearX = winCloseX - 56;
+        boolean gearHover = mouseX >= gearX - 3 && mouseX <= gearX + 13 && mouseY >= winBtnY - 1 && mouseY <= winBtnY + 15;
+        boolean inSettings = currentCategory.section == Section.SETTINGS;
+        if (gearHover || inSettings) {
+            graphics.fill(gearX - 3, winBtnY - 1, gearX + 13, winBtnY + 15, gearHover ? 0xFF272952 : 0xFF1F2750);
+        }
+        graphics.text(font, "\u2699", gearX + 1, winBtnY + 3, (gearHover || inSettings) ? CYAN : MUTED, false);
         graphics.text(font, "—", winCloseX - 32, winBtnY + 2, MUTED, false);
         graphics.text(font, "□", winCloseX - 16, winBtnY + 2, MUTED, false);
         graphics.text(font, "✕", winCloseX, winBtnY + 2, closeHover ? RED : MUTED, false);
@@ -1629,6 +1637,15 @@ public final class AltairScreen extends Screen {
                 setFocused(null);
             }
             searchBox.setFocused(false);
+        }
+
+        // 0. Clic en el engranaje de ajustes
+        int gearBtnY = panelY + 10;
+        int gearBtnX = panelX + panelWidth - 24 - 56;
+        if (mx >= gearBtnX - 3 && mx <= gearBtnX + 13 && my >= gearBtnY - 1 && my <= gearBtnY + 15) {
+            openSection = Section.SETTINGS;
+            selectCategory(Category.SET_GENERAL);
+            return true;
         }
 
         // 1. Clic en botón cerrar [✕]
