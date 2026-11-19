@@ -57,7 +57,7 @@ import java.util.List;
 public final class AltairScreen extends Screen {
 
     // Paleta de colores base para el layout (sin sobredecoración)
-    private static final int OVERLAY_BG = 0xB0080B14;
+    private static final int OVERLAY_BG = 0x70080B14;
     private static final int MAIN_PANEL_BG = 0xF00D1224;
     private static final int HEADER_BG = 0xF511172E;
     private static final int SIDEBAR_BG = 0xF00F1429;
