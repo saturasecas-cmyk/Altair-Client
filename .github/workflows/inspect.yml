@@ -21,14 +21,8 @@ jobs:
         JARS=$(find $GITHUB_WORKSPACE/.gradle ~/.gradle -name '*.jar' ! -name '*sources*' 2>/dev/null | grep -E 'client-extra|forge-26.2|fastutil|joml|slf4j|asm|datafixer|brigadier|guava|gson|lwjgl|netty|commons' )
         CP=$(echo "$JARS" | tr '\n' ':')
         j() { echo "::group::$1 $2"; javap -p -cp "$CP" $1 2>&1 | grep -iE "$2" | cut -c1-230; echo "::endgroup::"; }
-        j net.minecraft.client.gui.Gui "rosshair|CameraOverlay|umpkin|Overlay|Spyglass|extractRender|extractHotbar"
-        j net.minecraft.client.gui.screens.TitleScreen "extract|Panorama|Background|render|init|fade"
-        j net.minecraft.client.gui.screens.Screen "Panorama|Background|Blur|extractRenderState"
-        j net.minecraft.client.renderer.PanoramaRenderer "."
-        j net.minecraft.client.renderer.ItemBlockRenderTypes "."
-        j net.minecraft.client.Options "nimat|ipmap|Cloud|ambient|entityShadows|particles\(|renderDistance|simulation|maxFps|fps|vsync|biomeBlend|graphicsPreset|improved"
-        j net.minecraft.client.renderer.ScreenEffectRenderer "."
-        j net.minecraftforge.client.gui.overlay.ForgeLayeredDraw "static final"
-        j net.minecraft.client.renderer.texture.SpriteContents "tick|Animat|class|uploadFirst"
-        j net.minecraft.client.renderer.texture.TextureAtlas "tick|Animat|cycle"
-        j net.minecraft.client.renderer.texture.TextureAtlasSprite "tick|Animat|cycle"
+        CJ=$(echo "$JARS" | tr ':' '\n' | grep client-extra | head -1)
+        echo "::group::classes"; unzip -l "$CJ" | grep -iE "rosshair|umpkin|HandItem|ItemInHand|FluidRender|LiquidBlockRenderer|ChunkSectionLayer|ItemBlockRender" | awk '{print $4}' | head -40; echo "::endgroup::"
+        echo "::group::Gui all"; javap -p -cp "$CP" net.minecraft.client.gui.Gui 2>&1 | cut -c1-200 | head -80; echo "::endgroup::"
+        echo "::group::ForgeLayeredDraw methods"; javap -p -cp "$CP" net.minecraftforge.client.gui.overlay.ForgeLayeredDraw 2>&1 | grep -v "static final" | cut -c1-200; echo "::endgroup::"
+        echo "::group::ForgeLayerInstance"; javap -p -cp "$CP" net.minecraftforge.client.gui.overlay.ForgeLayerInstance 2>&1 | cut -c1-200; echo "::endgroup::"
