@@ -1185,9 +1185,35 @@ public final class AltairScreen extends Screen {
         }
         net.minecraft.client.OptionInstance<Integer> blur = minecraft.options.menuBackgroundBlurriness();
         savedBlur = blur.get();
+        blurTarget = Math.max(savedBlur, 8);
         blurActive = true;
-        if (savedBlur < 8) {
-            blur.set(8);
+        blur.set(0); // empieza sin desenfoque y sube con la animacion de apertura
+    }
+
+    private static int blurTarget = 8;
+
+    /** Pone el desenfoque segun el avance de la animacion (0 = nada, 1 = completo). */
+    private void applyBlur(float amount) {
+        if (minecraft == null || !blurActive) {
+            return;
+        }
+        int level = Math.round(blurTarget * Math.max(0.0F, Math.min(1.0F, amount)));
+        net.minecraft.client.OptionInstance<Integer> blur = minecraft.options.menuBackgroundBlurriness();
+        if (blur.get() != level) {
+            blur.set(level);
+        }
+    }
+
+    // Cierre animado: el menu se funde y el fondo se enfoca de nuevo antes de cerrarse del todo
+    private boolean closing = false;
+    private long closeStart;
+    private static final float CLOSE_NANOS = 220_000_000.0F;
+
+    @Override
+    public void onClose() {
+        if (!closing) {
+            closing = true;
+            closeStart = System.nanoTime();
         }
     }
 
@@ -1269,11 +1295,23 @@ public final class AltairScreen extends Screen {
             int mouseY,
             float partialTick
     ) {
+        if (closing && (System.nanoTime() - closeStart) >= CLOSE_NANOS) {
+            if (minecraft != null) {
+                minecraft.gui.setScreen(null);
+            }
+            return;
+        }
         super.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
         // 1. Fondo oscuro global
         // Animación de apertura: el fondo se oscurece y el panel crece desde el 94 %.
-        float open = Anim.easeOut((System.nanoTime() - openStart) / 280_000_000.0F);
+        float open;
+        if (closing) {
+            open = 1.0F - Anim.easeOut((System.nanoTime() - closeStart) / CLOSE_NANOS);
+        } else {
+            open = Anim.easeOut((System.nanoTime() - openStart) / 280_000_000.0F);
+        }
+        applyBlur(open);
         boolean opening = open < 1.0F;
         graphics.fill(0, 0, width, height, Anim.scaleAlpha(OVERLAY_BG, open));
         if (opening) {
@@ -1664,6 +1702,9 @@ public final class AltairScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (closing) {
+            return true;
+        }
         if (event.button() != 0) {
             return super.mouseClicked(event, doubleClick);
         }
@@ -1705,7 +1746,7 @@ public final class AltairScreen extends Screen {
         int winCloseX = panelX + panelWidth - 24;
         if (mx >= winCloseX && mx <= winCloseX + 14 && my >= winBtnY && my <= winBtnY + 14) {
             if (minecraft != null) {
-                minecraft.gui.setScreen(null);
+                onClose();
             }
             return true;
         }
