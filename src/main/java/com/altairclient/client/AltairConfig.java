@@ -32,6 +32,7 @@ public final class AltairConfig {
     private static boolean autoSave = true;
     private static boolean titleBackground = true;
     private static boolean tabFleur = true;
+    private static boolean roundButtons = true;
     private static String lastWritten = "";
     private static int ticks = 0;
 
@@ -59,6 +60,15 @@ public final class AltairConfig {
 
     public static boolean isTitleBackground() {
         return titleBackground;
+    }
+
+    public static boolean isRoundButtons() {
+        return roundButtons;
+    }
+
+    public static void toggleRoundButtons() {
+        roundButtons = !roundButtons;
+        autoSaveNow();
     }
 
     public static boolean isTabFleur() {
@@ -131,6 +141,7 @@ public final class AltairConfig {
             root.addProperty("autoSave", autoSave);
             root.addProperty("titleBackground", titleBackground);
             root.addProperty("tabFleur", tabFleur);
+            root.addProperty("roundButtons", roundButtons);
             root.add("modules", com.altairclient.client.AltairScreen.exportState());
             root.add("hud", AltairHudEditorScreen.exportPositions());
             String text = GSON.toJson(root);
@@ -165,6 +176,10 @@ public final class AltairConfig {
             JsonElement title = root.get("titleBackground");
             if (title != null && title.isJsonPrimitive()) {
                 titleBackground = title.getAsBoolean();
+            }
+            JsonElement rb = root.get("roundButtons");
+            if (rb != null && rb.isJsonPrimitive()) {
+                roundButtons = rb.getAsBoolean();
             }
             JsonElement fleur = root.get("tabFleur");
             if (fleur != null && fleur.isJsonPrimitive()) {

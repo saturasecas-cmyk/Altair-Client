@@ -946,6 +946,15 @@ public final class AltairScreen extends Screen {
                 AltairConfig::toggleTabFleur,
                 AltairConfig::isTabFleur
         ));
+        allModules.add(new ModuleEntry(
+                "Round Buttons",
+                "Dark rounded buttons",
+                "Draws the normal Minecraft buttons (Singleplayer, Multiplayer, Options, Edit Server, Done...) with rounded corners in the dark Altair blue, with a purple glow when you hover them. Turn it off to get the vanilla buttons back.",
+                Category.SET_GENERAL,
+                "\u25A2",
+                AltairConfig::toggleRoundButtons,
+                AltairConfig::isRoundButtons
+        ));
         allModules.add(actionEntry("Save now", "Write the config file",
                 "Saves everything right now to config/altairclient-modules.json in your Minecraft folder. Click the switch to run it.",
                 AltairConfig::saveNow));

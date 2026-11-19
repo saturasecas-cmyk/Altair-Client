@@ -12,7 +12,8 @@
     "CameraMixin",
     "LoadingOverlayMixin",
     "LevelLoadingScreenMixin",
-    "PlayerTabOverlayMixin"
+    "PlayerTabOverlayMixin",
+    "AbstractButtonMixin"
   ],
   "injectors": {
     "defaultRequire": 0
