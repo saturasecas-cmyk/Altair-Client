@@ -97,6 +97,7 @@ public final class AltairScreen extends Screen {
         PLAYER(Section.MODS, null, "Player", "Player", "👤"),
         WORLD(Section.MODS, null, "World", "World", "🌐"),
         MISC(Section.MODS, null, "Misc", "Misc", "✨"),
+        APPS(Section.MODS, null, "Apps", "Apps", "▦"),
 
         // Carpeta Textures
         TEX_PVP(Section.TEXTURES, TextureModules.PVP, "PvP Textures", "PvP", "⚔"),
@@ -616,6 +617,16 @@ public final class AltairScreen extends Screen {
         ));
 
         allModules.add(new ModuleEntry(
+                "Notes",
+                "Word-style notepad",
+                "A small note-taking window you can use inside Minecraft, like a tiny Word. Bold, italic, underline, strikethrough, 8 text colors, bullet lists, numbered lists and task lists with check boxes, and a Coords button that writes your current X Y Z. Select text with the mouse or Shift + arrows and use the toolbar or Ctrl+B / Ctrl+I / Ctrl+U. Drag the title bar to move it and the bottom-right corner to resize it. Everything is saved automatically to config/altairclient-notes.json. Click the switch to open it.",
+                Category.APPS,
+                "\u270E",
+                () -> net.minecraft.client.Minecraft.getInstance().gui.setScreen(new NotesScreen(this)),
+                () -> false
+        ));
+
+        allModules.add(new ModuleEntry(
                 "Freelook",
                 "Cámara libre 3ª persona",
                 "Pasa a tercera persona y el ratón mueve la cámara alrededor de tu jugador sin girarlo, como un orbitar libre. No vuela como Freecam: sigue anclada a ti. Actívalo aquí o con la tecla Freelook (B por defecto, configurable en Controles). Es visual y no envía giros al servidor.",
@@ -983,7 +994,7 @@ public final class AltairScreen extends Screen {
 
     /** Modules that are actions or momentary views, not states: they are never saved or restored. */
     private static final java.util.Set<String> NOT_SAVED = java.util.Set.of(
-            "Freecam", "Smooth Zoom", "Perspective Mod", "Freelook", "Fullbright", "Screenshot", "Screenshot Upload");
+            "Notes", "Freecam", "Smooth Zoom", "Perspective Mod", "Freelook", "Fullbright", "Screenshot", "Screenshot Upload");
 
     private static AltairScreen model;
 
