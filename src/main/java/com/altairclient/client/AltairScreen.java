@@ -592,7 +592,7 @@ public final class AltairScreen extends Screen {
                 "Screenshot",
                 "Captura de pantalla",
                 "Hace una captura del juego sin el menú y la guarda en la carpeta screenshots. También con la tecla Captura de pantalla (F9 por defecto, configurable en Controles).",
-                Category.MISC,
+                Category.APPS,
                 "\u25A3",
                 () -> {
                     ScreenshotModule.request();
@@ -607,7 +607,7 @@ public final class AltairScreen extends Screen {
                 "Screenshot Upload",
                 "Subir última captura",
                 "Envía tu última captura a un webhook de Discord tuyo. Pon la URL del webhook en el archivo altairclient-webhook.txt (carpeta de Minecraft). También con la tecla Subir captura (sin asignar, configurable en Controles).",
-                Category.MISC,
+                Category.APPS,
                 "\u2191",
                 () -> {
                     net.minecraft.client.Minecraft.getInstance().gui.setScreen(null);
@@ -650,7 +650,7 @@ public final class AltairScreen extends Screen {
                 "Dynamic Island",
                 "Música en la parte de arriba",
                 "Una píldora arriba al centro con la música que suena en tu PC. Con un menú abierto (p. ej. el chat) haz clic en ella, o usa su tecla, para expandirla: título, artista, barra de progreso, pausa y siguiente/anterior. Windows: lee los controles multimedia del sistema; Linux: necesita playerctl. Las notificaciones del PC (Discord, etc.) no se pueden leer desde Minecraft.",
-                Category.MISC,
+                Category.APPS,
                 "\u266A",
                 () -> com.altairclient.modules.mods.DynamicIsland.toggle(),
                 () -> com.altairclient.modules.mods.DynamicIsland.isEnabled()
@@ -965,6 +965,15 @@ public final class AltairScreen extends Screen {
                 "\u25A2",
                 AltairConfig::toggleRoundButtons,
                 AltairConfig::isRoundButtons
+        ));
+        allModules.add(new ModuleEntry(
+                "Altair Link",
+                "Find other Altair users",
+                "Lets Altair Client users on the same server recognise each other through the server chat, so the TAB list can show a fleur-de-lis before their name. A few seconds after you join, the client sends one chat message made of a fleur-de-lis and invisible characters; other Altair clients hide it and answer the same way. Players without the mod see a message with just a fleur-de-lis. Some servers block or punish automatic chat messages, so turn this off if yours does not allow it. You still see the marks of other users when it is off.",
+                Category.SET_GENERAL,
+                "\u269C",
+                AltairConfig::toggleLinkChat,
+                AltairConfig::isLinkChat
         ));
         allModules.add(actionEntry("Save now", "Write the config file",
                 "Saves everything right now to config/altairclient-modules.json in your Minecraft folder. Click the switch to run it.",

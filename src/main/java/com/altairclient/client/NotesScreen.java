@@ -2,6 +2,7 @@ package com.altairclient.client;
 
 import com.altairclient.client.NotesData.Line;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,8 @@ public class NotesScreen extends Screen {
     private static final int B_NUMBER = 31;
     private static final int B_CHECK = 32;
     private static final int B_COORDS = 33;
+    private static final int B_UNDO = 34;
+    private static final int B_REDO = 35;
 
     private static final int DRAG_NONE = 0;
     private static final int DRAG_MOVE = 1;
@@ -99,6 +102,78 @@ public class NotesScreen extends Screen {
             this.end = end;
             this.indent = indent;
         }
+    }
+
+    // Deshacer / rehacer: copias del documento; escribir seguido se agrupa en un solo paso
+    private static final class Snap {
+        final List<Line> lines = new ArrayList<>();
+        int cl;
+        int cc;
+    }
+
+    private final ArrayDeque<Snap> undoStack = new ArrayDeque<>();
+    private final ArrayDeque<Snap> redoStack = new ArrayDeque<>();
+    private long lastKindTime;
+    private int lastKind = -1;
+
+    private Snap capture() {
+        Snap snap = new Snap();
+        for (Line l : data.lines) {
+            Line c = new Line();
+            c.text.append(l.text);
+            c.styles.addAll(l.styles);
+            c.list = l.list;
+            c.checked = l.checked;
+            snap.lines.add(c);
+        }
+        snap.cl = cl;
+        snap.cc = cc;
+        return snap;
+    }
+
+    private void restore(Snap snap) {
+        data.lines.clear();
+        data.lines.addAll(snap.lines);
+        data.ensureLine();
+        cl = Math.min(snap.cl, data.lines.size() - 1);
+        cc = Math.min(snap.cc, data.lines.get(cl).length());
+        anchorSet = false;
+        dirty = true;
+        edited = true;
+        ensureVisible = true;
+        lastKind = -1;
+    }
+
+    /** Guarda el estado antes de un cambio. kind: 1 = escribir, 2 = borrar, 0 = cualquier otro (siempre un paso nuevo). */
+    private void checkpoint(int kind) {
+        long now = System.currentTimeMillis();
+        boolean merge = kind != 0 && kind == lastKind && now - lastKindTime < 1000 && selRange() == null;
+        lastKind = kind;
+        lastKindTime = now;
+        if (merge) {
+            return;
+        }
+        undoStack.push(capture());
+        while (undoStack.size() > 100) {
+            undoStack.removeLast();
+        }
+        redoStack.clear();
+    }
+
+    private void undo() {
+        if (undoStack.isEmpty()) {
+            return;
+        }
+        redoStack.push(capture());
+        restore(undoStack.pop());
+    }
+
+    private void redo() {
+        if (redoStack.isEmpty()) {
+            return;
+        }
+        undoStack.push(capture());
+        restore(redoStack.pop());
     }
 
     private final List<Row> rows = new ArrayList<>();
@@ -420,6 +495,7 @@ public class NotesScreen extends Screen {
     }
 
     private void insertText(String text) {
+        checkpoint(text.length() == 1 && text.charAt(0) != '\n' ? 1 : 0);
         deleteSelection();
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
@@ -458,6 +534,7 @@ public class NotesScreen extends Screen {
     }
 
     private void backspace() {
+        checkpoint(2);
         if (deleteSelection()) {
             return;
         }
@@ -483,6 +560,7 @@ public class NotesScreen extends Screen {
     }
 
     private void deleteForward() {
+        checkpoint(2);
         if (deleteSelection()) {
             return;
         }
@@ -535,6 +613,7 @@ public class NotesScreen extends Screen {
             curStyle ^= flag;
             return;
         }
+        checkpoint(0);
         boolean remove = selectionAll(flag);
         for (int l = s[0]; l <= s[2]; l++) {
             Line line = data.lines.get(l);
@@ -555,6 +634,7 @@ public class NotesScreen extends Screen {
         if (s == null) {
             return;
         }
+        checkpoint(0);
         for (int l = s[0]; l <= s[2]; l++) {
             Line line = data.lines.get(l);
             int from = l == s[0] ? s[1] : 0;
@@ -570,6 +650,7 @@ public class NotesScreen extends Screen {
         int[] s = selRange();
         int from = s == null ? cl : s[0];
         int to = s == null ? cl : s[2];
+        checkpoint(0);
         boolean allSame = true;
         for (int l = from; l <= to; l++) {
             if (data.lines.get(l).list != type) {
@@ -619,6 +700,10 @@ public class NotesScreen extends Screen {
         list.add(new Btn(B_CHECK, x, y, 40, 15));
         x += 46;
         list.add(new Btn(B_COORDS, x, y, 44, 15));
+        x += 46;
+        list.add(new Btn(B_UNDO, x, y, 34, 15));
+        x += 36;
+        list.add(new Btn(B_REDO, x, y, 34, 15));
         return list;
     }
 
@@ -641,6 +726,10 @@ public class NotesScreen extends Screen {
             toggleList(NotesData.LIST_CHECK);
         } else if (id == B_COORDS) {
             insertCoords();
+        } else if (id == B_UNDO) {
+            undo();
+        } else if (id == B_REDO) {
+            redo();
         }
         ensureVisible = true;
     }
@@ -727,6 +816,12 @@ public class NotesScreen extends Screen {
                     break;
                 case B_CHECK:
                     label = "Tasks";
+                    break;
+                case B_UNDO:
+                    label = "Undo";
+                    break;
+                case B_REDO:
+                    label = "Redo";
                     break;
                 default:
                     label = "Coords";
@@ -884,6 +979,7 @@ public class NotesScreen extends Screen {
                 if (!t.isEmpty() && minecraft != null) {
                     minecraft.keyboardHandler.setClipboard(t);
                     if (event.isCut()) {
+                        checkpoint(0);
                         deleteSelection();
                     }
                 }
@@ -893,6 +989,18 @@ public class NotesScreen extends Screen {
                 if (minecraft != null) {
                     insertText(minecraft.keyboardHandler.getClipboard());
                 }
+                return true;
+            }
+            if (key == 90) { // Z
+                if (shift) {
+                    redo();
+                } else {
+                    undo();
+                }
+                return true;
+            }
+            if (key == 89) { // Y
+                redo();
                 return true;
             }
             if (key == 66) { // B
@@ -1030,6 +1138,7 @@ public class NotesScreen extends Screen {
             Line line = data.lines.get(r.line);
             int localX = (int) mx - (contentX() + 4);
             if (line.list == NotesData.LIST_CHECK && r.start == 0 && localX >= 0 && localX < INDENT - 2) {
+                checkpoint(0);
                 line.checked = !line.checked;
                 edited = true;
                 return true;

@@ -33,6 +33,7 @@ public final class AltairConfig {
     private static boolean titleBackground = true;
     private static boolean tabFleur = true;
     private static boolean roundButtons = true;
+    private static boolean linkChat = true;
     private static String lastWritten = "";
     private static int ticks = 0;
 
@@ -60,6 +61,15 @@ public final class AltairConfig {
 
     public static boolean isTitleBackground() {
         return titleBackground;
+    }
+
+    public static boolean isLinkChat() {
+        return linkChat;
+    }
+
+    public static void toggleLinkChat() {
+        linkChat = !linkChat;
+        autoSaveNow();
     }
 
     public static boolean isRoundButtons() {
@@ -142,6 +152,7 @@ public final class AltairConfig {
             root.addProperty("titleBackground", titleBackground);
             root.addProperty("tabFleur", tabFleur);
             root.addProperty("roundButtons", roundButtons);
+            root.addProperty("linkChat", linkChat);
             root.add("modules", com.altairclient.client.AltairScreen.exportState());
             root.add("hud", AltairHudEditorScreen.exportPositions());
             String text = GSON.toJson(root);
@@ -176,6 +187,10 @@ public final class AltairConfig {
             JsonElement title = root.get("titleBackground");
             if (title != null && title.isJsonPrimitive()) {
                 titleBackground = title.getAsBoolean();
+            }
+            JsonElement lc = root.get("linkChat");
+            if (lc != null && lc.isJsonPrimitive()) {
+                linkChat = lc.getAsBoolean();
             }
             JsonElement rb = root.get("roundButtons");
             if (rb != null && rb.isJsonPrimitive()) {

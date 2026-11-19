@@ -38,6 +38,7 @@ public class AltairClient {
         LOGGER.info("Inicializando Altair Client para Forge...");
 
         AltairKeyHandler.register();
+        com.altairclient.client.AltairLink.register();
         com.altairclient.client.AltairConfig.register();
         com.altairclient.client.TitleBackground.register();
         AltairHud.register();
