@@ -1,6 +1,9 @@
-net.minecraft.client.renderer.ItemInHandRenderer
-net.minecraft.client.gui.Gui
-net.minecraft.client.renderer.fog.FogRenderer
-net.minecraft.client.particle.ParticleEngine
-net.minecraft.client.renderer.LevelRenderer
-net.minecraft.client.multiplayer.MultiPlayerGameMode
+net.minecraft.client.gui.Hud
+net.minecraft.client.renderer.fog.FogData
+net.minecraft.client.renderer.fog.environment.FogEnvironment
+net.minecraft.client.renderer.fog.environment.LavaFogEnvironment
+net.minecraft.client.renderer.fog.environment.WaterFogEnvironment
+net.minecraft.client.particle.TerrainParticle
+net.minecraft.client.renderer.LevelEventHandler
+net.minecraft.client.Camera
+net.minecraft.client.renderer.GameRenderer
