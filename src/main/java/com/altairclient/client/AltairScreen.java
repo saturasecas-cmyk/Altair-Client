@@ -76,8 +76,8 @@ public final class AltairScreen extends Screen {
 
     /** Las dos carpetas de la barra izquierda: al abrir una salen sus apartados. */
     public enum Section {
-        MODS("Mods", "Módulo"),
-        TEXTURES("Textures", "Textura"),
+        MODS("Mods", "Module"),
+        TEXTURES("Textures", "Texture"),
         SETTINGS("Settings", "Setting");
 
         final String displayName;
@@ -407,8 +407,8 @@ public final class AltairScreen extends Screen {
         // ==================== COMBAT ====================
         allModules.add(new ModuleEntry(
                 "Combo Counter",
-                "Golpes consecutivos",
-                "Cuenta los golpes consecutivos que aciertas a tus oponentes en combate. Se reinicia automáticamente si pasan 2.5s o si recibes daño.",
+                "Hit streak",
+                "Counts the consecutive hits you land on your opponents in combat. Resets automatically after 2.5s or when you take damage.",
                 Category.COMBAT,
                 "⚔",
                 () -> ComboCounter.getInstance().toggle(),
@@ -417,8 +417,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Reach Display",
-                "Distancia de golpe",
-                "Muestra con precisión matemática la distancia exacta en metros a la que conectas cada ataque sobre la caja de colisión del objetivo.",
+                "Hit distance",
+                "Shows the exact distance in blocks from which you land each attack on the target's hitbox.",
                 Category.COMBAT,
                 "⌖",
                 () -> ReachDisplay.getInstance().toggle(),
@@ -427,8 +427,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Hit Indicator",
-                "Impacto en mira",
-                "Dibuja un indicador diagonal (hitmarker) alrededor del punto de mira al acertar un golpe a un enemigo con animación rápida.",
+                "Crosshair hit marker",
+                "Draws a diagonal hitmarker around the crosshair with a quick animation when you hit an enemy.",
                 Category.COMBAT,
                 "✦",
                 () -> HitIndicator.getInstance().toggle(),
@@ -437,8 +437,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "CPS Counter",
-                "Clics por segundo",
-                "Registra y muestra en tiempo real la velocidad de pulsación para el botón izquierdo y derecho del ratón (LMB | RMB).",
+                "Clicks per second",
+                "Tracks and shows in real time how fast you click the left and right mouse buttons (LMB | RMB).",
                 Category.COMBAT,
                 "🖱",
                 () -> CPSCounter.getInstance().toggle(),
@@ -447,8 +447,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Health Display",
-                "Corazones del objetivo",
-                "Muestra el número de corazones de la entidad o jugador al que apuntas (1 corazón = 2 de vida). Si no apuntas a nadie, muestra los tuyos.",
+                "Target hearts",
+                "Shows the number of hearts of the entity or player you are aiming at (1 heart = 2 health). If you aren't aiming at anyone, it shows yours.",
                 Category.COMBAT,
                 "\u2665",
                 () -> HealthDisplay.getInstance().toggle(),
@@ -458,8 +458,8 @@ public final class AltairScreen extends Screen {
         // ==================== RENDER ====================
         allModules.add(new ModuleEntry(
                 "FPS Display",
-                "Contador de FPS",
-                "Muestra la tasa de cuadros por segundo de Minecraft en pantalla con actualización fluida y posición personalizable.",
+                "FPS counter",
+                "Shows Minecraft's frames per second on screen with smooth updates and a customizable position.",
                 Category.RENDER,
                 "🖥",
                 () -> FPSDisplay.getInstance().toggle(),
@@ -468,8 +468,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Hitbox Display",
-                "Colisiones visibles",
-                "Muestra de forma gráfica las cajas de colisión y líneas de visión de todas las entidades en el mundo con 0 impacto en rendimiento.",
+                "Visible hitboxes",
+                "Draws the hitboxes and sight lines of all entities in the world with no performance impact.",
                 Category.RENDER,
                 "📦",
                 () -> HitboxDisplay.getInstance().toggle(),
@@ -478,8 +478,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Armor HUD",
-                "Durabilidad armadura",
-                "Muestra las piezas de armadura equipadas (casco, peto, pantalones y botas) junto a su porcentaje y barra de durabilidad.",
+                "Armor durability",
+                "Shows your equipped armor pieces (helmet, chestplate, leggings and boots) with their percentage and durability bar.",
                 Category.RENDER,
                 "🛡",
                 () -> ArmorHUD.getInstance().toggle(),
@@ -488,8 +488,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Keystrokes",
-                "Teclas en vivo",
-                "Representación visual interactiva de las teclas WASD, clics izquierdo y derecho y la barra espaciadora en la pantalla.",
+                "Live keys",
+                "An interactive on-screen display of the WASD keys, left and right clicks and the space bar.",
                 Category.RENDER,
                 "⌨",
                 () -> Keystrokes.getInstance().toggle(),
@@ -498,8 +498,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Ping Display",
-                "Latencia al servidor",
-                "Muestra tu latencia (ping) en milisegundos con un color que pasa suavemente de verde a amarillo y rojo según sube.",
+                "Server latency",
+                "Shows your latency (ping) in milliseconds with a color that smoothly shifts from green to yellow to red as it rises.",
                 Category.RENDER,
                 "\u25C9",
                 () -> PingDisplay.getInstance().toggle(),
@@ -508,8 +508,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Freecam",
-                "Cámara libre",
-                "Tu jugador se queda quieto y la cámara vuela libre como en modo espectador. Vuela con W/A/S/D, Espacio sube, Mayús baja y Ctrl acelera. Actívalo aquí o con la tecla Freecam (V por defecto, configurable en Controles). Es solo visual: no mueve a tu jugador en el servidor.",
+                "Free camera",
+                "Your player stays still and the camera flies freely like in spectator mode. Fly with W/A/S/D, Space goes up, Shift goes down and Ctrl speeds up. Enable it here or with the Freecam key (V by default, configurable in Controls). It is visual only: it does not move your player on the server.",
                 Category.RENDER,
                 "\u25CE",
                 () -> FreecamHandler.toggle(),
@@ -519,8 +519,8 @@ public final class AltairScreen extends Screen {
         // ==================== PLAYER ====================
         allModules.add(new ModuleEntry(
                 "Potion Status",
-                "Efectos activos",
-                "Muestra la lista de pociones y efectos que tiene tu jugador, indicando el nombre, nivel y tiempo restante formateado en MM:SS.",
+                "Active effects",
+                "Shows the list of potions and effects on your player, with name, level and remaining time formatted as MM:SS.",
                 Category.PLAYER,
                 "🧪",
                 () -> PotionStatus.getInstance().toggle(),
@@ -529,8 +529,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Smooth Zoom",
-                "Zoom cinematográfico",
-                "Permite acercar suavemente la vista del jugador al mantener pulsada la tecla C con interpolación dinámica del campo de visión (FOV).",
+                "Cinematic zoom",
+                "Smoothly zooms in your view while you hold the C key, with dynamic field of view (FOV) interpolation.",
                 Category.PLAYER,
                 "🔍",
                 null,
@@ -539,8 +539,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Custom FOV",
-                "FOV personalizado",
-                "Usa tu propio campo de visión en lugar del de las opciones de vídeo. Ajusta el valor con los botones - y + (de 30 a 110).",
+                "Custom FOV",
+                "Uses your own field of view instead of the one from the video options. Adjust the value with the - and + buttons (30 to 110).",
                 Category.RENDER,
                 "\u25CD",
                 () -> FovHandler.toggleCustom(),
@@ -550,8 +550,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Dynamic FOV",
-                "Cambios dinámicos",
-                "Activado: el FOV cambia al correr o con efectos de velocidad, como en vanilla. Desactivado: el FOV se queda fijo.",
+                "Dynamic changes",
+                "On: the FOV changes when sprinting or with speed effects, like in vanilla. Off: the FOV stays fixed.",
                 Category.RENDER,
                 "\u2194",
                 () -> FovHandler.toggleDynamic(),
@@ -560,8 +560,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Perspective Mod",
-                "Mirar alrededor",
-                "Mantén la tecla Perspective Mod (Alt izquierdo por defecto, configurable en Controles) y mueve el ratón: la cámara pasa a tercera persona y orbita sin girar a tu jugador. Es visual y no envía giros al servidor.",
+                "Look around",
+                "Hold the Perspective Mod key (Left Alt by default, configurable in Controls) and move the mouse: the camera switches to third person and orbits without turning your player. It is visual only and does not send rotations to the server.",
                 Category.RENDER,
                 "\u25CE",
                 () -> PerspectiveHandler.toggle(),
@@ -570,8 +570,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Toggle Sprint",
-                "Correr automático",
-                "Corres automáticamente mientras avanzas, sin mantener la tecla de sprint. Asígnale un atajo en Controles si quieres.",
+                "Auto sprint",
+                "You sprint automatically while moving forward, without holding the sprint key. Assign a shortcut in Controls if you like.",
                 Category.PLAYER,
                 "\u00BB",
                 () -> ToggleSprint.toggle(),
@@ -580,8 +580,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Toggle Sneak",
-                "Agacharse automático",
-                "Te mantienes agachado automáticamente, sin mantener la tecla de agacharse. Asígnale un atajo en Controles si quieres.",
+                "Auto sneak",
+                "You stay sneaking automatically, without holding the sneak key. Assign a shortcut in Controls if you like.",
                 Category.PLAYER,
                 "\u2193",
                 () -> ToggleSneak.toggle(),
@@ -590,8 +590,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Screenshot",
-                "Captura de pantalla",
-                "Hace una captura del juego sin el menú y la guarda en la carpeta screenshots. También con la tecla Captura de pantalla (F9 por defecto, configurable en Controles).",
+                "Take a screenshot",
+                "Takes a screenshot of the game without the menu and saves it in the screenshots folder. Also available with the Screenshot key (F9 by default, configurable in Controls).",
                 Category.APPS,
                 "\u25A3",
                 () -> {
@@ -605,8 +605,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Screenshot Upload",
-                "Subir última captura",
-                "Envía tu última captura a un webhook de Discord tuyo. Pon la URL del webhook en el archivo altairclient-webhook.txt (carpeta de Minecraft). También con la tecla Subir captura (sin asignar, configurable en Controles).",
+                "Upload last screenshot",
+                "Sends your latest screenshot to your own Discord webhook. Put the webhook URL in the altairclient-webhook.txt file (Minecraft folder). Also available with the Upload screenshot key (unbound by default, configurable in Controls).",
                 Category.APPS,
                 "\u2191",
                 () -> {
@@ -628,8 +628,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Fullbright",
-                "Brillo máximo",
-                "Sube el brillo al máximo para ver en cuevas y de noche. Es el ajuste de brillo del propio juego: no añade efectos de poción ni envía nada al servidor. Si el servidor prohíbe el fullbright, no lo actives. Al desactivarlo vuelve tu brillo original.",
+                "Maximum brightness",
+                "Raises brightness to the maximum so you can see in caves and at night. It uses the game's own brightness setting: it adds no potion effects and sends nothing to the server. If the server forbids fullbright, don't enable it. When you turn it off, your original brightness returns.",
                 Category.RENDER,
                 "\u2600",
                 () -> FullbrightHandler.toggle(),
@@ -638,8 +638,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Dynamic Island",
-                "Música en la parte de arriba",
-                "Una píldora arriba al centro con la música que suena en tu PC. Con un menú abierto (p. ej. el chat) haz clic en ella, o usa su tecla, para expandirla: título, artista, barra de progreso, pausa y siguiente/anterior. Windows: lee los controles multimedia del sistema; Linux: necesita playerctl. Las notificaciones del PC (Discord, etc.) no se pueden leer desde Minecraft.",
+                "Music at the top",
+                "A pill at the top center showing the music playing on your PC. With a menu open (e.g. the chat) click it, or use its key, to expand it: title, artist, progress bar, pause and next/previous. Windows: reads the system media controls; Linux: needs playerctl. PC notifications (Discord, etc.) cannot be read from Minecraft.",
                 Category.APPS,
                 "\u266A",
                 () -> com.altairclient.modules.mods.DynamicIsland.toggle(),
@@ -648,21 +648,21 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Ultra Optimizer",
-                "Más FPS, menos carga",
-                "Baja lo que el juego tiene que dibujar: sin sombras de entidades ni oclusión ambiental, nubes simples (o sin nubes), menos partículas, menos distancia de dibujado y de entidades, y no se dibujan las criaturas que están muy por debajo de ti. Elige el nivel con - y +. Al apagarlo vuelven tus ajustes de vídeo.",
+                "More FPS, less load",
+                "Lowers what the game has to draw: no entity shadows or ambient occlusion, simple clouds (or none), fewer particles, shorter render and entity distance, and mobs far below you are not drawn. Choose the level with - and +. When you turn it off, your video settings return.",
                 Category.MISC,
                 "\u26A1",
                 () -> com.altairclient.modules.mods.UltraOptimizer.toggle(),
                 () -> com.altairclient.modules.mods.UltraOptimizer.isEnabled()
-        ).withSetting("Nivel", 0, com.altairclient.modules.mods.UltraOptimizer.LEVEL_NAMES.length - 1, 1,
+        ).withSetting("Level", 0, com.altairclient.modules.mods.UltraOptimizer.LEVEL_NAMES.length - 1, 1,
                 () -> com.altairclient.modules.mods.UltraOptimizer.getLevel(),
                 v -> com.altairclient.modules.mods.UltraOptimizer.setLevel(v))
                 .withSettingNames(com.altairclient.modules.mods.UltraOptimizer.LEVEL_NAMES));
 
         allModules.add(new ModuleEntry(
                 "Hide Boss Bar",
-                "Quita la barra de jefe",
-                "Oculta las barras de jefe de arriba de la pantalla (las del Wither, el Dragón o las de los servidores).",
+                "Remove the boss bar",
+                "Hides the boss bars at the top of the screen (Wither, Dragon or server bars).",
                 Category.RENDER,
                 "\u25AC",
                 () -> com.altairclient.modules.mods.HudHider.toggleBossBar(),
@@ -671,8 +671,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Hide Scoreboard",
-                "Quita la tabla lateral",
-                "Oculta la tabla de puntuación que sale a la derecha de la pantalla en muchos servidores.",
+                "Remove the sidebar",
+                "Hides the scoreboard shown on the right side of the screen on many servers.",
                 Category.RENDER,
                 "\u25A4",
                 () -> com.altairclient.modules.mods.HudHider.toggleScoreboard(),
@@ -681,20 +681,20 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Custom Nametags",
-                "Nombres con estilo",
-                "Cambia el aspecto de los nombres sobre jugadores y entidades: Altair, Dorado, Neón o Marcado. Solo lo ves tú, no cambia el nombre real de nadie. Elige el estilo con - y +. Tecla opcional en Controles.",
+                "Styled names",
+                "Changes the look of the names above players and entities: Altair, Gold, Neon or Marked. Only you see it; nobody's real name changes. Choose the style with - and +. Optional key in Controls.",
                 Category.RENDER,
                 "\u25C6",
                 () -> NametagHandler.toggle(),
                 () -> NametagHandler.isEnabled()
-        ).withSetting("Estilo", 0, NametagHandler.STYLE_COUNT - 1, 1,
+        ).withSetting("Style", 0, NametagHandler.STYLE_COUNT - 1, 1,
                 () -> NametagHandler.getStyle(), v -> NametagHandler.setStyle(v))
                 .withSettingNames(NametagHandler.STYLE_NAMES));
 
         allModules.add(new ModuleEntry(
                 "Better Chat Bubbles",
-                "Burbujas de chat",
-                "Lo que escribe un jugador aparece unos segundos sobre su cabeza, bajo su nombre. Solo lo ves tú. Tecla opcional en Controles.",
+                "Chat bubbles",
+                "What a player writes appears for a few seconds above their head, under their name. Only you see it. Optional key in Controls.",
                 Category.RENDER,
                 "\uD83D\uDCAC",
                 () -> ChatBubbleHandler.toggle(),
@@ -703,8 +703,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Damage Indicator",
-                "Daño en números",
-                "Cada vez que le quitas vida a una entidad, el daño sale en números que flotan y se desvanecen, estilo Fortnite. Mueve el punto de salida en el HUD Editor.",
+                "Damage numbers",
+                "Every time you damage an entity, the damage appears as floating numbers that fade away, Fortnite style. Move the spawn point in the HUD Editor.",
                 Category.COMBAT,
                 "\u2736",
                 () -> DamageIndicator.getInstance().toggle(),
@@ -713,8 +713,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Totem Counter",
-                "Tótems en inventario",
-                "Cuenta los tótems de la inmortalidad que llevas, incluida la mano secundaria. Se mueve en el HUD Editor.",
+                "Totems in inventory",
+                "Counts the totems of undying you carry, including the offhand. Movable in the HUD Editor.",
                 Category.COMBAT,
                 "\u2605",
                 () -> TotemCounter.getInstance().toggle(),
@@ -723,8 +723,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Arrow Counter",
-                "Flechas en inventario",
-                "Cuenta las flechas (normales, espectrales y con efecto) que llevas. Se mueve en el HUD Editor.",
+                "Arrows in inventory",
+                "Counts the arrows (normal, spectral and tipped) you carry. Movable in the HUD Editor.",
                 Category.COMBAT,
                 "\u27B3",
                 () -> ArrowCounter.getInstance().toggle(),
@@ -733,20 +733,20 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Memory Display",
-                "RAM usada",
-                "Muestra la RAM que usa el juego como porcentaje, como gráfico de los últimos segundos o las dos cosas. Elige el modo con - y +. Se mueve en el HUD Editor.",
+                "RAM used",
+                "Shows the RAM the game uses as a percentage, as a graph of the last few seconds, or both. Choose the mode with - and +. Movable in the HUD Editor.",
                 Category.WORLD,
                 "\u25A6",
                 () -> MemoryDisplay.getInstance().toggle(),
                 () -> MemoryDisplay.getInstance().isEnabled()
-        ).withSetting("Modo", 0, MemoryDisplay.MODE_NAMES.length - 1, 1,
+        ).withSetting("Mode", 0, MemoryDisplay.MODE_NAMES.length - 1, 1,
                 () -> MemoryDisplay.getInstance().getMode(), v -> MemoryDisplay.getInstance().setMode(v))
                 .withSettingNames(MemoryDisplay.MODE_NAMES));
 
         allModules.add(new ModuleEntry(
                 "Direction HUD",
-                "Brújula en pantalla",
-                "Muestra una brújula con las direcciones (N, E, S, W...) y los grados hacia donde miras. Se mueve en el HUD Editor.",
+                "On-screen compass",
+                "Shows a compass with the directions (N, E, S, W...) and the degrees you are facing. Movable in the HUD Editor.",
                 Category.WORLD,
                 "\u2736",
                 () -> DirectionHud.getInstance().toggle(),
@@ -756,8 +756,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Server Address",
-                "IP del servidor",
-                "Muestra la IP del servidor en el que estás jugando. Se mueve en el HUD Editor.",
+                "Server IP",
+                "Shows the IP of the server you are playing on. Movable in the HUD Editor.",
                 Category.WORLD,
                 "\u2301",
                 () -> ServerAddress.getInstance().toggle(),
@@ -766,32 +766,32 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Time Changer",
-                "Hora visual del día",
-                "Fija la hora del día solo en tu cliente (siempre de día, de noche...). No afecta al servidor ni a otros jugadores. Elige la hora con - y +.",
+                "Visual time of day",
+                "Sets the time of day on your client only (always day, always night...). It does not affect the server or other players. Choose the time with - and +.",
                 Category.RENDER,
                 "\u263C",
                 () -> TimeChanger.toggle(),
                 () -> TimeChanger.isEnabled()
-        ).withSetting("Hora", 0, TimeChanger.MODE_NAMES.length - 1, 1,
+        ).withSetting("Time", 0, TimeChanger.MODE_NAMES.length - 1, 1,
                 () -> TimeChanger.getMode(), v -> TimeChanger.setMode(v))
                 .withSettingNames(TimeChanger.MODE_NAMES));
 
         allModules.add(new ModuleEntry(
                 "Weather Changer",
-                "Clima visual",
-                "Cambia el clima solo en tu cliente: quita la lluvia y la nieve o fuerza lluvia y tormenta. No afecta al servidor. Elige el clima con - y +.",
+                "Visual weather",
+                "Changes the weather on your client only: removes rain and snow or forces rain and thunderstorms. It does not affect the server. Choose the weather with - and +.",
                 Category.RENDER,
                 "\u2602",
                 () -> WeatherChanger.toggle(),
                 () -> WeatherChanger.isEnabled()
-        ).withSetting("Clima", 0, WeatherChanger.MODE_NAMES.length - 1, 1,
+        ).withSetting("Weather", 0, WeatherChanger.MODE_NAMES.length - 1, 1,
                 () -> WeatherChanger.getMode(), v -> WeatherChanger.setMode(v))
                 .withSettingNames(WeatherChanger.MODE_NAMES));
 
         allModules.add(new ModuleEntry(
                 "Block Outline",
-                "Contorno de bloque",
-                "Cambia el color y el grosor del contorno del bloque que miras. Elige un color de la paleta, el Ciclo Altair (pasa por los colores de la paleta) o Arcoíris.",
+                "Block outline",
+                "Changes the color and thickness of the outline of the block you look at. Choose a palette color, the Altair Cycle (cycles through the palette colors) or Rainbow.",
                 Category.RENDER,
                 "\u25A2",
                 () -> BlockOutline.toggle(),
@@ -799,30 +799,30 @@ public final class AltairScreen extends Screen {
         ).withSetting("Color", 0, com.altairclient.client.Palette.MAX_INDEX, 1,
                 () -> BlockOutline.getColorIndex(), v -> BlockOutline.setColorIndex(v))
                 .withSettingNames(com.altairclient.client.Palette.NAMES)
-                .withExtra("Grosor", BlockOutline.MIN_WIDTH, BlockOutline.MAX_WIDTH, 1,
+                .withExtra("Thickness", BlockOutline.MIN_WIDTH, BlockOutline.MAX_WIDTH, 1,
                         () -> BlockOutline.getWidth(), v -> BlockOutline.setWidth(v), null));
 
         allModules.add(new ModuleEntry(
                 "Custom Crosshair",
-                "Mira para PvP",
-                "Sustituye la mira por un modelo para PvP: punto, cruz, cruz con hueco, círculo, T, X o esquinas. Elige estilo, color (paleta de Altair, ciclo o arcoíris) y tamaño.",
+                "PvP crosshair",
+                "Replaces the crosshair with a PvP design: dot, cross, gapped cross, circle, T, X or corners. Choose style, color (Altair palette, cycle or rainbow) and size.",
                 Category.COMBAT,
                 "\u2316",
                 () -> CustomCrosshair.toggle(),
                 () -> CustomCrosshair.isEnabled()
-        ).withSetting("Estilo", 0, CustomCrosshair.STYLE_NAMES.length - 1, 1,
+        ).withSetting("Style", 0, CustomCrosshair.STYLE_NAMES.length - 1, 1,
                 () -> CustomCrosshair.getStyle(), v -> CustomCrosshair.setStyle(v))
                 .withSettingNames(CustomCrosshair.STYLE_NAMES)
                 .withExtra("Color", 0, com.altairclient.client.Palette.MAX_INDEX, 1,
                         () -> CustomCrosshair.getColorIndex(), v -> CustomCrosshair.setColorIndex(v),
                         com.altairclient.client.Palette.NAMES)
-                .withExtra("Tamaño", CustomCrosshair.MIN_SIZE, CustomCrosshair.MAX_SIZE, 1,
+                .withExtra("Size", CustomCrosshair.MIN_SIZE, CustomCrosshair.MAX_SIZE, 1,
                         () -> CustomCrosshair.getSize(), v -> CustomCrosshair.setSize(v), null));
 
         allModules.add(new ModuleEntry(
                 "Auto GG",
-                "GG automático",
-                "Escribe gg en el chat cuando el servidor anuncia el final de una partida. Solo reacciona a mensajes del servidor y espera 15 s entre envíos. Algunos servidores no permiten mensajes automáticos: actívalo solo si lo admiten.",
+                "Automatic GG",
+                "Types gg in the chat when the server announces the end of a game. It only reacts to server messages and waits 15 s between sends. Some servers don't allow automatic messages: enable it only if yours does.",
                 Category.MISC,
                 "\u2713",
                 () -> AutoGG.toggle(),
@@ -831,8 +831,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Auto Respawn",
-                "Reaparecer solo",
-                "Al morir, pulsa Reaparecer por ti automáticamente.",
+                "Respawn on its own",
+                "When you die, clicks Respawn for you automatically.",
                 Category.PLAYER,
                 "\u21BB",
                 () -> AutoRespawn.toggle(),
@@ -841,8 +841,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "No Hurt Camera",
-                "Sin sacudida de cámara",
-                "Elimina el movimiento de cámara al recibir daño.",
+                "No camera shake",
+                "Removes the camera movement when you take damage.",
                 Category.RENDER,
                 "\u2715",
                 () -> NoHurtCamera.toggle(),
@@ -851,8 +851,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Chat Timestamps",
-                "Hora en el chat",
-                "Añade la hora [HH:mm] delante de cada mensaje del chat.",
+                "Time in chat",
+                "Adds the time [HH:mm] before every chat message.",
                 Category.MISC,
                 "\u231A",
                 () -> ChatTimestamps.toggle(),
@@ -861,8 +861,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Item Name",
-                "Nombre del objeto",
-                "Muestra el nombre del objeto que llevas en la mano, con el color de su rareza. Se mueve en el HUD Editor.",
+                "Item name",
+                "Shows the name of the item in your hand, in its rarity color. Movable in the HUD Editor.",
                 Category.PLAYER,
                 "\u270E",
                 () -> ItemNameDisplay.getInstance().toggle(),
@@ -871,8 +871,8 @@ public final class AltairScreen extends Screen {
 
         allModules.add(new ModuleEntry(
                 "Auto Tool",
-                "Herramienta adecuada",
-                "Al picar un bloque, selecciona de tu barra rápida la herramienta más rápida para ese bloque y al terminar vuelve al hueco que tenías.",
+                "Right tool",
+                "When you mine a block, picks the fastest tool for it from your hotbar and goes back to your previous slot when you finish.",
                 Category.PLAYER,
                 "\u26CF",
                 () -> AutoTool.toggle(),
@@ -882,8 +882,8 @@ public final class AltairScreen extends Screen {
         // ==================== WORLD ====================
         allModules.add(new ModuleEntry(
                 "World Info",
-                "Info del entorno",
-                "Panel con coordenadas XYZ, dirección cardinal con grados, ping al servidor y reloj en hora local del sistema.",
+                "Surroundings info",
+                "Panel with XYZ coordinates, cardinal direction with degrees, server ping and a clock with your system's local time.",
                 Category.WORLD,
                 "🌐",
                 () -> WorldInfo.getInstance().toggle(),
@@ -1125,10 +1125,10 @@ public final class AltairScreen extends Screen {
 
         String full = tex.isImplemented() || isLinkedToMod(tex)
                 ? tex.description
-                : tex.description + " Aún no tiene efecto en el juego: de momento solo está en el menú.";
+                : tex.description + " It has no effect in the game yet: for now it only exists in the menu.";
         ModuleEntry entry = new ModuleEntry(tex.name, tex.description, full, cat, cat.icon, toggle, enabled);
         if (TextureModules.ID_ALTAIR_SKY.equals(tex.id)) {
-            entry.withSetting("Estrellas", 0, AltairSky.DENSITY_NAMES.length - 1, 1,
+            entry.withSetting("Stars", 0, AltairSky.DENSITY_NAMES.length - 1, 1,
                     AltairSky::getDensity, AltairSky::setDensity)
                     .withSettingNames(AltairSky.DENSITY_NAMES);
         }
@@ -1159,11 +1159,11 @@ public final class AltairScreen extends Screen {
                 searchY + 6,
                 SEARCH_WIDTH - 32,
                 12,
-                Component.literal("Buscar módulos")
+                Component.literal("Search modules")
         );
         searchBox.setBordered(false);
         searchBox.setMaxLength(32);
-        searchBox.setHint(Component.literal("Buscar módulos..."));
+        searchBox.setHint(Component.literal("Search modules..."));
         searchBox.setValue(searchQuery);
         searchBox.setResponder(this::onSearchChanged);
         addWidget(searchBox);
@@ -1514,8 +1514,8 @@ public final class AltairScreen extends Screen {
             }
 
             boolean isModEnabled = selectedModule.isEnabled();
-            graphics.text(font, "Estado:", rightPanelX + 14, panelY + panelHeight - 62, MUTED, false);
-            graphics.text(font, isModEnabled ? "ACTIVADO" : "DESACTIVADO", rightPanelX + 60, panelY + panelHeight - 62, isModEnabled ? GREEN : MUTED, false);
+            graphics.text(font, "Status:", rightPanelX + 14, panelY + panelHeight - 62, MUTED, false);
+            graphics.text(font, isModEnabled ? "ENABLED" : "DISABLED", rightPanelX + 60, panelY + panelHeight - 62, isModEnabled ? GREEN : MUTED, false);
 
             int bigBtnX = rightPanelX + 14;
             int bigBtnY = panelY + panelHeight - 44;
@@ -1534,7 +1534,7 @@ public final class AltairScreen extends Screen {
             graphics.fill(bigBtnX, bigBtnY + 1, bigBtnX + 1, bigBtnY + bigBtnH, bigBorder);
             graphics.fill(bigBtnX + bigBtnW - 1, bigBtnY, bigBtnX + bigBtnW, bigBtnY + bigBtnH, bigBorder);
 
-            String statusLabel = isModEnabled ? "Activado" : "Desactivado";
+            String statusLabel = isModEnabled ? "Enabled" : "Disabled";
             graphics.text(font, statusLabel, bigBtnX + 10, bigBtnY + 9, WHITE, false);
 
             int pillX = bigBtnX + bigBtnW - 28;
@@ -1557,15 +1557,15 @@ public final class AltairScreen extends Screen {
         int gridWidth = rightPanelX - gridStartX - 14;
 
         boolean searching = !searchQuery.isEmpty();
-        String gridTitle = searching ? "Resultados" : currentCategory.displayName;
+        String gridTitle = searching ? "Results" : currentCategory.displayName;
         graphics.text(font, gridTitle, gridStartX, gridStartY, WHITE, false);
-        graphics.text(font, searching ? "\"" + searchQuery + "\"" : "Selecciona una tarjeta para ver sus opciones",
+        graphics.text(font, searching ? "\"" + searchQuery + "\"" : "Select a card to see its options",
                 gridStartX + font.width(gridTitle) + 10, gridStartY + 1, MUTED, false);
 
         List<ModuleEntry> categoryModules = getVisibleModules();
 
         if (searching && categoryModules.isEmpty()) {
-            graphics.text(font, "Sin resultados", gridStartX, gridStartY + 22, MUTED, false);
+            graphics.text(font, "No results", gridStartX, gridStartY + 22, MUTED, false);
         }
 
         int cols = 3;

@@ -72,7 +72,7 @@ public class HealthDisplay {
     public int getWidth() {
         Minecraft mc = Minecraft.getInstance();
         if (mc != null && mc.font != null) {
-            return mc.font.width("Jugador: ♥ 10.0 / 10.0") + 13;
+            return mc.font.width("Player: ♥ 10.0 / 10.0") + 13;
         }
         return 130;
     }
@@ -111,12 +111,12 @@ public class HealthDisplay {
         }
 
         Entity entity = shown;
-        String name = entity == mc.player ? "Tú" : entity.getName().getString();
+        String name = entity == mc.player ? "You" : entity.getName().getString();
         renderContent(graphics, name, shown.getHealth(), shown.getMaxHealth());
     }
 
     public void renderPreview(GuiGraphicsExtractor graphics) {
-        renderContent(graphics, "Jugador", 15.0F, 20.0F);
+        renderContent(graphics, "Player", 15.0F, 20.0F);
     }
 
     private final Anim.Counter healthAnim = new Anim.Counter(0.5F);

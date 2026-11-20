@@ -206,14 +206,14 @@ public final class BuildTextures {
             CompletableFuture.runAsync(() -> generate(vanilla, dir, enabled))
                     .whenComplete((v, error) -> mc.execute(() -> {
                         if (error != null) {
-                            LOGGER.error("[Altair] No se pudo generar el pack de Build Textures", error);
+                            LOGGER.error("[Altair] Could not generate the Build Textures pack", error);
                             busy = false;
                             return;
                         }
                         activate(mc);
                     }));
         } catch (RuntimeException e) {
-            LOGGER.error("[Altair] Error aplicando Build Textures", e);
+            LOGGER.error("[Altair] Error applying Build Textures", e);
             busy = false;
         }
     }
@@ -233,7 +233,7 @@ public final class BuildTextures {
             repo.reload();
             String id = findPackId(repo);
             if (id == null) {
-                LOGGER.warn("[Altair] El pack de Build Textures no aparece en la lista de packs");
+                LOGGER.warn("[Altair] The Build Textures pack is not in the pack list");
                 busy = false;
                 return;
             }
@@ -245,7 +245,7 @@ public final class BuildTextures {
             mc.options.updateResourcePacks(repo);
             mc.reloadResourcePacks().whenComplete((v, t) -> busy = false);
         } catch (RuntimeException e) {
-            LOGGER.error("[Altair] Error activando el pack de Build Textures", e);
+            LOGGER.error("[Altair] Error enabling the Build Textures pack", e);
             busy = false;
         }
     }
@@ -502,7 +502,7 @@ public final class BuildTextures {
             pack.add("max_format", max);
             root.add("pack", pack);
         }
-        root.getAsJsonObject("pack").addProperty("description", "Altair Build Textures (generado automáticamente)");
+        root.getAsJsonObject("pack").addProperty("description", "Altair Build Textures (auto-generated)");
         Files.writeString(dir.resolve("pack.mcmeta"), root.toString(), StandardCharsets.UTF_8);
     }
 

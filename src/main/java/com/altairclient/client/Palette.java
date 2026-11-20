@@ -4,7 +4,7 @@ package com.altairclient.client;
 public final class Palette {
 
     public static final String[] NAMES = {
-            "Morado", "Cian", "Verde", "Amarillo", "Rojo", "Oro", "Rosa", "Blanco", "Ciclo Altair", "Arcoíris"
+            "Purple", "Cyan", "Green", "Yellow", "Red", "Gold", "Pink", "White", "Altair Cycle", "Rainbow"
     };
 
     private static final int[] COLORS = {

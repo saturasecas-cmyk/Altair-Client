@@ -33,32 +33,32 @@ public final class ScreenshotUpload {
     public static void upload() {
         Minecraft mc = Minecraft.getInstance();
         if (uploading) {
-            say(mc, "Ya se está subiendo una captura.");
+            say(mc, "A screenshot is already being uploaded.");
             return;
         }
 
         File webhookFile = new File(mc.gameDirectory, CONFIG_FILE);
         String webhook = readWebhook(webhookFile);
         if (webhook == null) {
-            say(mc, "Pon la URL de tu webhook de Discord en " + CONFIG_FILE + " (carpeta de Minecraft) y vuelve a intentarlo.");
+            say(mc, "Put your Discord webhook URL in " + CONFIG_FILE + " (Minecraft folder) and try again.");
             return;
         }
 
         File[] shots = new File(mc.gameDirectory, "screenshots").listFiles((d, n) -> n.toLowerCase().endsWith(".png"));
         if (shots == null || shots.length == 0) {
-            say(mc, "No hay capturas en la carpeta screenshots.");
+            say(mc, "There are no screenshots in the screenshots folder.");
             return;
         }
         File latest = Arrays.stream(shots).max(Comparator.comparingLong(File::lastModified)).get();
 
         uploading = true;
-        say(mc, "Subiendo " + latest.getName() + "...");
+        say(mc, "Uploading " + latest.getName() + "...");
         Thread t = new Thread(() -> {
             String result;
             try {
                 result = send(webhook, latest);
             } catch (Exception e) {
-                result = "Error al subir la captura: " + e.getMessage();
+                result = "Failed to upload the screenshot: " + e.getMessage();
             }
             String msg = result;
             uploading = false;
@@ -101,7 +101,7 @@ public final class ScreenshotUpload {
                 .build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         int code = response.statusCode();
-        return code >= 200 && code < 300 ? "Captura subida a Discord." : "Discord rechazó la subida (código " + code + ").";
+        return code >= 200 && code < 300 ? "Screenshot uploaded to Discord." : "Discord rejected the upload (code " + code + ").";
     }
 
     private static void say(Minecraft mc, String text) {

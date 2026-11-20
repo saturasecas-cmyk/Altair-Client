@@ -134,16 +134,16 @@ public class WorldInfo {
         graphics.text(mc.font, pingText, curX + 30, curY + 28, WHITE, false);
 
         // Línea 4: Hora
-        graphics.text(mc.font, "Hora:", curX + 2, curY + 41, CYAN, false);
+        graphics.text(mc.font, "Time:", curX + 2, curY + 41, CYAN, false);
         graphics.text(mc.font, timeText, curX + 30, curY + 41, MUTED, false);
     }
 
     private String formatDirection(Direction dir) {
         return switch (dir) {
-            case NORTH -> "Norte (-Z)";
-            case SOUTH -> "Sur (+Z)";
-            case WEST -> "Oeste (-X)";
-            case EAST -> "Este (+X)";
+            case NORTH -> "North (-Z)";
+            case SOUTH -> "South (+Z)";
+            case WEST -> "West (-X)";
+            case EAST -> "East (+X)";
             default -> dir.getName();
         };
     }

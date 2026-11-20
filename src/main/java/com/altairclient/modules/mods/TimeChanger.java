@@ -17,7 +17,7 @@ import java.util.Optional;
  */
 public final class TimeChanger {
 
-    public static final String[] MODE_NAMES = {"Amanecer", "Día", "Atardecer", "Noche"};
+    public static final String[] MODE_NAMES = {"Sunrise", "Day", "Sunset", "Night"};
     private static final long[] TICKS = {23000L, 6000L, 12500L, 18000L};
     private static final long DAY = 24000L;
 

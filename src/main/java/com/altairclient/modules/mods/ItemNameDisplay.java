@@ -20,7 +20,7 @@ public class ItemNameDisplay extends HudElement {
 
     private Component currentName(Minecraft mc, boolean preview) {
         if (preview) {
-            return Component.literal("Espada de diamante");
+            return Component.literal("Diamond Sword");
         }
         ItemStack stack = mc.player.getMainHandItem();
         return stack.isEmpty() ? null : stack.getHoverName();
@@ -30,7 +30,7 @@ public class ItemNameDisplay extends HudElement {
     public int getWidth() {
         Minecraft mc = Minecraft.getInstance();
         if (mc != null && mc.font != null) {
-            return mc.font.width("Espada de diamante") + 13;
+            return mc.font.width("Diamond Sword") + 13;
         }
         return 110;
     }

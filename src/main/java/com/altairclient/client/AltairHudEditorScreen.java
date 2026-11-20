@@ -345,7 +345,7 @@ public final class AltairHudEditorScreen extends Screen {
         int titleWidth = font.width(title);
         graphics.text(font, title, (width - titleWidth) / 2, 6, WHITE, false);
 
-        String hint = "Arrastra los módulos activos para posicionarlos • ESC para guardar y volver";
+        String hint = "Drag the active modules to position them • ESC to save and go back";
         int hintWidth = font.width(hint);
         graphics.text(font, hint, (width - hintWidth) / 2, 17, MUTED, false);
 
@@ -381,7 +381,7 @@ public final class AltairHudEditorScreen extends Screen {
         }
 
         if (activeCount == 0) {
-            String empty = "No hay m\u00F3dulos de HUD activos. Act\u00EDvalos en el men\u00FA de m\u00F3dulos.";
+            String empty = "No HUD modules are active. Enable them in the modules menu.";
             graphics.text(font, empty, (width - font.width(empty)) / 2, height / 2 - 4, MUTED, false);
         }
     }

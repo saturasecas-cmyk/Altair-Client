@@ -24,7 +24,7 @@ public class TotemCounter extends HudElement {
     @Override
     public int getWidth() {
         Minecraft mc = Minecraft.getInstance();
-        return (mc != null && mc.font != null ? mc.font.width("T\u00F3tems: 00") : 60) + 13;
+        return (mc != null && mc.font != null ? mc.font.width("Totems: 00") : 60) + 13;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class TotemCounter extends HudElement {
     protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         int n = preview ? 3 : count(mc, false);
-        String label = "T\u00F3tems: ";
+        String label = "Totems: ";
         int shown = Math.round(counter.update(n, 14.0F));
         String value = String.valueOf(shown);
         box(graphics, Math.round(widthAnim.update(mc.font.width(label + value), 20.0F)), getHeight(), GOLD);

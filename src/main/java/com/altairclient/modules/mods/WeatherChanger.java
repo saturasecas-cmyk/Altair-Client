@@ -7,7 +7,7 @@ import net.minecraftforge.event.TickEvent;
 /** Weather Changer: cambia el clima solo en tu cliente (quitar lluvia o nieve, o forzar lluvia y tormenta). */
 public final class WeatherChanger {
 
-    public static final String[] MODE_NAMES = {"Despejado", "Lluvia", "Tormenta"};
+    public static final String[] MODE_NAMES = {"Clear", "Rain", "Thunderstorm"};
 
     private static boolean enabled = false;
     private static boolean registered = false;

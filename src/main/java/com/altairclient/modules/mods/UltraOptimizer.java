@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public final class UltraOptimizer {
 
-    public static final String[] LEVEL_NAMES = {"Equilibrado", "Agresivo", "Ultra"};
+    public static final String[] LEVEL_NAMES = {"Balanced", "Aggressive", "Ultra"};
 
     private static final int[] RENDER_DISTANCE_CAP = {10, 7, 5};
     private static final double[] ENTITY_DISTANCE = {1.0, 0.75, 0.5};

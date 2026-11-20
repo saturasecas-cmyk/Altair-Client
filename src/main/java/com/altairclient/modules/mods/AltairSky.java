@@ -18,7 +18,7 @@ public final class AltairSky {
     private static final int HORIZON_G = 0x16;
     private static final int HORIZON_B = 0x5E;
 
-    public static final String[] DENSITY_NAMES = {"Normal", "Densas", "Muy densas"};
+    public static final String[] DENSITY_NAMES = {"Normal", "Dense", "Very dense"};
     /** Capas extra de estrellas dibujadas encima de las de vanilla, por nivel de densidad. */
     private static final int[] EXTRA_LAYERS = {0, 2, 4};
 

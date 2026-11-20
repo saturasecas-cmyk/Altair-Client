@@ -193,116 +193,116 @@ public final class TextureModules {
 
     static {
         // ==================== 1. PvP Textures ====================
-        add(PVP, "Short Swords", "Espadas visualmente más cortas.");
-        addColor(PVP, "Low Fire", "Reduce la altura del fuego y lo pone morado del tono del cliente.", DEFAULT_COLOR);
-        addColor(PVP, "Transparent Fire", "Fuego semitransparente con la paleta del cliente.", DEFAULT_COLOR);
-        add(PVP, "Low Shield", "Reduce la presencia visual del escudo.");
-        addColor(PVP, "Low Particles", "Reduce la cantidad de partículas y las tiñe con la paleta del cliente.", DEFAULT_COLOR);
-        add(PVP, "Clear Water", "Agua más transparente.");
-        add(PVP, "Clear Lava", "Lava más transparente.");
-        add(PVP, "Low Armor Overlay", "Armadura menos invasiva visualmente.");
-        addColor(PVP, "Simple Hit Particles", "Partículas de impacto sencillas con la paleta del cliente.", DEFAULT_COLOR);
-        add(PVP, "Critical Particles", "Partículas de crítico discretas (menos y más sutiles).");
-        add(PVP, "Minimal Enchantment Glint", "Quita el brillo de los objetos encantados (el brillo no se puede teñir con la paleta).");
-        addColor(PVP, "Minimal Totem", "Tótem simplificado con la paleta del cliente.", DEFAULT_COLOR);
-        add(PVP, "Transparent Pumpkin Overlay", "Máscara de calabaza transparente.");
-        addColor(PVP, "Simple XP Bar", "Barra de experiencia minimalista con la paleta del cliente.", DEFAULT_COLOR);
-        addColor(PVP, "Minimal Hotbar", "Barra de objetos simplificada con la paleta del cliente.", DEFAULT_COLOR);
+        add(PVP, "Short Swords", "Visually shorter swords.");
+        addColor(PVP, "Low Fire", "Lowers the fire height and turns it the client's purple tone.", DEFAULT_COLOR);
+        addColor(PVP, "Transparent Fire", "Semi-transparent fire using the client palette.", DEFAULT_COLOR);
+        add(PVP, "Low Shield", "Reduces the visual presence of the shield.");
+        addColor(PVP, "Low Particles", "Reduces the number of particles and tints them with the client palette.", DEFAULT_COLOR);
+        add(PVP, "Clear Water", "More transparent water.");
+        add(PVP, "Clear Lava", "More transparent lava.");
+        add(PVP, "Low Armor Overlay", "Less visually intrusive armor.");
+        addColor(PVP, "Simple Hit Particles", "Simple hit particles using the client palette.", DEFAULT_COLOR);
+        add(PVP, "Critical Particles", "Subtle critical hit particles (fewer and less flashy).");
+        add(PVP, "Minimal Enchantment Glint", "Removes the glint from enchanted items (the glint can't be tinted with the palette).");
+        addColor(PVP, "Minimal Totem", "Simplified totem using the client palette.", DEFAULT_COLOR);
+        add(PVP, "Transparent Pumpkin Overlay", "Transparent pumpkin overlay.");
+        addColor(PVP, "Simple XP Bar", "Minimalist experience bar using the client palette.", DEFAULT_COLOR);
+        addColor(PVP, "Minimal Hotbar", "Simplified hotbar using the client palette.", DEFAULT_COLOR);
 
         // ==================== 2. Build Textures ====================
-        add(BUILD, "Clean Wool", "Lana con colores uniformes.");
-        add(BUILD, "Smooth Concrete", "Hormigón con apariencia simplificada.");
-        add(BUILD, "Clean Glass", "Cristal sin bordes molestos.");
-        add(BUILD, "Borderless Glass", "Cristales conectados visualmente.");
-        add(BUILD, "Clean Planks", "Madera con patrones sencillos.");
-        add(BUILD, "Simple Stone", "Piedra simplificada.");
-        add(BUILD, "Clean Bricks", "Ladrillos minimalistas.");
-        add(BUILD, "Smooth Quartz", "Cuarzo más uniforme.");
-        add(BUILD, "Clean Terracotta", "Terracota simplificada.");
-        add(BUILD, "Minimal Logs", "Troncos con menos detalles.");
-        add(BUILD, "Clean Leaves", "Hojas más limpias.");
-        add(BUILD, "Simple Doors", "Puertas sencillas.");
-        add(BUILD, "Simple Trapdoors", "Trampillas minimalistas.");
-        add(BUILD, "Clean Slabs", "Losas uniformes.");
-        add(BUILD, "Clean Stairs", "Escaleras simplificadas.");
-        add(BUILD, "Simple Bed Textures", "Camas sencillas.");
-        add(BUILD, "Clean Ores", "Minerales más claros.");
-        add(BUILD, "Minimal Redstone", "Redstone simplificada.");
-        add(BUILD, "Clean Buttons", "Botones simplificados.");
+        add(BUILD, "Clean Wool", "Wool with uniform colors.");
+        add(BUILD, "Smooth Concrete", "Concrete with a simplified look.");
+        add(BUILD, "Clean Glass", "Glass without annoying borders.");
+        add(BUILD, "Borderless Glass", "Visually connected glass.");
+        add(BUILD, "Clean Planks", "Wood with simple patterns.");
+        add(BUILD, "Simple Stone", "Simplified stone.");
+        add(BUILD, "Clean Bricks", "Minimalist bricks.");
+        add(BUILD, "Smooth Quartz", "More uniform quartz.");
+        add(BUILD, "Clean Terracotta", "Simplified terracotta.");
+        add(BUILD, "Minimal Logs", "Logs with fewer details.");
+        add(BUILD, "Clean Leaves", "Cleaner leaves.");
+        add(BUILD, "Simple Doors", "Simple doors.");
+        add(BUILD, "Simple Trapdoors", "Minimalist trapdoors.");
+        add(BUILD, "Clean Slabs", "Uniform slabs.");
+        add(BUILD, "Clean Stairs", "Simplified stairs.");
+        add(BUILD, "Simple Bed Textures", "Simple beds.");
+        add(BUILD, "Clean Ores", "Clearer ores.");
+        add(BUILD, "Minimal Redstone", "Simplified redstone.");
+        add(BUILD, "Clean Buttons", "Simplified buttons.");
 
         // ==================== 3. Breaking Effects ====================
-        add(BREAKING, "Clean Block Crack", "Grietas sencillas.");
-        add(BREAKING, "Thin Block Crack", "Grietas con líneas finas.");
-        add(BREAKING, "Dark Block Crack", "Grietas oscuras.");
-        add(BREAKING, "White Block Crack", "Grietas blancas.");
-        addColor(BREAKING, "Colored Block Crack", "Grietas de colores.", ALTAIR_CYCLE);
-        add(BREAKING, "Minimal Breaking Particles", "Menos partículas al romper.");
-        add(BREAKING, "Small Block Debris", "Fragmentos pequeños.");
-        add(BREAKING, "Reduced Block Dust", "Menos polvo.");
-        add(BREAKING, "Clean Breaking Overlay", "Superposición de rotura simplificada.");
-        add(BREAKING, "Smooth Breaking Animation", "Rotura más fluida.");
-        addColor(BREAKING, "Breaking Progress Bar", "Barra de progreso de rotura.", DEFAULT_COLOR);
-        add(BREAKING, "Static Block Crack", "Grietas sin animación adicional.");
+        add(BREAKING, "Clean Block Crack", "Simple cracks.");
+        add(BREAKING, "Thin Block Crack", "Cracks with thin lines.");
+        add(BREAKING, "Dark Block Crack", "Dark cracks.");
+        add(BREAKING, "White Block Crack", "White cracks.");
+        addColor(BREAKING, "Colored Block Crack", "Colored cracks.", ALTAIR_CYCLE);
+        add(BREAKING, "Minimal Breaking Particles", "Fewer particles when breaking.");
+        add(BREAKING, "Small Block Debris", "Small fragments.");
+        add(BREAKING, "Reduced Block Dust", "Less dust.");
+        add(BREAKING, "Clean Breaking Overlay", "Simplified breaking overlay.");
+        add(BREAKING, "Smooth Breaking Animation", "Smoother breaking.");
+        addColor(BREAKING, "Breaking Progress Bar", "Breaking progress bar.", DEFAULT_COLOR);
+        add(BREAKING, "Static Block Crack", "Cracks without extra animation.");
 
         // ==================== 4. Movement Effects ====================
-        add(MOVEMENT, "Sprint Particles", "Partículas al correr.");
-        add(MOVEMENT, "Jump Particles", "Partículas al saltar.");
-        add(MOVEMENT, "Landing Particles", "Partículas al aterrizar.");
-        add(MOVEMENT, "Footstep Particles", "Partículas en las pisadas.");
-        addColor(MOVEMENT, "Small Speed Lines", "Líneas de velocidad discretas.", DEFAULT_COLOR);
-        add(MOVEMENT, "Minimal Motion Blur", "Desenfoque ligero de movimiento.");
-        add(MOVEMENT, "Reduced Camera Bobbing", "Menos movimiento de cámara.");
-        add(MOVEMENT, "Water Splash", "Salpicaduras al entrar en agua.");
-        add(MOVEMENT, "Snow Footprints", "Huellas sobre nieve.");
-        add(MOVEMENT, "Sand Footprints", "Huellas sobre arena.");
+        add(MOVEMENT, "Sprint Particles", "Particles when sprinting.");
+        add(MOVEMENT, "Jump Particles", "Particles when jumping.");
+        add(MOVEMENT, "Landing Particles", "Particles when landing.");
+        add(MOVEMENT, "Footstep Particles", "Particles on footsteps.");
+        addColor(MOVEMENT, "Small Speed Lines", "Subtle speed lines.", DEFAULT_COLOR);
+        add(MOVEMENT, "Minimal Motion Blur", "Light motion blur.");
+        add(MOVEMENT, "Reduced Camera Bobbing", "Less camera movement.");
+        add(MOVEMENT, "Water Splash", "Splashes when entering water.");
+        add(MOVEMENT, "Snow Footprints", "Footprints on snow.");
+        add(MOVEMENT, "Sand Footprints", "Footprints on sand.");
 
         // ==================== 5. Walk Effects ====================
-        add(WALK, "Walk Dust", "Polvo al caminar.");
-        add(WALK, "Walk Smoke", "Pequeñas nubes de humo.");
-        addColor(WALK, "Walk Sparks", "Chispas discretas.", DEFAULT_COLOR);
-        add(WALK, "Walk Hearts", "Corazones al caminar.");
-        addColor(WALK, "Walk Stars", "Estrellas pequeñas.", DEFAULT_COLOR);
-        add(WALK, "Walk Snow", "Partículas de nieve.");
-        add(WALK, "Walk Leaves", "Hojas al caminar.");
-        add(WALK, "Walk Bubbles", "Burbujas pequeñas.");
-        add(WALK, "Walk Footprints", "Huellas temporales.");
-        addColor(WALK, "Walk Circles", "Círculos bajo los pies.", DEFAULT_COLOR);
-        add(WALK, "Walk Shadow", "Sombra al caminar.");
-        addColor(WALK, "Walk Aura", "Aura sutil.", DEFAULT_COLOR);
-        addColor(WALK, "Walk Altair", "Partículas con la paleta de Altair.", ALTAIR_CYCLE);
+        add(WALK, "Walk Dust", "Dust when walking.");
+        add(WALK, "Walk Smoke", "Small puffs of smoke.");
+        addColor(WALK, "Walk Sparks", "Subtle sparks.", DEFAULT_COLOR);
+        add(WALK, "Walk Hearts", "Hearts when walking.");
+        addColor(WALK, "Walk Stars", "Small stars.", DEFAULT_COLOR);
+        add(WALK, "Walk Snow", "Snow particles.");
+        add(WALK, "Walk Leaves", "Leaves when walking.");
+        add(WALK, "Walk Bubbles", "Small bubbles.");
+        add(WALK, "Walk Footprints", "Temporary footprints.");
+        addColor(WALK, "Walk Circles", "Circles under your feet.", DEFAULT_COLOR);
+        add(WALK, "Walk Shadow", "Shadow when walking.");
+        addColor(WALK, "Walk Aura", "Subtle aura.", DEFAULT_COLOR);
+        addColor(WALK, "Walk Altair", "Particles using the Altair palette.", ALTAIR_CYCLE);
 
         // ==================== 6. Movement Animations ====================
-        add(ANIMATIONS, "Smooth Walking", "Caminar más fluido.");
-        add(ANIMATIONS, "Smooth Sprinting", "Correr más suavemente.");
-        add(ANIMATIONS, "Smooth Sneaking", "Agacharse con una animación fluida.");
-        add(ANIMATIONS, "Smooth Jumping", "Animación de salto mejorada.");
-        add(ANIMATIONS, "Smooth Falling", "Caída más fluida.");
-        add(ANIMATIONS, "Smooth Landing", "Transición al aterrizar.");
-        add(ANIMATIONS, "Smooth Swimming", "Animación de natación.");
-        add(ANIMATIONS, "Smooth Climbing", "Animación al subir escaleras.");
-        add(ANIMATIONS, "Smooth Elytra", "Movimiento de élitros.");
-        add(ANIMATIONS, "Idle Animation", "Pequeños movimientos estando quieto.");
-        add(ANIMATIONS, "Hand Swing", "Movimiento de manos.");
-        add(ANIMATIONS, "Item Swing", "Animación al utilizar objetos.");
-        add(ANIMATIONS, "Eating Animation", "Animación al comer.");
-        add(ANIMATIONS, "Bow Animation", "Animación al tensar el arco.");
-        add(ANIMATIONS, "Rod Animation", "Animación de caña de pescar.");
-        add(ANIMATIONS, "Block Animation", "Animación al colocar bloques.");
-        add(ANIMATIONS, "Sneak Camera", "Movimiento de cámara al agacharse.");
-        add(ANIMATIONS, "Sprint Camera", "Movimiento de cámara al correr.");
+        add(ANIMATIONS, "Smooth Walking", "Smoother walking.");
+        add(ANIMATIONS, "Smooth Sprinting", "Smoother sprinting.");
+        add(ANIMATIONS, "Smooth Sneaking", "Sneaking with a smooth animation.");
+        add(ANIMATIONS, "Smooth Jumping", "Improved jump animation.");
+        add(ANIMATIONS, "Smooth Falling", "Smoother falling.");
+        add(ANIMATIONS, "Smooth Landing", "Transition when landing.");
+        add(ANIMATIONS, "Smooth Swimming", "Swimming animation.");
+        add(ANIMATIONS, "Smooth Climbing", "Climbing animation.");
+        add(ANIMATIONS, "Smooth Elytra", "Elytra movement.");
+        add(ANIMATIONS, "Idle Animation", "Small movements while standing still.");
+        add(ANIMATIONS, "Hand Swing", "Hand movement.");
+        add(ANIMATIONS, "Item Swing", "Animation when using items.");
+        add(ANIMATIONS, "Eating Animation", "Eating animation.");
+        add(ANIMATIONS, "Bow Animation", "Bow drawing animation.");
+        add(ANIMATIONS, "Rod Animation", "Fishing rod animation.");
+        add(ANIMATIONS, "Block Animation", "Block placing animation.");
+        add(ANIMATIONS, "Sneak Camera", "Camera movement when sneaking.");
+        add(ANIMATIONS, "Sprint Camera", "Camera movement when sprinting.");
 
         // ==================== 7. Extra Visual Effects ====================
-        add(EXTRA, "Minimal Nametag", "Nombre de jugador sencillo.");
-        add(EXTRA, "Minimal Tablist", "Lista de jugadores simplificada.");
-        add(EXTRA, "Clean Chat", "Chat más ordenado.");
-        add(EXTRA, "Clean Inventory", "Inventario más limpio.");
-        add(EXTRA, "Smooth GUI Transitions", "Transiciones suaves entre menús.");
-        addColor(EXTRA, "Hotbar Highlight", "Resaltado del objeto seleccionado.", DEFAULT_COLOR);
+        add(EXTRA, "Minimal Nametag", "Simple player nametag.");
+        add(EXTRA, "Minimal Tablist", "Simplified player list.");
+        add(EXTRA, "Clean Chat", "Tidier chat.");
+        add(EXTRA, "Clean Inventory", "Cleaner inventory.");
+        add(EXTRA, "Smooth GUI Transitions", "Smooth transitions between menus.");
+        addColor(EXTRA, "Hotbar Highlight", "Highlight of the selected item.", DEFAULT_COLOR);
 
         // ==================== 8. Misc ====================
-        add(MISC, "Altair Sky", "Cielo azul marino con horizonte morado y muchísimas estrellas, también de día. Solo en el Overworld. Sin sol ni luna: solo queda la luz que dan.");
-        addColor(MISC, "Altair Rain", "Cuando llueve, gotas y salpicaduras con la paleta del cliente, más gotas de colores a tu alrededor y chispas de luz de estrella en el suelo. Se suma a la lluvia normal.", 8);
-        add(MISC, "No Animation", "Reduce las animaciones: sin fuego en pantalla, sin animación del tótem, sin inclinación al recibir daño, sin distorsión de pantalla ni cambios de FOV, y el brillo de encantamiento quieto.");
+        add(MISC, "Altair Sky", "Navy blue sky with a purple horizon and tons of stars, even during the day. Overworld only. No sun or moon: only the light they give remains.");
+        addColor(MISC, "Altair Rain", "When it rains, drops and splashes use the client palette, plus colored drops around you and starlight sparks on the ground. It adds to the normal rain.", 8);
+        add(MISC, "No Animation", "Reduces animations: no fire on screen, no totem animation, no tilt when taking damage, no screen distortion or FOV changes, and a still enchantment glint.");
     }
 
     private TextureModules() {
@@ -323,7 +323,7 @@ public final class TextureModules {
                 return e;
             }
         }
-        throw new IllegalArgumentException("Textura desconocida: " + id);
+        throw new IllegalArgumentException("Unknown texture: " + id);
     }
 
     /** Todas las entradas, en el orden del menú. */

@@ -12,7 +12,7 @@ import java.util.List;
 public final class CustomCrosshair {
 
     public static final String[] STYLE_NAMES = {
-            "Punto", "Cruz", "Cruz con hueco", "Círculo", "Círculo + punto", "T", "X", "Esquinas"
+            "Dot", "Cross", "Gapped cross", "Circle", "Circle + dot", "T", "X", "Corners"
     };
 
     public static final int MIN_SIZE = 2;

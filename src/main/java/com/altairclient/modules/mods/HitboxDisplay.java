@@ -88,7 +88,7 @@ public class HitboxDisplay {
         } catch (Throwable t) {
             // Evita bloquear el juego si cambia la API interna: se desactiva y se avisa una vez.
             enabled = false;
-            AltairClient.LOGGER.error("Hitbox Display desactivado por un error al dibujar", t);
+            AltairClient.LOGGER.error("Hitbox Display disabled because of a rendering error", t);
         }
     }
 }

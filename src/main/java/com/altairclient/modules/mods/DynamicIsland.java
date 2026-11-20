@@ -187,7 +187,7 @@ public final class DynamicIsland {
                 }
             }
         } catch (IOException | RuntimeException e) {
-            AltairClient.LOGGER.warn("[Altair] Dynamic Island: no se pudo leer el reproductor del sistema", e);
+            AltairClient.LOGGER.warn("[Altair] Dynamic Island: could not read the system media player", e);
         } finally {
             hasMedia = false;
             running = false;
@@ -217,7 +217,7 @@ public final class DynamicIsland {
                 Thread.sleep(1000L);
             }
         } catch (IOException e) {
-            AltairClient.LOGGER.warn("[Altair] Dynamic Island: 'playerctl' no está instalado, no se puede leer la música", e);
+            AltairClient.LOGGER.warn("[Altair] Dynamic Island: 'playerctl' is not installed, cannot read the music", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -260,7 +260,7 @@ public final class DynamicIsland {
                 new ProcessBuilder("playerctl", arg).redirectError(ProcessBuilder.Redirect.DISCARD).start();
             }
         } catch (IOException e) {
-            AltairClient.LOGGER.warn("[Altair] Dynamic Island: no se pudo enviar el comando", e);
+            AltairClient.LOGGER.warn("[Altair] Dynamic Island: could not send the command", e);
         }
     }
 

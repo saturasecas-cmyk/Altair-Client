@@ -11,7 +11,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
  */
 public class MemoryDisplay extends HudElement {
 
-    public static final String[] MODE_NAMES = {"Porcentaje y gr\u00E1fico", "Solo gr\u00E1fico", "Solo porcentaje"};
+    public static final String[] MODE_NAMES = {"Percent and graph", "Graph only", "Percent only"};
 
     private static final MemoryDisplay INSTANCE = new MemoryDisplay();
 

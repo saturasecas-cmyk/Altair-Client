@@ -12,7 +12,7 @@ public class ServerAddress extends HudElement {
     private static final ServerAddress INSTANCE = new ServerAddress();
 
     private final Anim.Smooth widthAnim = new Anim.Smooth();
-    private String lastText = "IP: play.ejemplo.net";
+    private String lastText = "IP: play.example.net";
 
     private ServerAddress() {
         super(10, 130);
@@ -27,7 +27,7 @@ public class ServerAddress extends HudElement {
         if (server != null && server.ip != null && !server.ip.isEmpty()) {
             return "IP: " + server.ip;
         }
-        return mc.getSingleplayerServer() != null ? "IP: un jugador" : "IP: --";
+        return mc.getSingleplayerServer() != null ? "IP: singleplayer" : "IP: --";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ServerAddress extends HudElement {
     @Override
     protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
-        lastText = preview ? "IP: play.ejemplo.net" : currentText(mc);
+        lastText = preview ? "IP: play.example.net" : currentText(mc);
         int width = Math.round(widthAnim.update(mc.font.width(lastText), 20.0F));
         box(graphics, width, getHeight(), CYAN);
         graphics.text(mc.font, "IP: ", getX(), getY(), MUTED, false);

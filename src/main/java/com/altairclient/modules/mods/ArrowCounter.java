@@ -21,7 +21,7 @@ public class ArrowCounter extends HudElement {
     @Override
     public int getWidth() {
         Minecraft mc = Minecraft.getInstance();
-        return (mc != null && mc.font != null ? mc.font.width("Flechas: 0000") : 70) + 13;
+        return (mc != null && mc.font != null ? mc.font.width("Arrows: 0000") : 70) + 13;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ArrowCounter extends HudElement {
     protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         int n = preview ? 64 : TotemCounter.count(mc, true);
-        String label = "Flechas: ";
+        String label = "Arrows: ";
         int shown = Math.round(counter.update(n, 14.0F));
         String value = String.valueOf(shown);
         box(graphics, Math.round(widthAnim.update(mc.font.width(label + value), 20.0F)), getHeight(), CYAN);

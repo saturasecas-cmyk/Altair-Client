@@ -11,7 +11,7 @@ import net.minecraftforge.client.event.RenderNameTagEvent;
  */
 public final class NametagHandler {
 
-    public static final String[] STYLE_NAMES = {"Altair", "Dorado", "Neón", "Marcado"};
+    public static final String[] STYLE_NAMES = {"Altair", "Gold", "Neon", "Marked"};
     public static final int STYLE_COUNT = STYLE_NAMES.length;
 
     private static boolean enabled = false;

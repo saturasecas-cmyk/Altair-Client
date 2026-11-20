@@ -35,7 +35,7 @@ public class AltairClient {
 
     public AltairClient(FMLJavaModLoadingContext context) {
 
-        LOGGER.info("Inicializando Altair Client para Forge...");
+        LOGGER.info("Initializing Altair Client for Forge...");
 
         AltairKeyHandler.register();
         com.altairclient.client.AltairLink.register();
@@ -68,6 +68,6 @@ public class AltairClient {
     }
 
     private void onClientSetup(final FMLClientSetupEvent event) {
-        LOGGER.info("Configuración de cliente de Altair Client completada.");
+        LOGGER.info("Altair Client setup completed.");
     }
 }
