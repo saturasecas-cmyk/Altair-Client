@@ -1,0 +1,22 @@
+{
+  "key.category.altairclient.altair_client": "ALTAIR CLIENT",
+  "key.altairclient.zoom": "Zoom",
+  "key.altairclient.menu": "Open menu",
+  "key.altairclient.freecam": "Toggle Freecam",
+  "key.altairclient.toggle_sprint": "Toggle Sprint",
+  "key.altairclient.toggle_sneak": "Toggle Sneak",
+  "key.altairclient.perspective": "Perspective Mod (hold)",
+  "key.altairclient.screenshot": "Screenshot (Altair)",
+  "key.altairclient.screenshot_upload": "Upload last screenshot (Altair)",
+  "key.altairclient.island": "Dynamic Island: expand/close",
+  "key.altairclient.island_play": "Dynamic Island: pause/resume",
+  "key.altairclient.island_next": "Dynamic Island: next song",
+  "key.altairclient.island_prev": "Dynamic Island: previous song",
+  "key.altairclient.fullbright": "Toggle Fullbright",
+  "key.altairclient.nametags": "Toggle Custom Nametags",
+  "key.altairclient.chat_bubbles": "Toggle Chat Bubbles",
+  "key.altairclient.time_changer": "Toggle Time Changer",
+  "key.altairclient.weather_changer": "Toggle Weather Changer",
+  "key.altairclient.block_outline": "Toggle Block Outline",
+  "key.altairclient.crosshair": "Toggle Custom Crosshair"
+}
