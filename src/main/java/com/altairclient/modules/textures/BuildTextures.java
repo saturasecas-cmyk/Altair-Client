@@ -135,7 +135,7 @@ public final class BuildTextures {
         BLOCK_RULES.add(new Rule(B + "/simple-doors", n -> n.endsWith("_door_top") || n.endsWith("_door_bottom"), img -> soften(img, 0.4F)));
         BLOCK_RULES.add(new Rule(B + "/simple-trapdoors", n -> n.endsWith("_trapdoor"), img -> soften(img, 0.4F)));
         BLOCK_RULES.add(new Rule(B + "/clean-ores", n -> n.endsWith("_ore"), BuildTextures::brightenOre));
-        BLOCK_RULES.add(new Rule(B + "/minimal-redstone", REDSTONE::contains, img -> soften(img, 0.25F)));
+        BLOCK_RULES.add(new Rule(B + "/minimal-redstone", REDSTONE::contains, img -> soften(img, 0.8F)));
     }
 
     // ==================== Tick ====================
@@ -169,6 +169,10 @@ public final class BuildTextures {
         if (busy || !mc.isGameLoadFinished()) {
             return;
         }
+        // Los cambios se aplican al salir del menú de Altair (recargar recursos con el menú abierto lo congela).
+        if (mc.screen instanceof com.altairclient.client.AltairScreen) {
+            return;
+        }
         String sig = signature();
         if (sig.equals(appliedSignature)) {
             pendingSignature = null;
@@ -179,7 +183,7 @@ public final class BuildTextures {
             stableTicks = 0;
             return;
         }
-        if (++stableTicks < 20) {
+        if (++stableTicks < 3) {
             return;
         }
         apply(mc, sig);

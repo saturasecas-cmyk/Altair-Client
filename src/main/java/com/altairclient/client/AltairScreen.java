@@ -627,16 +627,6 @@ public final class AltairScreen extends Screen {
         ));
 
         allModules.add(new ModuleEntry(
-                "Freelook",
-                "Cámara libre 3ª persona",
-                "Pasa a tercera persona y el ratón mueve la cámara alrededor de tu jugador sin girarlo, como un orbitar libre. No vuela como Freecam: sigue anclada a ti. Actívalo aquí o con la tecla Freelook (B por defecto, configurable en Controles). Es visual y no envía giros al servidor.",
-                Category.RENDER,
-                "\u25CE",
-                () -> PerspectiveHandler.toggleLatched(),
-                () -> PerspectiveHandler.isLatched()
-        ));
-
-        allModules.add(new ModuleEntry(
                 "Fullbright",
                 "Brillo máximo",
                 "Sube el brillo al máximo para ver en cuevas y de noche. Es el ajuste de brillo del propio juego: no añade efectos de poción ni envía nada al servidor. Si el servidor prohíbe el fullbright, no lo actives. Al desactivarlo vuelve tu brillo original.",
@@ -761,7 +751,8 @@ public final class AltairScreen extends Screen {
                 "\u2736",
                 () -> DirectionHud.getInstance().toggle(),
                 () -> DirectionHud.getInstance().isEnabled()
-        ));
+        ).withSetting("Size %", 50, 200, 10,
+                () -> DirectionHud.getInstance().getSizePercent(), v -> DirectionHud.getInstance().setSizePercent(v)));
 
         allModules.add(new ModuleEntry(
                 "Server Address",
@@ -849,16 +840,6 @@ public final class AltairScreen extends Screen {
         ));
 
         allModules.add(new ModuleEntry(
-                "Clear Water",
-                "Agua sin niebla",
-                "Bajo el agua se ve lejos y sin el filtro azul de la pantalla. No cambia el aspecto de la superficie del agua.",
-                Category.RENDER,
-                "\u2248",
-                () -> ClearWater.toggle(),
-                () -> ClearWater.isEnabled()
-        ));
-
-        allModules.add(new ModuleEntry(
                 "No Hurt Camera",
                 "Sin sacudida de cámara",
                 "Elimina el movimiento de cámara al recibir daño.",
@@ -896,16 +877,6 @@ public final class AltairScreen extends Screen {
                 "\u26CF",
                 () -> AutoTool.toggle(),
                 () -> AutoTool.isEnabled()
-        ));
-
-        allModules.add(new ModuleEntry(
-                "Fast Game",
-                "Optimiza el juego",
-                "No dibuja las entidades tapadas por bloques, baja la distancia de entidades y quita sus sombras. Al desactivarlo vuelven tus ajustes.",
-                Category.MISC,
-                "\u26A1",
-                () -> FastGame.toggle(),
-                () -> FastGame.isEnabled()
         ));
 
         // ==================== WORLD ====================
@@ -988,6 +959,36 @@ public final class AltairScreen extends Screen {
         if (!allModules.isEmpty()) {
             selectedModule = allModules.get(0);
         }
+        restoreLastPage();
+    }
+
+    // La página donde estabas (carpeta, apartado y módulo) se recuerda al volver a abrir el menú.
+    private static Category lastCategory = null;
+    private static Section lastSection = null;
+    private static String lastModuleName = null;
+
+    private void restoreLastPage() {
+        if (lastCategory == null) {
+            return;
+        }
+        currentCategory = lastCategory;
+        openSection = lastSection != null ? lastSection : lastCategory.section;
+        List<ModuleEntry> mods = getModulesForCategory(currentCategory);
+        for (ModuleEntry m : mods) {
+            if (m.name.equals(lastModuleName)) {
+                selectedModule = m;
+                return;
+            }
+        }
+        if (!mods.isEmpty()) {
+            selectedModule = mods.get(0);
+        }
+    }
+
+    private void rememberPage() {
+        lastCategory = currentCategory;
+        lastSection = openSection;
+        lastModuleName = selectedModule != null ? selectedModule.name : null;
     }
 
     /** A card in Settings that runs an action when its switch is clicked and shows the result in its description. */
@@ -1003,7 +1004,7 @@ public final class AltairScreen extends Screen {
 
     /** Modules that are actions or momentary views, not states: they are never saved or restored. */
     private static final java.util.Set<String> NOT_SAVED = java.util.Set.of(
-            "Notes", "Freecam", "Smooth Zoom", "Perspective Mod", "Freelook", "Fullbright", "Screenshot", "Screenshot Upload");
+            "Notes", "Freecam", "Smooth Zoom", "Perspective Mod", "Fullbright", "Screenshot", "Screenshot Upload");
 
     private static AltairScreen model;
 
@@ -1093,6 +1094,7 @@ public final class AltairScreen extends Screen {
     @Override
     public void removed() {
         super.removed();
+        rememberPage();
         restoreBlur();
         AltairConfig.autoSaveNow();
     }
@@ -1119,11 +1121,6 @@ public final class AltairScreen extends Screen {
         } else if (TextureModules.ID_ALTAIR_SKY.equals(tex.id)) {
             toggle = AltairSky::toggle;
             enabled = AltairSky::isEnabled;
-        } else if (TextureModules.ID_MINIMAL_OUTLINE.equals(tex.id)) {
-            toggle = BlockOutline::toggle;
-            enabled = BlockOutline::isEnabled;
-            colorGet = BlockOutline::getColorIndex;
-            colorSet = BlockOutline::setColorIndex;
         }
 
         String full = tex.isImplemented() || isLinkedToMod(tex)

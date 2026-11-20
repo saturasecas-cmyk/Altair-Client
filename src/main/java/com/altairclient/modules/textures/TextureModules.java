@@ -28,7 +28,6 @@ public final class TextureModules {
     public static final String ID_ALTAIR_RAIN = MISC + "/altair-rain";
     public static final String ID_NO_ANIMATION = MISC + "/no-animation";
     public static final String ID_ALTAIR_SKY = MISC + "/altair-sky";
-    public static final String ID_MINIMAL_OUTLINE = BREAKING + "/minimal-block-outline";
 
     /** Texturas PvP que ya tienen efecto en el juego (el resto de entradas solo están en el menú por ahora). */
     private static final java.util.Set<String> IMPLEMENTED = new java.util.HashSet<>(java.util.Arrays.asList(
@@ -58,17 +57,13 @@ public final class TextureModules {
             BREAKING + "/small-block-debris",
             BREAKING + "/reduced-block-dust",
             BREAKING + "/breaking-progress-bar",
-            BREAKING + "/minimal-block-outline",
             MOVEMENT + "/sprint-particles",
             MOVEMENT + "/jump-particles",
             MOVEMENT + "/landing-particles",
-            MOVEMENT + "/running-dust",
-            MOVEMENT + "/walking-dust",
             MOVEMENT + "/footstep-particles",
             MOVEMENT + "/small-speed-lines",
             MOVEMENT + "/minimal-motion-blur",
             MOVEMENT + "/reduced-camera-bobbing",
-            MOVEMENT + "/landing-dust",
             MOVEMENT + "/water-splash",
             MOVEMENT + "/snow-footprints",
             MOVEMENT + "/sand-footprints",
@@ -103,7 +98,6 @@ public final class TextureModules {
             ANIMATIONS + "/block-animation",
             ANIMATIONS + "/sneak-camera",
             ANIMATIONS + "/sprint-camera",
-            PVP + "/clean-glass",
             MISC + "/altair-sky",
             MISC + "/altair-rain",
             MISC + "/no-animation",
@@ -133,10 +127,6 @@ public final class TextureModules {
             EXTRA + "/clean-inventory",
             EXTRA + "/smooth-gui-transitions",
             EXTRA + "/hotbar-highlight",
-            EXTRA + "/low-fire-overlay",
-            EXTRA + "/clear-pumpkin-overlay",
-            EXTRA + "/clean-scoreboard",
-            EXTRA + "/minimal-bossbar",
             "__none__"
     ));
 
@@ -216,7 +206,6 @@ public final class TextureModules {
         add(PVP, "Minimal Enchantment Glint", "Quita el brillo de los objetos encantados (el brillo no se puede teñir con la paleta).");
         addColor(PVP, "Minimal Totem", "Tótem simplificado con la paleta del cliente.", DEFAULT_COLOR);
         add(PVP, "Transparent Pumpkin Overlay", "Máscara de calabaza transparente.");
-        add(PVP, "Clean Glass", "Cristal más limpio.");
         addColor(PVP, "Simple XP Bar", "Barra de experiencia minimalista con la paleta del cliente.", DEFAULT_COLOR);
         addColor(PVP, "Minimal Hotbar", "Barra de objetos simplificada con la paleta del cliente.", DEFAULT_COLOR);
 
@@ -253,20 +242,16 @@ public final class TextureModules {
         add(BREAKING, "Clean Breaking Overlay", "Superposición de rotura simplificada.");
         add(BREAKING, "Smooth Breaking Animation", "Rotura más fluida.");
         addColor(BREAKING, "Breaking Progress Bar", "Barra de progreso de rotura.", DEFAULT_COLOR);
-        addColor(BREAKING, "Minimal Block Outline", "Contorno fino del bloque.", DEFAULT_COLOR);
         add(BREAKING, "Static Block Crack", "Grietas sin animación adicional.");
 
         // ==================== 4. Movement Effects ====================
         add(MOVEMENT, "Sprint Particles", "Partículas al correr.");
         add(MOVEMENT, "Jump Particles", "Partículas al saltar.");
         add(MOVEMENT, "Landing Particles", "Partículas al aterrizar.");
-        add(MOVEMENT, "Running Dust", "Polvo al correr.");
-        add(MOVEMENT, "Walking Dust", "Polvo al caminar.");
         add(MOVEMENT, "Footstep Particles", "Partículas en las pisadas.");
         addColor(MOVEMENT, "Small Speed Lines", "Líneas de velocidad discretas.", DEFAULT_COLOR);
         add(MOVEMENT, "Minimal Motion Blur", "Desenfoque ligero de movimiento.");
         add(MOVEMENT, "Reduced Camera Bobbing", "Menos movimiento de cámara.");
-        add(MOVEMENT, "Landing Dust", "Polvo al tocar el suelo.");
         add(MOVEMENT, "Water Splash", "Salpicaduras al entrar en agua.");
         add(MOVEMENT, "Snow Footprints", "Huellas sobre nieve.");
         add(MOVEMENT, "Sand Footprints", "Huellas sobre arena.");
@@ -308,26 +293,16 @@ public final class TextureModules {
 
         // ==================== 7. Extra Visual Effects ====================
         add(EXTRA, "Minimal Nametag", "Nombre de jugador sencillo.");
-        add(EXTRA, "Clean Scoreboard", "Marcador más limpio.");
         add(EXTRA, "Minimal Tablist", "Lista de jugadores simplificada.");
         add(EXTRA, "Clean Chat", "Chat más ordenado.");
-        add(EXTRA, "Minimal Bossbar", "Barra de jefe simplificada.");
         add(EXTRA, "Clean Inventory", "Inventario más limpio.");
         add(EXTRA, "Smooth GUI Transitions", "Transiciones suaves entre menús.");
         addColor(EXTRA, "Hotbar Highlight", "Resaltado del objeto seleccionado.", DEFAULT_COLOR);
-        add(EXTRA, "Low Fire Overlay", "Superposición de fuego reducida.");
-        add(EXTRA, "Clear Pumpkin Overlay", "Máscara de calabaza simplificada.");
 
         // ==================== 8. Misc ====================
         add(MISC, "Altair Sky", "Cielo azul marino con horizonte morado y muchísimas estrellas, también de día. Solo en el Overworld. Sin sol ni luna: solo queda la luz que dan.");
         addColor(MISC, "Altair Rain", "Cuando llueve, gotas y salpicaduras con la paleta del cliente, más gotas de colores a tu alrededor y chispas de luz de estrella en el suelo. Se suma a la lluvia normal.", 8);
         add(MISC, "No Animation", "Reduce las animaciones: sin fuego en pantalla, sin animación del tótem, sin inclinación al recibir daño, sin distorsión de pantalla ni cambios de FOV, y el brillo de encantamiento quieto.");
-    }
-
-    static {
-        byId(PVP + "/clean-glass").link = byId(BUILD + "/clean-glass");
-        byId(EXTRA + "/low-fire-overlay").link = byId(PVP + "/low-fire");
-        byId(EXTRA + "/clear-pumpkin-overlay").link = byId(PVP + "/transparent-pumpkin-overlay");
     }
 
     private TextureModules() {

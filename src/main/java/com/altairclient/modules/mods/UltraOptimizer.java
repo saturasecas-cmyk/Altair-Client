@@ -21,11 +21,13 @@ public final class UltraOptimizer {
 
     public static final String[] LEVEL_NAMES = {"Equilibrado", "Agresivo", "Ultra"};
 
-    private static final int[] RENDER_DISTANCE_CAP = {12, 8, 6};
+    private static final int[] RENDER_DISTANCE_CAP = {10, 7, 5};
     private static final double[] ENTITY_DISTANCE = {1.0, 0.75, 0.5};
     private static final int[] WEATHER_RADIUS = {5, 3, 2};
     /** Criaturas más abajo que esto (en bloques) respecto a tus ojos no se dibujan. */
     private static final double[] BELOW_CULL = {Double.MAX_VALUE, 24.0, 8.0};
+
+    private static final int[] SIM_DISTANCE_CAP = {10, 8, 6};
 
     private static boolean enabled = false;
     private static boolean registered = false;
@@ -64,6 +66,10 @@ public final class UltraOptimizer {
 
     public static void toggle() {
         enabled = !enabled;
+        // También oculta lo que queda tapado por bloques (antes era el módulo Fast Game).
+        if (FastGame.isEnabled() != enabled) {
+            FastGame.toggle();
+        }
     }
 
     public static int getLevel() {
@@ -113,6 +119,9 @@ public final class UltraOptimizer {
         apply("transparency", o.improvedTransparency(), on, false);
         apply("weather", o.weatherRadius(), on, WEATHER_RADIUS[level]);
         apply("entityDist", o.entityDistanceScaling(), on, ENTITY_DISTANCE[level]);
+        apply("vsync", o.enableVsync(), on, false);
+        apply("fps", o.framerateLimit(), on, 260);
+        capInt("simDist", o.simulationDistance(), on, SIM_DISTANCE_CAP[level]);
 
         // La distancia de dibujado solo se baja, nunca se sube por encima de la tuya
         OptionInstance<Integer> rd = o.renderDistance();
@@ -124,6 +133,18 @@ public final class UltraOptimizer {
             }
         } else if (SAVED.containsKey("renderDistance")) {
             rd.set((Integer) SAVED.remove("renderDistance"));
+        }
+    }
+
+    private static void capInt(String key, OptionInstance<Integer> option, boolean on, int cap) {
+        if (on) {
+            SAVED.putIfAbsent(key, option.get());
+            int target = Math.min((Integer) SAVED.get(key), cap);
+            if (option.get() != target) {
+                option.set(target);
+            }
+        } else if (SAVED.containsKey(key)) {
+            option.set((Integer) SAVED.remove(key));
         }
     }
 

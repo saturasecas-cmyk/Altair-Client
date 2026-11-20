@@ -32,12 +32,9 @@ public final class MovementTextures {
     private static final TextureModules.Entry SPRINT = e(TextureModules.MOVEMENT, "sprint-particles");
     private static final TextureModules.Entry JUMP = e(TextureModules.MOVEMENT, "jump-particles");
     private static final TextureModules.Entry LANDING = e(TextureModules.MOVEMENT, "landing-particles");
-    private static final TextureModules.Entry RUNNING_DUST = e(TextureModules.MOVEMENT, "running-dust");
-    private static final TextureModules.Entry WALKING_DUST = e(TextureModules.MOVEMENT, "walking-dust");
     private static final TextureModules.Entry FOOTSTEP = e(TextureModules.MOVEMENT, "footstep-particles");
     private static final TextureModules.Entry SPEED_LINES = e(TextureModules.MOVEMENT, "small-speed-lines");
     private static final TextureModules.Entry NO_BOBBING = e(TextureModules.MOVEMENT, "reduced-camera-bobbing");
-    private static final TextureModules.Entry LANDING_DUST = e(TextureModules.MOVEMENT, "landing-dust");
     private static final TextureModules.Entry WATER_SPLASH = e(TextureModules.MOVEMENT, "water-splash");
     private static final TextureModules.Entry SNOW_PRINTS = e(TextureModules.MOVEMENT, "snow-footprints");
     private static final TextureModules.Entry SAND_PRINTS = e(TextureModules.MOVEMENT, "sand-footprints");
@@ -128,15 +125,6 @@ public final class MovementTextures {
             if (LANDING.isEnabled()) {
                 ring(level, ParticleTypes.POOF, p, 0.4, 10, 0.05);
             }
-            if (LANDING_DUST.isEnabled() && solidBelow) {
-                ring(level, new BlockParticleOption(ParticleTypes.BLOCK, below), p, 0.35, 10, 0.06);
-            }
-        }
-        if (RUNNING_DUST.isEnabled() && p.isSprinting() && ground && solidBelow && tick % 2 == 0) {
-            spawn(level, new BlockParticleOption(ParticleTypes.BLOCK, below), p, 0.0, 0.05, rnd(0.05), 0.04, rnd(0.05));
-        }
-        if (WALKING_DUST.isEnabled() && moving && !p.isSprinting() && solidBelow && tick % 4 == 0) {
-            spawn(level, new BlockParticleOption(ParticleTypes.BLOCK, below), p, 0.0, 0.04, rnd(0.03), 0.02, rnd(0.03));
         }
         if (WATER_SPLASH.isEnabled() && splashed) {
             ring(level, ParticleTypes.SPLASH, p, 0.3, 10, 0.1);
@@ -396,7 +384,8 @@ public final class MovementTextures {
                             double dx, double dy, double dz) {
         PvpTextures.markSelfSpawn(true);
         try {
-            level.addParticle(options, x, y, z, dx, dy, dz);
+            // Directo al motor de partículas: no pasa por los límites de distancia y de ajustes de ClientLevel.
+            Minecraft.getInstance().particleEngine.createParticle(options, x, y, z, dx, dy, dz);
         } finally {
             PvpTextures.markSelfSpawn(false);
         }

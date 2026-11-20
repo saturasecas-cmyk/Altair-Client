@@ -16,8 +16,6 @@ public final class PerspectiveHandler {
 
     private static boolean enabled = true;
     private static boolean keyDown = false;
-    // Freelook: la cámara queda en tercera persona y libre hasta que se desactive.
-    private static boolean latched = false;
 
     private static boolean active = false;
     private static CameraType savedType = null;
@@ -36,14 +34,6 @@ public final class PerspectiveHandler {
 
     public static void toggle() {
         enabled = !enabled;
-    }
-
-    public static boolean isLatched() {
-        return latched;
-    }
-
-    public static void toggleLatched() {
-        latched = !latched;
     }
 
     public static void setKeyDown(boolean value) {
@@ -110,12 +100,7 @@ public final class PerspectiveHandler {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
 
-        // Con un menú abierto y Freelook fijo, la cámara se queda donde está.
-        if (active && latched && player != null && mc.gui.screen() != null) {
-            return true;
-        }
-
-        boolean wanted = player != null && enabled && (keyDown || latched)
+        boolean wanted = player != null && enabled && keyDown
                 && mc.gui.screen() == null && !FreecamHandler.isActive();
 
         if (!wanted) {

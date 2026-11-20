@@ -12,6 +12,17 @@ public class DirectionHud extends HudElement {
     private static final int WIDTH = 150;
     private static final String[] LABELS = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 
+    /** Tamaño en porcentaje (50 a 200). */
+    private int sizePercent = 100;
+
+    public int getSizePercent() {
+        return sizePercent;
+    }
+
+    public void setSizePercent(int v) {
+        sizePercent = Math.max(50, Math.min(200, v));
+    }
+
     private DirectionHud() {
         super(100, 40);
     }
@@ -22,16 +33,26 @@ public class DirectionHud extends HudElement {
 
     @Override
     public int getWidth() {
-        return WIDTH;
+        return Math.round(WIDTH * sizePercent / 100.0F);
     }
 
     @Override
     public int getHeight() {
-        return 28;
+        return Math.round(28 * sizePercent / 100.0F);
     }
 
     @Override
     protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
+        float k = sizePercent / 100.0F;
+        graphics.pose().pushMatrix();
+        graphics.pose().translate((float) getX(), (float) getY());
+        graphics.pose().scale(k, k);
+        graphics.pose().translate((float) -getX(), (float) -getY());
+        drawCompass(graphics, preview);
+        graphics.pose().popMatrix();
+    }
+
+    private void drawCompass(GuiGraphicsExtractor graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         float bearing;
         if (preview || mc.player == null) {
@@ -47,7 +68,7 @@ public class DirectionHud extends HudElement {
         int x = getX();
         int y = getY();
         int cx = x + WIDTH / 2;
-        box(graphics, WIDTH, getHeight(), CYAN);
+        plainBox(graphics, WIDTH, 28);
 
         for (int i = 0; i < LABELS.length; i++) {
             float delta = Mth.wrapDegrees(i * 45.0F - bearing);

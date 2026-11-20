@@ -21,6 +21,7 @@ public class MemoryDisplay extends HudElement {
     private static final long SAMPLE_MS = 500L;
 
     private final int[] history = new int[SAMPLES];
+    private final float[] shown = new float[SAMPLES];
     private long lastSample = 0L;
     private int mode = 0;
 
@@ -122,12 +123,31 @@ public class MemoryDisplay extends HudElement {
 
         if (showGraph()) {
             int baseY = y + GRAPH_H;
+            long now = System.currentTimeMillis();
+            // Desplazamiento suave entre muestras: el gráfico se desliza en vez de dar saltos.
+            float slide = preview ? 0.0F : Math.min(1.0F, (now - lastSample) / (float) SAMPLE_MS);
             graphics.fill(gx - 1, y - 1, gx + SAMPLES * COLUMN_W + 1, baseY + 1, 0x66000000);
+            graphics.fill(gx - 1, baseY, gx + SAMPLES * COLUMN_W + 1, baseY + 1, 0x3362C8FF);
             for (int i = 0; i < SAMPLES; i++) {
-                int h = Math.max(1, data[i] * GRAPH_H / 100);
-                int cx = gx + i * COLUMN_W;
-                graphics.fill(cx, baseY - h, cx + COLUMN_W, baseY, colorFor(data[i]) | 0xFF000000);
+                // La altura mostrada persigue a la real (animación de subida y bajada)
+                shown[i] += (data[i] - shown[i]) * 0.2F;
+                int cx = gx + i * COLUMN_W - Math.round(slide * COLUMN_W);
+                if (cx < gx - COLUMN_W) {
+                    continue;
+                }
+                int left = Math.max(cx, gx);
+                int h = Math.max(1, Math.round(shown[i] * GRAPH_H / 100.0F));
+                int rgb = colorFor(Math.round(shown[i])) & 0x00FFFFFF;
+                int fade = 70 + 150 * i / SAMPLES;
+                graphics.fill(left, baseY - h, cx + COLUMN_W, baseY, (fade << 24) | rgb);
+                graphics.fill(left, baseY - h, cx + COLUMN_W, baseY - h + 1, 0xFF000000 | rgb);
             }
+            // Punto que late al final de la línea
+            float pulse = 0.5F + 0.5F * (float) Math.sin(now / 220.0);
+            int lastH = Math.max(1, Math.round(shown[SAMPLES - 1] * GRAPH_H / 100.0F));
+            int dotX = gx + SAMPLES * COLUMN_W - 2;
+            int dotA = 120 + Math.round(135 * pulse);
+            graphics.fill(dotX - 1, baseY - lastH - 1, dotX + 2, baseY - lastH + 2, (dotA << 24) | 0xFFFFFF);
         }
     }
 }

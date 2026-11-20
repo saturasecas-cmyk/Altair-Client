@@ -16,8 +16,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.ViewportEvent;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -58,25 +56,23 @@ public final class PvpTextures {
     public static void register() {
         if (!registered) {
             registered = true;
-            RenderHandEvent.BUS.addListener(PvpTextures::onHand);
             RenderBlockScreenEffectEvent.BUS.addListener(PvpTextures::onScreenEffect);
-            ViewportEvent.RenderFog.BUS.addListener(PvpTextures::onFog);
         }
     }
 
     // ==================== Short Swords / Low Shield ====================
 
-    /** Encoge el objeto de la mano antes de dibujarlo. No cancela el evento. */
-    private static boolean onHand(RenderHandEvent event) {
-        ItemStack stack = event.getItemStack();
+    /**
+     * Lo llama ItemInHandRendererMixin justo antes de dibujar el objeto de la mano (primera persona):
+     * encoge espadas y escudos en su propio origen, así que siempre se ve.
+     */
+    public static void transformHeldItem(ItemStack stack, boolean leftHand, com.mojang.blaze3d.vertex.PoseStack poseStack) {
         if (SHORT_SWORDS.isEnabled() && stack.is(ItemTags.SWORDS)) {
-            event.getPoseStack().scale(0.72F, 0.72F, 0.72F);
+            poseStack.scale(0.7F, 0.7F, 0.7F);
         } else if (LOW_SHIELD.isEnabled() && stack.is(Items.SHIELD)) {
-            float side = event.getHand() == InteractionHand.MAIN_HAND ? 1.0F : -1.0F;
-            event.getPoseStack().translate(0.08F * side, -0.14F, 0.0F);
-            event.getPoseStack().scale(0.7F, 0.7F, 0.7F);
+            poseStack.translate(leftHand ? -0.06F : 0.06F, -0.12F, 0.0F);
+            poseStack.scale(0.7F, 0.7F, 0.7F);
         }
-        return false;
     }
 
     // ==================== Fuego (Low Fire / Transparent Fire) ====================
@@ -131,12 +127,8 @@ public final class PvpTextures {
 
     // ==================== Lava (Clear Lava) ====================
 
-    private static boolean onFog(ViewportEvent.RenderFog event) {
-        if (CLEAR_LAVA.isEnabled() && String.valueOf(event.getType()).contains("LAVA")) {
-            event.setFarPlaneDistance(96.0F);
-            event.setNearPlaneDistance(-8.0F);
-        }
-        return false;
+    public static boolean isClearLava() {
+        return CLEAR_LAVA.isEnabled();
     }
 
     // ==================== Calabaza (Transparent Pumpkin Overlay) ====================
@@ -187,6 +179,23 @@ public final class PvpTextures {
         }
         if (LOW_PARTICLES.isEnabled() && type != ParticleTypes.TOTEM_OF_UNDYING) {
             return ThreadLocalRandom.current().nextFloat() < 0.5F;
+        }
+        return false;
+    }
+
+    /** Partículas de rotura (TerrainParticle) creadas directamente por el juego: menos y más pequeñas. */
+    public static boolean shouldDropBreakParticle(Particle particle) {
+        if (selfSpawning || !(particle instanceof net.minecraft.client.particle.TerrainParticle)) {
+            return false;
+        }
+        if (MIN_BREAK_PARTICLES.isEnabled() && ThreadLocalRandom.current().nextFloat() < 0.6F) {
+            return true;
+        }
+        if (REDUCED_DUST.isEnabled() && ThreadLocalRandom.current().nextFloat() < 0.4F) {
+            return true;
+        }
+        if (SMALL_DEBRIS.isEnabled()) {
+            particle.scale(0.5F);
         }
         return false;
     }

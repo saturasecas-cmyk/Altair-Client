@@ -99,12 +99,27 @@ public final class TitleBackground {
         }
     }
 
+    /** Lo llama TitleScreenMixin: dibuja el fondo de Altair en el título. Devuelve false si está desactivado. */
+    public static boolean drawForTitle(GuiGraphicsExtractor g, int w, int h) {
+        if (!AltairConfig.isTitleBackground()) {
+            return false;
+        }
+        titleDrawnFrame = System.nanoTime();
+        draw(g, w, h);
+        return true;
+    }
+
+    private static long titleDrawnFrame = 0L;
+
     private static void onBackground(ScreenEvent.BackgroundRendered event) {
         if (!AltairConfig.isTitleBackground()) {
             return;
         }
         Screen screen = event.getScreen();
         if (screen instanceof TitleScreen) {
+            if (System.nanoTime() - titleDrawnFrame < 100_000_000L) {
+                return; // ya dibujado por TitleScreenMixin
+            }
             draw(event.getGuiGraphics(), screen.width, screen.height);
         } else if (Minecraft.getInstance().level == null
                 && (screen instanceof OptionsScreen || screen instanceof SelectWorldScreen
@@ -117,7 +132,7 @@ public final class TitleBackground {
     public static void drawStarfield(GuiGraphicsExtractor g, int w, int h, float alpha) {
         float t = (System.currentTimeMillis() % 3_600_000L) / 1000.0F;
 
-        final int cell = 6;
+        final int cell = 12;
         for (int y = 0; y < h; y += cell) {
             float v = y / (float) h;
             for (int x = 0; x < w; x += cell) {
@@ -131,7 +146,7 @@ public final class TitleBackground {
             }
         }
 
-        for (int i = 0; i < FIELD_STARS; i++) {
+        for (int i = 0; i < FIELD_STARS; i += 2) {
             float speed = LAYER_SPEED[FLAYER[i]];
             float px = FX[i] * w - t * speed;
             float py = FY[i] * h + t * speed * 0.25F;
@@ -174,14 +189,14 @@ public final class TitleBackground {
         final int top = 0xFF040821;
         final int mid = 0xFF0B1244;
         final int low = 0xFF2B1A5E;
-        for (int y = 0; y < h; y += 3) {
+        for (int y = 0; y < h; y += 8) {
             float f = y / (float) h;
             int c = f < 0.6F ? Anim.mix(top, mid, f / 0.6F) : Anim.mix(mid, low, (f - 0.6F) / 0.4F);
-            g.fill(0, y, w, Math.min(h, y + 3), c);
+            g.fill(0, y, w, Math.min(h, y + 8), c);
         }
 
         // Estrellas pequeñas con parpadeo
-        for (int i = 0; i < STARS; i++) {
+        for (int i = 0; i < STARS; i += 2) {
             float tw = 0.5F + 0.5F * (float) Math.sin(t * SSPEED[i] + SPHASE[i]);
             int x = (int) (SX[i] * w);
             int y = (int) (SY[i] * h);
@@ -235,7 +250,7 @@ public final class TitleBackground {
     }
 
     private static void drawTerrain(GuiGraphicsExtractor g, int w, int h) {
-        final int cell = 4;
+        final int cell = 8;
         // Colinas del fondo, con árboles
         for (int x = 0; x < w; x += cell) {
             float hy = h * (0.80F + 0.04F * (float) Math.sin(x * 0.011F) + 0.025F * (float) Math.sin(x * 0.027F + 1.3F));

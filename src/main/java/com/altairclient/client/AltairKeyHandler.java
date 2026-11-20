@@ -99,14 +99,6 @@ public final class AltairKeyHandler {
             CATEGORY
     );
 
-    // Activa/desactiva Freelook: cámara libre en tercera persona (el mismo estado que la tarjeta del menú).
-    public static final KeyMapping FREELOOK_KEY = new KeyMapping(
-            "key.altairclient.freelook",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_B,
-            CATEGORY
-    );
-
     // Dynamic Island: expandir/cerrar, pausa y siguiente canción.
     public static final KeyMapping ISLAND_KEY = new KeyMapping(
             "key.altairclient.island",
@@ -210,7 +202,6 @@ public final class AltairKeyHandler {
         event.register(PERSPECTIVE_KEY);
         event.register(SCREENSHOT_KEY);
         event.register(SCREENSHOT_UPLOAD_KEY);
-        event.register(FREELOOK_KEY);
         event.register(ISLAND_KEY);
         event.register(ISLAND_PLAY_KEY);
         event.register(ISLAND_NEXT_KEY);
@@ -308,10 +299,6 @@ public final class AltairKeyHandler {
         }
         while (ISLAND_PREV_KEY.consumeClick()) {
             DynamicIsland.previous();
-        }
-
-        while (FREELOOK_KEY.consumeClick()) {
-            PerspectiveHandler.toggleLatched();
         }
 
         while (NAMETAGS_KEY.consumeClick()) {

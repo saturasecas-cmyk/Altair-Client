@@ -19,8 +19,6 @@ public final class HudTextures {
     private static final TextureModules.Entry SIMPLE_XP = TextureModules.byId(TextureModules.PVP + "/simple-xp-bar");
     private static final TextureModules.Entry MIN_HOTBAR = TextureModules.byId(TextureModules.PVP + "/minimal-hotbar");
     private static final TextureModules.Entry HIGHLIGHT = TextureModules.byId(TextureModules.EXTRA + "/hotbar-highlight");
-    private static final TextureModules.Entry CLEAN_SCOREBOARD = TextureModules.byId(TextureModules.EXTRA + "/clean-scoreboard");
-    private static final TextureModules.Entry MIN_BOSSBAR = TextureModules.byId(TextureModules.EXTRA + "/minimal-bossbar");
     private static final TextureModules.Entry BREAK_BAR = TextureModules.byId(TextureModules.BREAKING + "/breaking-progress-bar");
 
     private HudTextures() {
@@ -36,11 +34,11 @@ public final class HudTextures {
     }
 
     public static boolean hideScoreboard() {
-        return CLEAN_SCOREBOARD.isEnabled() || com.altairclient.modules.mods.HudHider.isScoreboardHidden();
+        return com.altairclient.modules.mods.HudHider.isScoreboardHidden();
     }
 
     public static boolean hideBossBar() {
-        return MIN_BOSSBAR.isEnabled() || com.altairclient.modules.mods.HudHider.isBossBarHidden();
+        return com.altairclient.modules.mods.HudHider.isBossBarHidden();
     }
 
     /** Dibuja todo lo de este apartado en el HUD. */

@@ -14,6 +14,8 @@ import net.minecraftforge.event.TickEvent;
 public final class NoAnimation {
 
     private static boolean enabled = false;
+    private static Double savedDarkness;
+    private static Boolean savedBob;
     private static boolean registered = false;
 
     private static Double savedTilt = null;
@@ -48,6 +50,19 @@ public final class NoAnimation {
         savedScreenEffect = apply(mc.options.screenEffectScale(), savedScreenEffect);
         savedFov = apply(mc.options.fovEffectScale(), savedFov);
         savedGlint = apply(mc.options.glintSpeed(), savedGlint);
+        savedDarkness = apply(mc.options.darknessEffectScale(), savedDarkness);
+        // Sin balanceo de cámara al caminar
+        if (enabled) {
+            if (savedBob == null) {
+                savedBob = mc.options.bobView().get();
+            }
+            if (mc.options.bobView().get()) {
+                mc.options.bobView().set(false);
+            }
+        } else if (savedBob != null) {
+            mc.options.bobView().set(savedBob);
+            savedBob = null;
+        }
     }
 
     /** Pone la opción a 0 guardando su valor, o lo restaura si ya no está activo. Devuelve el valor guardado. */

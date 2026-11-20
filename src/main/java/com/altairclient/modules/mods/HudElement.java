@@ -80,4 +80,9 @@ public abstract class HudElement {
         graphics.fill(x - 5, y - 4, x + width + 8, y + height - 4, BACKGROUND);
         graphics.fill(x - 5, y - 4, x - 2, y + height - 4, accent);
     }
+
+    /** Solo el fondo, sin la barra de color. */
+    protected void plainBox(GuiGraphicsExtractor graphics, int width, int height) {
+        graphics.fill(x - 5, y - 4, x + width + 8, y + height - 4, BACKGROUND);
+    }
 }
