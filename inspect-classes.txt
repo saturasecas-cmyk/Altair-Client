@@ -1,0 +1,6 @@
+net.minecraft.client.renderer.ItemInHandRenderer
+net.minecraft.client.gui.Gui
+net.minecraft.client.renderer.fog.FogRenderer
+net.minecraft.client.particle.ParticleEngine
+net.minecraft.client.renderer.LevelRenderer
+net.minecraft.client.multiplayer.MultiPlayerGameMode
