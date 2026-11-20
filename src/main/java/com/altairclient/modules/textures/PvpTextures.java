@@ -69,6 +69,8 @@ public final class PvpTextures {
     public static void transformHeldItem(ItemStack stack, boolean leftHand, com.mojang.blaze3d.vertex.PoseStack poseStack) {
         if (SHORT_SWORDS.isEnabled() && stack.is(ItemTags.SWORDS)) {
             poseStack.scale(0.7F, 0.7F, 0.7F);
+        } else if (MINIMAL_TOTEM.isEnabled() && stack.is(Items.TOTEM_OF_UNDYING)) {
+            poseStack.scale(0.6F, 0.6F, 0.6F);
         } else if (LOW_SHIELD.isEnabled() && stack.is(Items.SHIELD)) {
             poseStack.translate(leftHand ? -0.06F : 0.06F, -0.12F, 0.0F);
             poseStack.scale(0.7F, 0.7F, 0.7F);
