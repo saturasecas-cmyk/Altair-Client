@@ -1,0 +1,7 @@
+net.minecraft.client.gui.screens.TitleScreen
+net.minecraft.client.gui.components.LogoRenderer
+net.minecraft.client.gui.screens.Screen
+net.minecraft.client.renderer.PanoramaRenderer
+net.minecraft.client.gui.GuiGraphicsExtractor
+net.minecraft.client.renderer.ScreenEffectRenderer
+net.minecraft.client.renderer.ItemInHandRenderer
