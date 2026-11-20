@@ -388,11 +388,27 @@ public final class AltairScreen extends Screen {
     }
     private int maxScroll = 0;
 
+    private final java.util.HashMap<String, String> fitCache = new java.util.HashMap<>();
+
+    /** Recorta el texto con "..." si no cabe; el resultado se guarda para no medir fuentes en cada frame. */
     private String fit(String text, int maxWidth) {
-        if (maxWidth <= 0 || font.width(text) <= maxWidth) {
+        if (maxWidth <= 0) {
             return text;
         }
-        return font.plainSubstrByWidth(text, Math.max(0, maxWidth - font.width("\u2026"))) + "\u2026";
+        String key = maxWidth + "|" + text;
+        String cached = fitCache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        String result = text;
+        if (font.width(text) > maxWidth) {
+            result = font.plainSubstrByWidth(text, Math.max(0, maxWidth - font.width("\u2026"))) + "\u2026";
+        }
+        if (fitCache.size() > 1024) {
+            fitCache.clear();
+        }
+        fitCache.put(key, result);
+        return result;
     }
 
     // Barra de búsqueda del header
@@ -1610,13 +1626,10 @@ public final class AltairScreen extends Screen {
             cy += Math.round((1.0F - enter) * 14.0F) - Math.round(hovA * 2.0F);
 
             int cardBgColor = Anim.mix(Anim.mix(CARD_BG, CARD_HOVER_BG, hovA), CARD_SELECTED_BG, selA);
-            graphics.fill(cx, cy, cx + cardWidth, cy + cardHeight, cardBgColor);
-
+            // Borde + fondo en 2 rectángulos (antes 5)
             int borderCol = Anim.mix(Anim.mix(BORDER_COLOR, CYAN, hovA), PURPLE, selA);
-            graphics.fill(cx, cy, cx + cardWidth, cy + 1, borderCol);
-            graphics.fill(cx, cy + cardHeight - 1, cx + cardWidth, cy + cardHeight, borderCol);
-            graphics.fill(cx, cy, cx + 1, cy + cardHeight, borderCol);
-            graphics.fill(cx + cardWidth - 1, cy, cx + cardWidth, cy + cardHeight, borderCol);
+            graphics.fill(cx, cy, cx + cardWidth, cy + cardHeight, borderCol);
+            graphics.fill(cx + 1, cy + 1, cx + cardWidth - 1, cy + cardHeight - 1, cardBgColor);
 
             // Textos con 8 px de margen a cada lado, recortados si no caben
             int textWidth = cardWidth - 16;
