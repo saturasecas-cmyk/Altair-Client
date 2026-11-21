@@ -11,6 +11,8 @@
     "LogoRendererMixin",
     "CameraMixin",
     "HudMixin",
+    "EffectsInInventoryMixin",
+    "LightmapMixin",
     "ItemInHandRendererMixin",
     "LavaFogMixin",
     "WaterFogMixin",

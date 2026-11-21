@@ -70,6 +70,10 @@ public final class ExtraTextures {
 
     // ==================== Clean Inventory ====================
 
+    public static boolean isCleanInventory() {
+        return INVENTORY.isEnabled();
+    }
+
     /** Oculta el panel de efectos de poción del inventario. */
     private static boolean onInventoryEffects(ScreenEvent.RenderInventoryMobEffects event) {
         return INVENTORY.isEnabled();

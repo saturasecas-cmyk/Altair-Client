@@ -105,7 +105,6 @@ public final class AltairScreen extends Screen {
         TEX_BREAKING(Section.TEXTURES, TextureModules.BREAKING, "Breaking Effects", "Breaking", "⛏"),
         TEX_MOVEMENT(Section.TEXTURES, TextureModules.MOVEMENT, "Movement Effects", "Movement", "»"),
         TEX_WALK(Section.TEXTURES, TextureModules.WALK, "Walk Effects", "Walk", "✧"),
-        TEX_ANIMATIONS(Section.TEXTURES, TextureModules.ANIMATIONS, "Movement Animations", "Animations", "↻"),
         TEX_EXTRA(Section.TEXTURES, TextureModules.EXTRA, "Extra Visual Effects", "Extra", "✦"),
         TEX_MISC(Section.TEXTURES, TextureModules.MISC, "Misc", "Misc", "✺"),
 

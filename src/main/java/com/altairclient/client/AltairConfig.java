@@ -29,6 +29,10 @@ public final class AltairConfig {
 
     private static boolean registered = false;
     private static boolean loaded = false;
+
+    public static boolean isLoaded() {
+        return loaded;
+    }
     private static boolean autoSave = true;
     private static boolean titleBackground = true;
     private static boolean tabFleur = true;
@@ -149,6 +153,7 @@ public final class AltairConfig {
             JsonObject root = new JsonObject();
             root.addProperty("version", 1);
             root.addProperty("autoSave", autoSave);
+            root.addProperty("settingsVersion", 2);
             root.addProperty("titleBackground", titleBackground);
             root.addProperty("tabFleur", tabFleur);
             root.addProperty("roundButtons", roundButtons);
@@ -188,6 +193,12 @@ public final class AltairConfig {
             if (title != null && title.isJsonPrimitive()) {
                 titleBackground = title.getAsBoolean();
             }
+            JsonElement ver = root.get("settingsVersion");
+            if (ver == null || !ver.isJsonPrimitive() || ver.getAsInt() < 2) {
+                // Versiones anteriores: el fondo y los botones de Altair pasan a ir activados por defecto
+                titleBackground = true;
+                roundButtons = true;
+            }
             JsonElement lc = root.get("linkChat");
             if (lc != null && lc.isJsonPrimitive()) {
                 linkChat = lc.getAsBoolean();
@@ -195,6 +206,10 @@ public final class AltairConfig {
             JsonElement rb = root.get("roundButtons");
             if (rb != null && rb.isJsonPrimitive()) {
                 roundButtons = rb.getAsBoolean();
+            }
+            if (ver == null || !ver.isJsonPrimitive() || ver.getAsInt() < 2) {
+                titleBackground = true;
+                roundButtons = true;
             }
             JsonElement fleur = root.get("tabFleur");
             if (fleur != null && fleur.isJsonPrimitive()) {

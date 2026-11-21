@@ -53,4 +53,12 @@ public abstract class HudMixin {
             ci.cancel();
         }
     }
+
+    /** La barra de experiencia de vanilla se oculta cuando Simple XP Bar dibuja la del cliente. */
+    @Inject(method = "extractContextualInfoState", at = @At("HEAD"), cancellable = true, require = 0)
+    private void altair$xp(GuiGraphicsExtractor g, DeltaTracker dt, CallbackInfo ci) {
+        if (HudTextures.hideVanillaXpBar()) {
+            ci.cancel();
+        }
+    }
 }

@@ -19,7 +19,6 @@ public final class TextureModules {
     public static final String BREAKING = "breaking";
     public static final String MOVEMENT = "movement";
     public static final String WALK = "walk";
-    public static final String ANIMATIONS = "animations";
     public static final String EXTRA = "extra";
     public static final String MISC = "misc";
 
@@ -80,24 +79,6 @@ public final class TextureModules {
             WALK + "/walk-shadow",
             WALK + "/walk-aura",
             WALK + "/walk-altair",
-            ANIMATIONS + "/smooth-walking",
-            ANIMATIONS + "/smooth-sprinting",
-            ANIMATIONS + "/smooth-sneaking",
-            ANIMATIONS + "/smooth-jumping",
-            ANIMATIONS + "/smooth-falling",
-            ANIMATIONS + "/smooth-landing",
-            ANIMATIONS + "/smooth-swimming",
-            ANIMATIONS + "/smooth-climbing",
-            ANIMATIONS + "/smooth-elytra",
-            ANIMATIONS + "/idle-animation",
-            ANIMATIONS + "/hand-swing",
-            ANIMATIONS + "/item-swing",
-            ANIMATIONS + "/eating-animation",
-            ANIMATIONS + "/bow-animation",
-            ANIMATIONS + "/rod-animation",
-            ANIMATIONS + "/block-animation",
-            ANIMATIONS + "/sneak-camera",
-            ANIMATIONS + "/sprint-camera",
             MISC + "/altair-sky",
             MISC + "/altair-rain",
             MISC + "/no-animation",
@@ -271,25 +252,6 @@ public final class TextureModules {
         addColor(WALK, "Walk Aura", "Subtle aura.", DEFAULT_COLOR);
         addColor(WALK, "Walk Altair", "Particles using the Altair palette.", ALTAIR_CYCLE);
 
-        // ==================== 6. Movement Animations ====================
-        add(ANIMATIONS, "Smooth Walking", "Smoother walking.");
-        add(ANIMATIONS, "Smooth Sprinting", "Smoother sprinting.");
-        add(ANIMATIONS, "Smooth Sneaking", "Sneaking with a smooth animation.");
-        add(ANIMATIONS, "Smooth Jumping", "Improved jump animation.");
-        add(ANIMATIONS, "Smooth Falling", "Smoother falling.");
-        add(ANIMATIONS, "Smooth Landing", "Transition when landing.");
-        add(ANIMATIONS, "Smooth Swimming", "Swimming animation.");
-        add(ANIMATIONS, "Smooth Climbing", "Climbing animation.");
-        add(ANIMATIONS, "Smooth Elytra", "Elytra movement.");
-        add(ANIMATIONS, "Idle Animation", "Small movements while standing still.");
-        add(ANIMATIONS, "Hand Swing", "Hand movement.");
-        add(ANIMATIONS, "Item Swing", "Animation when using items.");
-        add(ANIMATIONS, "Eating Animation", "Eating animation.");
-        add(ANIMATIONS, "Bow Animation", "Bow drawing animation.");
-        add(ANIMATIONS, "Rod Animation", "Fishing rod animation.");
-        add(ANIMATIONS, "Block Animation", "Block placing animation.");
-        add(ANIMATIONS, "Sneak Camera", "Camera movement when sneaking.");
-        add(ANIMATIONS, "Sprint Camera", "Camera movement when sprinting.");
 
         // ==================== 7. Extra Visual Effects ====================
         add(EXTRA, "Minimal Nametag", "Simple player nametag.");

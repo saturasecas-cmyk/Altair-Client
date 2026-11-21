@@ -177,10 +177,14 @@ public final class MovementTextures {
         if (WALK_SHADOW.isEnabled() && moving && tick % 3 == 0) {
             dustRing(level, p, 0x0C0C12, 0.2, 5, 0.9F);
         }
-        if (WALK_AURA.isEnabled() && tick % 2 == 0) {
-            double a = ThreadLocalRandom.current().nextDouble() * Math.PI * 2.0;
-            ParticleOptions dust = new DustParticleOptions(Palette.color(WALK_AURA.getColorIndex()) & 0xFFFFFF, 0.5F);
-            raw(level, dust, p.getX() + Math.cos(a) * 0.55, p.getY() + rnd(0.0, 1.7), p.getZ() + Math.sin(a) * 0.55, 0.0, 0.02, 0.0);
+        if (WALK_AURA.isEnabled()) {
+            // Aura intensa: varias partículas grandes por tick, en dos anillos y subiendo
+            ParticleOptions dust = new DustParticleOptions(Palette.color(WALK_AURA.getColorIndex()) & 0xFFFFFF, 1.3F);
+            for (int k = 0; k < 4; k++) {
+                double a = ThreadLocalRandom.current().nextDouble() * Math.PI * 2.0;
+                double r = 0.45 + ThreadLocalRandom.current().nextDouble() * 0.35;
+                raw(level, dust, p.getX() + Math.cos(a) * r, p.getY() + rnd(0.0, 2.0), p.getZ() + Math.sin(a) * r, 0.0, 0.04, 0.0);
+            }
         }
 
         prevOnGround = ground;
@@ -306,20 +310,20 @@ public final class MovementTextures {
         int w = mc.getWindow().getGuiScaledWidth();
         int h = mc.getWindow().getGuiScaledHeight();
         if (blurX > 1.0F) {
-            int width = Math.round(Math.min(blurX, 20.0F) * w / 160.0F);
+            int width = Math.round(Math.min(blurX, 30.0F) * w / 70.0F);
             int steps = Math.max(1, width / 2);
             for (int i = 0; i < steps; i++) {
-                int a = Math.round(34.0F * (1.0F - i / (float) steps) * Math.min(1.0F, blurX / 12.0F));
+                int a = Math.round(120.0F * (1.0F - i / (float) steps) * Math.min(1.0F, blurX / 6.0F));
                 int c = (a << 24) | 0xFFFFFF;
                 graphics.fill(i * 2, 0, i * 2 + 2, h, c);
                 graphics.fill(w - i * 2 - 2, 0, w - i * 2, h, c);
             }
         }
         if (blurY > 1.0F) {
-            int height = Math.round(Math.min(blurY, 20.0F) * h / 160.0F);
+            int height = Math.round(Math.min(blurY, 30.0F) * h / 70.0F);
             int steps = Math.max(1, height / 2);
             for (int i = 0; i < steps; i++) {
-                int a = Math.round(34.0F * (1.0F - i / (float) steps) * Math.min(1.0F, blurY / 12.0F));
+                int a = Math.round(120.0F * (1.0F - i / (float) steps) * Math.min(1.0F, blurY / 6.0F));
                 int c = (a << 24) | 0xFFFFFF;
                 graphics.fill(0, i * 2, w, i * 2 + 2, c);
                 graphics.fill(0, h - i * 2 - 2, w, h - i * 2, c);

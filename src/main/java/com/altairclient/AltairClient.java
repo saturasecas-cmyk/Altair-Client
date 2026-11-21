@@ -12,7 +12,6 @@ import com.altairclient.modules.mods.ChatTimestamps;
 import com.altairclient.modules.mods.ClearWater;
 import com.altairclient.modules.mods.FastGame;
 import com.altairclient.modules.mods.NametagHandler;
-import com.altairclient.modules.textures.AnimationTextures;
 import com.altairclient.modules.textures.BuildTextures;
 import com.altairclient.modules.textures.ExtraTextures;
 import com.altairclient.modules.textures.MovementTextures;
@@ -40,6 +39,7 @@ public class AltairClient {
         AltairKeyHandler.register();
         com.altairclient.client.AltairLink.register();
         com.altairclient.client.AltairConfig.register();
+        com.altairclient.client.SafetyGuard.register();
         com.altairclient.client.TitleBackground.register();
         AltairHud.register();
         NametagHandler.register();
@@ -53,7 +53,6 @@ public class AltairClient {
         WeatherChanger.register();
         PvpTextures.register();
         MovementTextures.register();
-        AnimationTextures.register();
         BuildTextures.register();
         com.altairclient.modules.mods.AltairSky.register();
         com.altairclient.modules.mods.NoAnimation.register();
