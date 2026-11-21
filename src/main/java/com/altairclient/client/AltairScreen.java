@@ -1750,8 +1750,7 @@ public final class AltairScreen extends Screen {
         int gearBtnY = panelY + 10;
         int gearBtnX = panelX + panelWidth - 24 - 56;
         if (mx >= gearBtnX - 3 && mx <= gearBtnX + 13 && my >= gearBtnY - 1 && my <= gearBtnY + 15) {
-            openSection = Section.SETTINGS;
-            selectCategory(Category.SET_GENERAL);
+            // El engranaje ya no hace nada (se queda como decoración)
             return true;
         }
 
