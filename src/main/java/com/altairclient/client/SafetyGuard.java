@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.event.TickEvent;
+import net.minecraftforge.event.TickEvent;
 
 /**
  * Protección contra módulos que rompen el juego: si la sesión anterior terminó en crash,
