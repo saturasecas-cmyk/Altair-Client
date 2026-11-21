@@ -961,6 +961,11 @@ public final class AltairScreen extends Screen {
                 AltairConfig::toggleLinkChat,
                 AltairConfig::isLinkChat
         ));
+        allModules.add(new ModuleEntry("Configs", "Save and load your setups",
+                "Opens a small window where you can save your current modules and settings under a name and apply them again later. Press + Add, type a name and Save. Each saved config has Apply and Delete. Click the switch to open it.",
+                Category.SET_GENERAL, "\u2699",
+                () -> net.minecraft.client.Minecraft.getInstance().gui.setScreen(new ConfigsScreen(this)),
+                () -> false));
         allModules.add(actionEntry("Save now", "Write the config file",
                 "Saves everything right now to config/altairclient-modules.json in your Minecraft folder. Click the switch to run it.",
                 AltairConfig::saveNow));
