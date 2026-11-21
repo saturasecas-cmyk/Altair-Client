@@ -1,0 +1,4 @@
+net.minecraft.client.gui.screens.inventory.EffectsInInventory
+net.minecraft.client.renderer.LightTexture
+net.minecraft.client.renderer.state.LightmapRenderState
+net.minecraft.client.renderer.LightmapRenderStateExtractor
