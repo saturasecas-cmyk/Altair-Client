@@ -1,6 +1,6 @@
 # Changelog
 
-## Beta 2 (2026-11-21)
+## 2.2 - Beta 2 (2026-11-21)
 Fixed / changed after the second round of beta testing:
 - Walk Aura: much more intense (4 larger particles per tick).
 - Minimal Motion Blur: much stronger, wider edge streaks.
