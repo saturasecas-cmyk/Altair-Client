@@ -22,5 +22,5 @@ jobs:
         echo "::endgroup::"
         d() { echo "::group::$1"; javap -p -cp "$CP" $1 2>&1 | grep -E "$2" || true; echo "::endgroup::"; }
         d2() { echo "::group::$1"; javap -p -s -cp "$CP" $1 2>&1 | grep -A1 -E "$2" || true; echo "::endgroup::"; }
-        d net.minecraft.client.renderer.LevelRenderer 'allChanged|reload|setBlocksDirty|setSectionDirty|needsUpdate|refresh|dirty|Dirty|rebuild' || true
-        d net.minecraft.client.Minecraft 'reloadResourcePacks|levelRenderer' || true
+        d net.minecraft.client.renderer.LevelRenderer 'public ' || true
+        d net.minecraft.client.Minecraft 'levelRenderer|reloadResourcePacks|lazyReload' || true
