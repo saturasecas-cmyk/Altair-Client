@@ -20,5 +20,5 @@ jobs:
         echo "::group::classes"
         for j in $JARS; do unzip -l $j 2>/dev/null | awk '{print $4}' | grep -E '\.class$' | grep -E 'world/inventory/(Click|Container[A-Z][a-z]*Input|ContainerInput)|world/inventory/[A-Za-z]*Click' | head -20; done
         echo "::endgroup::"
-        d() { echo "::group::$1"; javap -p -cp "$CP" $1 2>&1 | grep -E 'handleInventoryMouseClick|getSelectedSlot|setSelectedSlot|getPickRadius|fallDistance|resetFallDistance|noPhysics|StatusOnly|tickRateManager|setTickRate|useItemOn|attack\(|getEquipmentSlotForItem|setFlyingSpeed|noCollision|getConnection|keyShift|keyJump|keySprint|hitResult|class |enum '; echo "::endgroup::"; }
-        for c in net.minecraft.client.multiplayer.MultiPlayerGameMode net.minecraft.world.entity.player.Inventory net.minecraft.world.entity.Entity net.minecraft.world.entity.LivingEntity net.minecraft.client.player.LocalPlayer 'net.minecraft.network.protocol.game.ServerboundMovePlayerPacket$StatusOnly' net.minecraft.client.multiplayer.ClientLevel net.minecraft.world.entity.player.Abilities net.minecraft.client.Minecraft net.minecraft.client.Options; do d $c; done
+        d() { echo "::group::$1"; javap -p -cp "$CP" $1 2>&1 | grep -E 'handle|Container|PICKUP|SWAP|QUICK|class '; echo "::endgroup::"; }
+        for c in net.minecraft.client.multiplayer.MultiPlayerGameMode net.minecraft.world.inventory.ContainerInput; do d $c; done
