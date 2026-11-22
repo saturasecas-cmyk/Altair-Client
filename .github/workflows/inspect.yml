@@ -22,5 +22,17 @@ jobs:
         echo "::endgroup::"
         d() { echo "::group::$1"; javap -p -cp "$CP" $1 2>&1 | grep -E "$2" || true; echo "::endgroup::"; }
         d2() { echo "::group::$1"; javap -p -s -cp "$CP" $1 2>&1 | grep -A1 -E "$2" || true; echo "::endgroup::"; }
-        d net.minecraft.client.renderer.LevelRenderer 'public ' || true
-        d net.minecraft.client.Minecraft 'levelRenderer|reloadResourcePacks|lazyReload' || true
+        d2() { echo "::group::$1"; javap -p -s -cp "$CP" $1 2>&1 | grep -A1 -E "$2" || true; echo "::endgroup::"; }
+        d2 net.minecraft.client.renderer.LevelRenderer 'invalidateCompiledGeometry'
+        d net.minecraft.client.Camera 'public ' || true
+        d net.minecraft.client.renderer.GameRenderer 'getFov|getProjectionMatrix|getMainCamera|Matrix|fov|Fov' || true
+        d 'net.minecraft.client.DeltaTracker$Timer' 'float|long|double|int |advance|tick' || true
+        d net.minecraft.client.DeltaTracker 'public ' || true
+        d net.minecraft.world.TickRateManager 'public |private ' || true
+        d net.minecraft.client.Minecraft 'DeltaTracker|timer|deltaTracker' || true
+        d net.minecraft.client.multiplayer.MultiPlayerGameMode 'releaseUsingItem|interact|useItem' || true
+        d net.minecraft.client.player.LocalPlayer 'respawn|isUsingItem|setSprinting|input' || true
+        d net.minecraft.world.entity.LivingEntity 'isBlocking|getUseItemRemainingTicks|getTicksUsingItem|getUsedItemHand' || true
+        d net.minecraft.world.level.block.RespawnAnchorBlock 'CHARGE' || true
+        d net.minecraft.world.item.Items 'MACE|COBWEB|RESPAWN_ANCHOR|GLOWSTONE |FLINT_AND_STEEL|SHIELD|SHEARS' || true
+        d net.minecraft.world.item.ItemStack 'getDestroySpeed|isCorrectToolForDrops' || true
