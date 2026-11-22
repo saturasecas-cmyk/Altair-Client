@@ -315,22 +315,22 @@ public final class MovementTextures {
         int h = mc.getWindow().getGuiScaledHeight();
         if (blurX > 1.0F) {
             int width = Math.round(Math.min(blurX, 30.0F) * w / 70.0F);
-            int steps = Math.max(1, width / 2);
+            int steps = Math.max(1, width / 4);
             for (int i = 0; i < steps; i++) {
                 int a = Math.round(120.0F * (1.0F - i / (float) steps) * Math.min(1.0F, blurX / 6.0F));
                 int c = (a << 24) | 0xFFFFFF;
-                graphics.fill(i * 2, 0, i * 2 + 2, h, c);
-                graphics.fill(w - i * 2 - 2, 0, w - i * 2, h, c);
+                graphics.fill(i * 4, 0, i * 4 + 4, h, c);
+                graphics.fill(w - i * 4 - 4, 0, w - i * 4, h, c);
             }
         }
         if (blurY > 1.0F) {
             int height = Math.round(Math.min(blurY, 30.0F) * h / 70.0F);
-            int steps = Math.max(1, height / 2);
+            int steps = Math.max(1, height / 4);
             for (int i = 0; i < steps; i++) {
                 int a = Math.round(120.0F * (1.0F - i / (float) steps) * Math.min(1.0F, blurY / 6.0F));
                 int c = (a << 24) | 0xFFFFFF;
-                graphics.fill(0, i * 2, w, i * 2 + 2, c);
-                graphics.fill(0, h - i * 2 - 2, w, h - i * 2, c);
+                graphics.fill(0, i * 4, w, i * 4 + 4, c);
+                graphics.fill(0, h - i * 4 - 4, w, h - i * 4, c);
             }
         }
     }
