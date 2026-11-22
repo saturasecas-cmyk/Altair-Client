@@ -7,6 +7,7 @@ import com.altairclient.modules.mods.ArrowCounter;
 import com.altairclient.modules.mods.DamageIndicator;
 import com.altairclient.modules.mods.FPSDisplay;
 import com.altairclient.modules.mods.ItemNameDisplay;
+import com.altairclient.modules.mods.ClockHud;
 import com.altairclient.modules.mods.DirectionHud;
 import com.altairclient.modules.mods.ServerAddress;
 import com.altairclient.modules.mods.MemoryDisplay;
@@ -309,6 +310,19 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public int getWidth() { return ServerAddress.getInstance().getWidth(); }
             @Override public int getHeight() { return ServerAddress.getInstance().getHeight(); }
             @Override public void render(GuiGraphicsExtractor g) { ServerAddress.getInstance().renderPreview(g); }
+        });
+
+        targets.add(new HudTarget() {
+            @Override public String getName() { return "Clock"; }
+            @Override public boolean isEnabled() { return ClockHud.getInstance().isEnabled(); }
+            @Override public void setEnabled(boolean e) { ClockHud.getInstance().setEnabled(e); }
+            @Override public int getX() { return ClockHud.getInstance().getX(); }
+            @Override public void setX(int x) { ClockHud.getInstance().setX(x); }
+            @Override public int getY() { return ClockHud.getInstance().getY(); }
+            @Override public void setY(int y) { ClockHud.getInstance().setY(y); }
+            @Override public int getWidth() { return ClockHud.getInstance().getWidth(); }
+            @Override public int getHeight() { return ClockHud.getInstance().getHeight(); }
+            @Override public void render(GuiGraphicsExtractor g) { ClockHud.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {

@@ -4,6 +4,7 @@ import com.altairclient.AltairClient;
 import com.altairclient.modules.mods.ArmorHUD;
 import com.altairclient.modules.mods.CPSCounter;
 import com.altairclient.modules.mods.CustomCrosshair;
+import com.altairclient.modules.mods.ClockHud;
 import com.altairclient.modules.mods.DirectionHud;
 import com.altairclient.modules.mods.ServerAddress;
 import net.minecraftforge.client.gui.overlay.ForgeLayeredDraw;
@@ -63,7 +64,7 @@ public final class AltairHud {
         event.getLayeredDraw().addWithCondition(
                 CROSSHAIR_LAYER_ID,
                 (graphics, deltaTracker) -> CustomCrosshair.render(graphics),
-                () -> CustomCrosshair.isEnabled() && !Minecraft.getInstance().gui.hud.isHidden()
+                () -> CustomCrosshair.isEnabled() && inWorld() && !Minecraft.getInstance().gui.hud.isHidden()
         );
 
         // Texturas PvP: la máscara de calabaza se oculta si Transparent Pumpkin Overlay está activo,
@@ -84,15 +85,21 @@ public final class AltairHud {
                     ExtraTextures.render(graphics);
                     com.altairclient.modules.mods.DynamicIsland.render(graphics);
                 },
-                () -> !Minecraft.getInstance().gui.hud.isHidden()
+                () -> inWorld() && !Minecraft.getInstance().gui.hud.isHidden()
         );
 
         // La capa del HUD se oculta con F1, igual que el HUD de vanilla.
         event.getLayeredDraw().addWithCondition(
                 LAYER_ID,
                 (graphics, deltaTracker) -> renderAll(graphics),
-                () -> !Minecraft.getInstance().gui.hud.isHidden()
+                () -> inWorld() && !Minecraft.getInstance().gui.hud.isHidden()
         );
+    }
+
+    /** Altair's HUD and texture overlays only draw while playing in a world, never on menu screens. */
+    private static boolean inWorld() {
+        Minecraft mc = Minecraft.getInstance();
+        return mc.level != null && mc.player != null;
     }
 
     public static void renderAll(GuiGraphicsExtractor graphics) {
@@ -113,5 +120,6 @@ public final class AltairHud {
         WorldInfo.getInstance().render(graphics);
         ServerAddress.getInstance().render(graphics);
         DirectionHud.getInstance().render(graphics);
+        ClockHud.getInstance().render(graphics);
     }
 }

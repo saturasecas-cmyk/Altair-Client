@@ -115,19 +115,21 @@ public final class MovementTextures {
         boolean solidBelow = !below.isAir();
 
         // ----- Movement Effects -----
-        if (SPRINT.isEnabled() && p.isSprinting() && ground && tick % 2 == 0) {
-            spawn(level, ParticleTypes.POOF, p, 0.0, 0.05, rnd(0.04), 0.02, rnd(0.04));
+        if (SPRINT.isEnabled() && p.isSprinting() && ground) {
+            for (int n = 0; n < 3; n++) {
+                spawn(level, ParticleTypes.POOF, p, 0.0, 0.08, rnd(0.08), 0.04, rnd(0.08));
+            }
         }
         if (JUMP.isEnabled() && jumped) {
-            ring(level, ParticleTypes.POOF, p, 0.35, 8, 0.03);
+            ring(level, ParticleTypes.POOF, p, 0.45, 22, 0.07);
         }
         if (landed && fallPeak > 0.8) {
             if (LANDING.isEnabled()) {
-                ring(level, ParticleTypes.POOF, p, 0.4, 10, 0.05);
+                ring(level, ParticleTypes.POOF, p, 0.5, 28, 0.1);
             }
         }
         if (WATER_SPLASH.isEnabled() && splashed) {
-            ring(level, ParticleTypes.SPLASH, p, 0.3, 10, 0.1);
+            ring(level, ParticleTypes.SPLASH, p, 0.4, 28, 0.15);
         }
 
         // Pisadas: una cada 0,65 bloques, alternando pie izquierdo y derecho
@@ -138,7 +140,8 @@ public final class MovementTextures {
         }
 
         // ----- Walk Effects -----
-        if (moving && tick % 3 == 0) {
+        if (moving) {
+          for (int n = 0; n < 3; n++) {
             if (WALK_DUST.isEnabled() && solidBelow) {
                 spawn(level, new BlockParticleOption(ParticleTypes.BLOCK, below), p, 0.0, 0.05, rnd(0.2), 0.03, rnd(0.2));
             }
@@ -167,17 +170,19 @@ public final class MovementTextures {
                 spawnColored(level, ParticleTypes.END_ROD, WALK_ALTAIR, p, 0.0, 0.1, rnd(0.3), 0.04, rnd(0.3));
             }
         }
+          }
+        }
         if (WALK_PRINTS.isEnabled() && moving && stepDistance == 0.0) {
             printAt(level, p, 0x2A2A33);
         }
         // Círculo bajo los pies y sombra: se mantienen mientras estás en el suelo
-        if (WALK_CIRCLES.isEnabled() && ground && tick % 4 == 0) {
-            dustRing(level, p, Palette.color(WALK_CIRCLES.getColorIndex()), 0.5, 10, 0.55F);
+        if (WALK_CIRCLES.isEnabled() && ground && tick % 2 == 0) {
+            dustRing(level, p, Palette.color(WALK_CIRCLES.getColorIndex()), 0.55, 20, 0.9F);
         }
-        if (WALK_SHADOW.isEnabled() && moving && tick % 3 == 0) {
-            dustRing(level, p, 0x0C0C12, 0.2, 5, 0.9F);
+        if (WALK_SHADOW.isEnabled() && moving && tick % 2 == 0) {
+            dustRing(level, p, 0x0C0C12, 0.25, 10, 1.3F);
         }
-        if (WALK_AURA.isEnabled()) {
+        if (WALK_AURA.isEnabled() && !mc.options.getCameraType().isFirstPerson()) {
             // Aura intensa: varias partículas grandes por tick, en dos anillos y subiendo
             ParticleOptions dust = new DustParticleOptions(Palette.color(WALK_AURA.getColorIndex()) & 0xFFFFFF, 1.3F);
             for (int k = 0; k < 4; k++) {
@@ -248,17 +253,17 @@ public final class MovementTextures {
         int base = Palette.color(SPEED_LINES.getColorIndex());
         long frame = System.currentTimeMillis() / 70L;
         int band = Math.max(8, w / 7);
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 44; i++) {
             long seed = (frame * 31L + i * 7919L) * 2654435761L;
             int y = (int) Math.floorMod(seed >>> 7, (long) h);
-            int len = 12 + (int) Math.floorMod(seed >>> 21, 22L);
+            int len = 22 + (int) Math.floorMod(seed >>> 21, 44L);
             int inset = (int) Math.floorMod(seed >>> 33, (long) band);
-            int alpha = 70 + (int) Math.floorMod(seed >>> 41, 90L);
+            int alpha = 150 + (int) Math.floorMod(seed >>> 41, 100L);
             int color = (alpha << 24) | (base & 0x00FFFFFF);
             if ((i & 1) == 0) {
-                graphics.fill(inset, y, inset + len, y + 1, color);
+                graphics.fill(inset, y, inset + len, y + 2, color);
             } else {
-                graphics.fill(w - inset - len, y, w - inset, y + 1, color);
+                graphics.fill(w - inset - len, y, w - inset, y + 2, color);
             }
         }
     }

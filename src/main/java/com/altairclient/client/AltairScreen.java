@@ -10,6 +10,7 @@ import com.altairclient.modules.mods.FastGame;
 import com.altairclient.modules.mods.ItemNameDisplay;
 import com.altairclient.modules.mods.BlockOutline;
 import com.altairclient.modules.mods.CustomCrosshair;
+import com.altairclient.modules.mods.ClockHud;
 import com.altairclient.modules.mods.DirectionHud;
 import com.altairclient.modules.mods.ServerAddress;
 import com.altairclient.modules.mods.TimeChanger;
@@ -770,6 +771,15 @@ public final class AltairScreen extends Screen {
                 () -> DirectionHud.getInstance().getSizePercent(), v -> DirectionHud.getInstance().setSizePercent(v)));
 
         allModules.add(new ModuleEntry(
+                "Clock",
+                "Your computer's time",
+                "Shows the time of your computer (hours, minutes and seconds). Movable in the HUD Editor.",
+                Category.WORLD,
+                "\u23F0",
+                () -> ClockHud.getInstance().toggle(),
+                () -> ClockHud.getInstance().isEnabled()
+        ));
+        allModules.add(new ModuleEntry(
                 "Server Address",
                 "Server IP",
                 "Shows the IP of the server you are playing on. Movable in the HUD Editor.",
@@ -961,11 +971,6 @@ public final class AltairScreen extends Screen {
                 AltairConfig::toggleLinkChat,
                 AltairConfig::isLinkChat
         ));
-        allModules.add(new ModuleEntry("Configs", "Save and load your setups",
-                "Opens a small window where you can save your current modules and settings under a name and apply them again later. Press + Add, type a name and Save. Each saved config has Apply and Delete. Click the switch to open it.",
-                Category.SET_GENERAL, "\u2699",
-                () -> net.minecraft.client.Minecraft.getInstance().gui.setScreen(new ConfigsScreen(this)),
-                () -> false));
         allModules.add(actionEntry("Save now", "Write the config file",
                 "Saves everything right now to config/altairclient-modules.json in your Minecraft folder. Click the switch to run it.",
                 AltairConfig::saveNow));
@@ -1403,7 +1408,7 @@ public final class AltairScreen extends Screen {
         // Lista de carpetas (Mods / Textures) y, dentro de la abierta, sus apartados.
         // Se recorta justo encima del botón HUD Editor y se puede desplazar con la rueda.
         int sideTop = contentY + 4;
-        int sideBottom = panelY + panelHeight - 46;
+        int sideBottom = panelY + panelHeight - 74;
         List<SideRow> sideRows = sidebarRows(contentY + 10);
         SideRow lastRow = sideRows.get(sideRows.size() - 1);
         sidebarMaxScroll = Math.max(0, lastRow.y + lastRow.h + 6 - sideBottom);
@@ -1448,6 +1453,22 @@ public final class AltairScreen extends Screen {
             }
         }
         graphics.disableScissor();
+
+        // Botón Configs, justo encima del HUD Editor
+        {
+            int cbY = panelY + panelHeight - 68;
+            int cbX = panelX + 8;
+            int cbW = sidebarWidth - 16;
+            boolean cbHot = mouseX >= cbX && mouseX <= cbX + cbW && mouseY >= cbY && mouseY <= cbY + 24;
+            int cbBorder = cbHot ? CYAN : PURPLE;
+            graphics.fill(cbX, cbY, cbX + cbW, cbY + 24, cbHot ? 0xFF352B66 : 0xFF1C2242);
+            graphics.fill(cbX, cbY, cbX + cbW, cbY + 1, cbBorder);
+            graphics.fill(cbX, cbY + 23, cbX + cbW, cbY + 24, cbBorder);
+            graphics.fill(cbX, cbY + 1, cbX + 1, cbY + 24, cbBorder);
+            graphics.fill(cbX + cbW - 1, cbY, cbX + cbW, cbY + 24, cbBorder);
+            String cbText = "\u2699 Configs";
+            graphics.text(font, cbText, cbX + (cbW - font.width(cbText)) / 2, cbY + 8, WHITE, false);
+        }
 
         // Botón inferior de HUD Editor
         int hudBtnY = panelY + panelHeight - 40;
@@ -1698,6 +1719,7 @@ public final class AltairScreen extends Screen {
         ReachDisplay.getInstance().render(graphics);
         ServerAddress.getInstance().render(graphics);
         DirectionHud.getInstance().render(graphics);
+        ClockHud.getInstance().render(graphics);
     }
 
     @Override
@@ -1764,6 +1786,18 @@ public final class AltairScreen extends Screen {
             return true;
         }
 
+        // 1b. Clic en el botón Configs
+        {
+            int cbY = panelY + panelHeight - 68;
+            int cbX = panelX + 8;
+            if (mx >= cbX && mx <= cbX + 94 && my >= cbY && my <= cbY + 24) {
+                if (minecraft != null) {
+                    minecraft.gui.setScreen(new ConfigsScreen(this));
+                }
+                return true;
+            }
+        }
+
         // 2. Clic en botón HUD EDITOR
         int sidebarWidth = 110;
         int hudBtnY = panelY + panelHeight - 40;
@@ -1781,7 +1815,7 @@ public final class AltairScreen extends Screen {
         int headerHeight = 36;
         int contentY = panelY + headerHeight + 1;
         int sideTop = contentY + 4;
-        int sideBottom = panelY + panelHeight - 46;
+        int sideBottom = panelY + panelHeight - 74;
         if (mx >= panelX + 8 && mx <= panelX + sidebarWidth - 8 && my >= sideTop && my <= sideBottom) {
             for (SideRow row : sidebarRows(contentY + 10)) {
                 int ry = row.y - sidebarScroll;
