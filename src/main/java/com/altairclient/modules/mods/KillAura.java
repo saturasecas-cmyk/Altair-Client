@@ -79,7 +79,7 @@ public final class KillAura {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null || mc.gameMode == null || mc.screen != null
+        if (mc.player == null || mc.level == null || mc.gameMode == null || mc.gui.screen() != null
                 || !mc.player.isAlive() || mc.player.isSpectator()) {
             return;
         }
