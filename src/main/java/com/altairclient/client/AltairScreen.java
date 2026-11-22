@@ -27,6 +27,7 @@ import com.altairclient.modules.mods.TotemCounter;
 import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
+import com.altairclient.modules.mods.Hacks;
 import com.altairclient.modules.mods.KillAura;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.HealthDisplay;
@@ -113,6 +114,8 @@ public final class AltairScreen extends Screen {
 
         // Carpeta Hacks
         HACK_COMBAT(Section.HACKS, null, "Hack Combat", "Combat", "\u2694"),
+        HACK_MOVE(Section.HACKS, null, "Hack Movement", "Movement", "\u00BB"),
+        HACK_PLAYER(Section.HACKS, null, "Hack Player", "Player", "\u2726"),
 
         // Carpeta Settings
         SET_GENERAL(Section.SETTINGS, null, "Configuration", "Configuration", "⚙");
@@ -789,6 +792,226 @@ public final class AltairScreen extends Screen {
                         () -> KillAura.getTargets(), v -> KillAura.setTargets(v), KillAura.TARGET_NAMES)
                 .withExtra("Interval", KillAura.MIN_INTERVAL, KillAura.MAX_INTERVAL, 1,
                         () -> KillAura.getInterval(), v -> KillAura.setInterval(v), null));
+
+        allModules.add(new ModuleEntry(
+                "Auto Crit",
+                "Automatic critical hits",
+                "Makes your hits critical. With Kill Aura it jumps and hits on the way down; when you hold attack on a target it jumps for you.",
+                Category.HACK_COMBAT,
+                "\u2694",
+                () -> Hacks.AUTO_CRIT.toggle(),
+                () -> Hacks.AUTO_CRIT.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Velocity",
+                "Less knockback",
+                "Reduces the knockback you take. Horizontal and Vertical are the percent of knockback you keep (0 = none). Servers may still move you.",
+                Category.HACK_COMBAT,
+                "\u21E9",
+                () -> Hacks.VELOCITY.toggle(),
+                () -> Hacks.VELOCITY.enabled
+        ).withSetting("Horizontal %", 0, 100, 10, () -> Hacks.VELOCITY.a, v -> Hacks.VELOCITY.a = v).withExtra("Vertical %", 0, 100, 10, () -> Hacks.VELOCITY.b, v -> Hacks.VELOCITY.b = v, null));
+
+        allModules.add(new ModuleEntry(
+                "Reach",
+                "Longer attack range",
+                "Raises how far you can hit entities (in blocks). The server can reject hits that are too far.",
+                Category.HACK_COMBAT,
+                "\u2194",
+                () -> Hacks.REACH.toggle(),
+                () -> Hacks.REACH.enabled
+        ).withSetting("Blocks", 3, 6, 1, () -> Hacks.REACH.a, v -> Hacks.REACH.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Hitboxes",
+                "Bigger enemy hitboxes",
+                "Makes other entities easier to hit by growing the area your crosshair checks (in tenths of a block).",
+                Category.HACK_COMBAT,
+                "\u25A3",
+                () -> Hacks.HITBOXES.toggle(),
+                () -> Hacks.HITBOXES.enabled
+        ).withSetting("Size /10", 0, 10, 1, () -> Hacks.HITBOXES.a, v -> Hacks.HITBOXES.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Auto Totem",
+                "Totem in off hand",
+                "Keeps a Totem of Undying in your off hand, taking one from your inventory when needed. Needs no screen open.",
+                Category.HACK_COMBAT,
+                "\u2726",
+                () -> Hacks.AUTO_TOTEM.toggle(),
+                () -> Hacks.AUTO_TOTEM.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Armor",
+                "Equips empty armor slots",
+                "Puts armor from your inventory into any empty armor slot.",
+                Category.HACK_COMBAT,
+                "\u25A4",
+                () -> Hacks.AUTO_ARMOR.toggle(),
+                () -> Hacks.AUTO_ARMOR.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Gapple",
+                "Eats a golden apple when low",
+                "When your health (in points, 2 = 1 heart) falls to the setting, it holds a golden apple from your hotbar until you are healthy, then goes back to your slot.",
+                Category.HACK_COMBAT,
+                "\u2764",
+                () -> Hacks.AUTO_GAPPLE.toggle(),
+                () -> Hacks.AUTO_GAPPLE.enabled
+        ).withSetting("Health", 2, 18, 2, () -> Hacks.AUTO_GAPPLE.a, v -> Hacks.AUTO_GAPPLE.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Aim Assist",
+                "Soft aim correction",
+                "While you hold attack, gently turns your view toward the closest target in range. Strength is how fast it corrects.",
+                Category.HACK_COMBAT,
+                "\u25CE",
+                () -> Hacks.AIM_ASSIST.toggle(),
+                () -> Hacks.AIM_ASSIST.enabled
+        ).withSetting("Range", 2, 6, 1, () -> Hacks.AIM_ASSIST.a, v -> Hacks.AIM_ASSIST.a = v).withExtra("Strength %", 10, 100, 10, () -> Hacks.AIM_ASSIST.b, v -> Hacks.AIM_ASSIST.b = v, null));
+
+        allModules.add(new ModuleEntry(
+                "Crystal Aura",
+                "Auto end crystals",
+                "Breaks end crystals near an enemy player and places new ones on obsidian or bedrock (hold end crystals). Range is the main setting; Interval is ticks between actions. Be careful: crystals hurt you too.",
+                Category.HACK_COMBAT,
+                "\u2736",
+                () -> Hacks.CRYSTAL_AURA.toggle(),
+                () -> Hacks.CRYSTAL_AURA.enabled
+        ).withSetting("Range", 2, 6, 1, () -> Hacks.CRYSTAL_AURA.a, v -> Hacks.CRYSTAL_AURA.a = v).withExtra("Interval", 1, 20, 1, () -> Hacks.CRYSTAL_AURA.b, v -> Hacks.CRYSTAL_AURA.b = v, null));
+
+        allModules.add(new ModuleEntry(
+                "Fly",
+                "Fly like a bird",
+                "Vanilla = move freely (Jump up, Sneak down), Glide = fall very slowly, Creative = the creative flight. Speed is the second setting.",
+                Category.HACK_MOVE,
+                "\u2708",
+                () -> Hacks.FLY.toggle(),
+                () -> Hacks.FLY.enabled
+        ).withSetting("Mode", 0, 2, 1, () -> Hacks.FLY.a, v -> Hacks.FLY.a = v).withSettingNames(Hacks.FLY_MODES).withExtra("Speed", 1, 10, 1, () -> Hacks.FLY.b, v -> Hacks.FLY.b = v, null));
+
+        allModules.add(new ModuleEntry(
+                "Speed",
+                "Move faster",
+                "Boosts your walking speed. Strength 1 to 5.",
+                Category.HACK_MOVE,
+                "\u00BB",
+                () -> Hacks.SPEED.toggle(),
+                () -> Hacks.SPEED.enabled
+        ).withSetting("Strength", 1, 5, 1, () -> Hacks.SPEED.a, v -> Hacks.SPEED.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Sprint",
+                "Always sprint",
+                "Sprints automatically while you walk forward.",
+                Category.HACK_MOVE,
+                "\u21E8",
+                () -> Hacks.SPRINT.toggle(),
+                () -> Hacks.SPRINT.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Step",
+                "Climb blocks",
+                "Lets you walk up blocks without jumping. Height in blocks.",
+                Category.HACK_MOVE,
+                "\u2B06",
+                () -> Hacks.STEP.toggle(),
+                () -> Hacks.STEP.enabled
+        ).withSetting("Height", 1, 5, 1, () -> Hacks.STEP.a, v -> Hacks.STEP.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Jesus",
+                "Walk on water",
+                "Keeps you on top of water. Sneak to sink.",
+                Category.HACK_MOVE,
+                "\u2248",
+                () -> Hacks.JESUS.toggle(),
+                () -> Hacks.JESUS.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Spider",
+                "Climb walls",
+                "Climb any wall you are touching. Sneak to stop.",
+                Category.HACK_MOVE,
+                "\u2191",
+                () -> Hacks.SPIDER.toggle(),
+                () -> Hacks.SPIDER.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Elytra Fly",
+                "Better elytra",
+                "While gliding: hold forward to fly fast along where you look, hold sneak to hover. Speed is the setting.",
+                Category.HACK_MOVE,
+                "\u2742",
+                () -> Hacks.ELYTRA_FLY.toggle(),
+                () -> Hacks.ELYTRA_FLY.enabled
+        ).withSetting("Speed", 1, 10, 1, () -> Hacks.ELYTRA_FLY.a, v -> Hacks.ELYTRA_FLY.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Boat Fly",
+                "Fly in boats",
+                "While riding a boat or minecart: Jump goes up, Sneak goes down, and you steer in the air. Speed is the setting.",
+                Category.HACK_MOVE,
+                "\u26F5",
+                () -> Hacks.BOAT_FLY.toggle(),
+                () -> Hacks.BOAT_FLY.enabled
+        ).withSetting("Speed", 1, 10, 1, () -> Hacks.BOAT_FLY.a, v -> Hacks.BOAT_FLY.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Phase",
+                "Walk through blocks",
+                "Lets you move through blocks when you push into them. The server may pull you back.",
+                Category.HACK_MOVE,
+                "\u25CC",
+                () -> Hacks.PHASE.toggle(),
+                () -> Hacks.PHASE.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "No Fall",
+                "No fall damage",
+                "Tells the server you landed before you hit the ground, so you take no fall damage.",
+                Category.HACK_PLAYER,
+                "\u2193",
+                () -> Hacks.NO_FALL.toggle(),
+                () -> Hacks.NO_FALL.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "No Slow",
+                "No slowdown when using items",
+                "Keeps your walking speed while eating, blocking or drawing a bow.",
+                Category.HACK_PLAYER,
+                "\u27A4",
+                () -> Hacks.NO_SLOW.toggle(),
+                () -> Hacks.NO_SLOW.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Timer",
+                "Speeds up the game",
+                "Runs the game faster than normal. The setting is the speed in tenths (15 = x1.5). The server may rubber-band you.",
+                Category.HACK_PLAYER,
+                "\u23F1",
+                () -> Hacks.TIMER.toggle(),
+                () -> Hacks.TIMER.enabled
+        ).withSetting("Speed /10", 10, 30, 1, () -> Hacks.TIMER.a, v -> Hacks.TIMER.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Blink",
+                "Hold your movement",
+                "Holds back your movement from the server while on, then sends it all at once when you turn it off. Don't leave it on for long.",
+                Category.HACK_PLAYER,
+                "\u2059",
+                () -> Hacks.BLINK.toggle(),
+                () -> Hacks.BLINK.enabled
+        ));
 
         allModules.add(new ModuleEntry(
                 "Clock",

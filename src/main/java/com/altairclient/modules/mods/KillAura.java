@@ -87,8 +87,11 @@ public final class KillAura {
             cooldown--;
             return;
         }
-        LivingEntity target = findTarget(mc);
+        LivingEntity target = findNearest(mc, range, targets);
         if (target == null) {
+            return;
+        }
+        if (!Hacks.critReady(mc.player)) {
             return;
         }
         mc.gameMode.attack(mc.player, target);
@@ -96,18 +99,19 @@ public final class KillAura {
         cooldown = interval - 1;
     }
 
-    private static LivingEntity findTarget(Minecraft mc) {
+    /** Closest valid target: kinds = 0 mobs, 1 players, 2 both. */
+    public static LivingEntity findNearest(Minecraft mc, double range, int kinds) {
         Player me = mc.player;
         List<Entity> near = mc.level.getEntities(me, me.getBoundingBox().inflate(range));
         LivingEntity best = null;
-        double bestDist = (double) range * range;
+        double bestDist = range * range;
         for (Entity e : near) {
             if (!(e instanceof LivingEntity living) || !living.isAlive() || living.isSpectator()) {
                 continue;
             }
             boolean isPlayer = living instanceof Player;
             boolean isMob = living instanceof Mob;
-            boolean wanted = (targets != 1 && isMob) || (targets != 0 && isPlayer);
+            boolean wanted = (kinds != 1 && isMob) || (kinds != 0 && isPlayer);
             if (!wanted) {
                 continue;
             }

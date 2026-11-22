@@ -20,7 +20,10 @@
     "LoadingOverlayMixin",
     "LevelLoadingScreenMixin",
     "PlayerTabOverlayMixin",
-    "AbstractButtonMixin"
+    "AbstractButtonMixin",
+    "ClientPacketListenerMixin",
+    "LocalPlayerMixin",
+    "EntityPickRadiusMixin"
   ],
   "injectors": {
     "defaultRequire": 0
