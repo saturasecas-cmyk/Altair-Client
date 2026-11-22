@@ -26,7 +26,8 @@
     "EntityPickRadiusMixin",
     "BlockFaceMixin",
     "EntityGlowMixin",
-    "NoFogMixin"
+    "NoFogMixin",
+    "CameraCaptureMixin"
   ],
   "injectors": {
     "defaultRequire": 0

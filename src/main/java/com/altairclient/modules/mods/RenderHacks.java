@@ -41,13 +41,15 @@ public final class RenderHacks {
     public static final Hacks.Mod ESP = new Hacks.Mod(64, 0, null);          // a = range, b = what to show
     public static final Hacks.Mod TRACERS = new Hacks.Mod(64, 2, null);       // a = range, b = who
     public static final Hacks.Mod CHAMS = new Hacks.Mod(2, 0, null);          // a = who (0 players, 1 mobs, 2 both)
-    public static final Hacks.Mod XRAY = new Hacks.Mod(0, 0, RenderHacks::reloadChunks);  // a = mode
+    public static final Hacks.Mod XRAY = new Hacks.Mod(0, 0, () -> pendingReload = true);  // a = mode
     public static final Hacks.Mod TRAJECTORIES = new Hacks.Mod(0, 0, null);
     public static final Hacks.Mod NO_FOG = new Hacks.Mod(0, 0, null);
     public static final Hacks.Mod NO_RAIN = new Hacks.Mod(0, 0, null);
     public static final Hacks.Mod NO_PARTICLES = new Hacks.Mod(0, 0, null);
     public static final Hacks.Mod NO_ANIMATIONS = new Hacks.Mod(0, 0, RenderHacks::restoreAnimations);
 
+    public static net.minecraft.client.Camera camera = null;
+    private static boolean pendingReload = false;
     private static boolean registered = false;
     private static Set<String> custom = new HashSet<>();
     private static Boolean savedBob = null;
@@ -77,14 +79,22 @@ public final class RenderHacks {
         XRAY.toggle();
         if (XRAY.enabled) {
             loadCustom();
+        }
+        pendingReload = true;
+    }
+
+    /** Called when the mod menu closes: rebuilds the chunks (not the resource packs) so Xray shows up. */
+    public static void applyPendingReload() {
+        if (pendingReload) {
+            pendingReload = false;
             reloadChunks();
         }
     }
 
     private static void reloadChunks() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null) {
-            mc.reloadResourcePacks();
+        if (mc.level != null && camera != null && mc.levelRenderer != null) {
+            mc.levelRenderer.invalidateCompiledGeometry(mc.level, mc.options, camera, mc.getBlockColors());
         }
     }
 
@@ -222,12 +232,30 @@ public final class RenderHacks {
     private static final double[] OUT = new double[2];
 
     private static void setupCamera(Minecraft mc, LocalPlayer p, float partial) {
-        Vec3 eye = p.getEyePosition(partial);
-        ex = eye.x;
-        ey = eye.y;
-        ez = eye.z;
-        double yaw = Math.toRadians(p.getViewYRot(partial));
-        double pitch = Math.toRadians(p.getViewXRot(partial));
+        net.minecraft.client.Camera cam = camera;
+        double yaw;
+        double pitch;
+        double fovDeg;
+        if (cam != null && cam.isInitialized()) {
+            Vec3 pos = cam.position();
+            ex = pos.x;
+            ey = pos.y;
+            ez = pos.z;
+            yaw = Math.toRadians(cam.yRot());
+            pitch = Math.toRadians(cam.xRot());
+            fovDeg = cam.getFov();
+        } else {
+            Vec3 eye = p.getEyePosition(partial);
+            ex = eye.x;
+            ey = eye.y;
+            ez = eye.z;
+            yaw = Math.toRadians(p.getViewYRot(partial));
+            pitch = Math.toRadians(p.getViewXRot(partial));
+            fovDeg = mc.options.fov().get();
+        }
+        if (fovDeg < 5.0 || fovDeg > 170.0) {
+            fovDeg = mc.options.fov().get();
+        }
         fx = -Math.sin(yaw) * Math.cos(pitch);
         fy = -Math.sin(pitch);
         fz = Math.cos(yaw) * Math.cos(pitch);
@@ -241,8 +269,7 @@ public final class RenderHacks {
         int h = mc.getWindow().getGuiScaledHeight();
         cx = w / 2.0;
         cy = h / 2.0;
-        double fov = Math.toRadians(mc.options.fov().get());
-        scale = (h / 2.0) / Math.tan(fov / 2.0);
+        scale = (h / 2.0) / Math.tan(Math.toRadians(fovDeg) / 2.0);
     }
 
     /** Projects a world point to GUI coordinates into OUT. Returns false if it is behind the camera. */
@@ -294,7 +321,7 @@ public final class RenderHacks {
     private static void line(GuiGraphicsExtractor g, double x0, double y0, double x1, double y1, int color) {
         double dx = x1 - x0;
         double dy = y1 - y0;
-        int steps = (int) Math.min(400, Math.max(Math.abs(dx), Math.abs(dy)) / 3.0);
+        int steps = (int) Math.min(600, Math.max(Math.abs(dx), Math.abs(dy)) / 1.5);
         for (int i = 0; i <= steps; i++) {
             double t = steps == 0 ? 0 : (double) i / steps;
             int x = (int) (x0 + dx * t);
@@ -399,22 +426,52 @@ public final class RenderHacks {
         } else {
             return;
         }
-        Vec3 pos = p.getEyePosition().add(0.0, -0.1, 0.0);
-        Vec3 vel = p.getLookAngle().scale(speed);
-        for (int i = 0; i < 120; i++) {
+        Vec3 look = p.getLookAngle();
+        Vec3 side = look.cross(new Vec3(0.0, 1.0, 0.0)).normalize();
+        Vec3 pos = p.getEyePosition().add(side.scale(-0.25)).add(0.0, -0.2, 0.0);
+        Vec3 vel = look.scale(speed);
+        Vec3 start = pos;
+        double px = 0;
+        double py = 0;
+        boolean havePrev = false;
+        Vec3 end = null;
+        for (int i = 0; i < 160; i++) {
             Vec3 next = pos.add(vel);
             BlockPos bp = BlockPos.containing(next);
             boolean hit = !mc.level.getBlockState(bp).getCollisionShape(mc.level, bp).isEmpty();
-            if (project(next.x, next.y, next.z)) {
-                int x = (int) OUT[0];
-                int y = (int) OUT[1];
-                g.fill(x - 1, y - 1, x + 2, y + 2, hit ? 0xFFFF5555 : 0xFF62C8FF);
+            AABB probe = new AABB(next, next).inflate(0.3);
+            boolean entityHit = false;
+            for (Entity e : mc.level.getEntities(p, probe, x -> x instanceof net.minecraft.world.entity.LivingEntity)) {
+                entityHit = true;
+                break;
             }
-            if (hit || next.y < mc.level.getMinY()) {
+            if (project(next.x, next.y, next.z)) {
+                if (havePrev) {
+                    int shade = 255 - Math.min(150, i);
+                    line(g, px, py, OUT[0], OUT[1], 0xFF000000 | (shade << 16) | (shade << 8) | 255);
+                }
+                px = OUT[0];
+                py = OUT[1];
+                havePrev = true;
+            } else {
+                havePrev = false;
+            }
+            if (hit || entityHit || next.y < mc.level.getMinY()) {
+                end = next;
                 break;
             }
             pos = next;
             vel = vel.scale(0.99).add(0.0, -grav, 0.0);
+        }
+        if (end != null && project(end.x, end.y, end.z)) {
+            int x = (int) OUT[0];
+            int y = (int) OUT[1];
+            g.fill(x - 5, y - 5, x + 6, y + 6, 0xFFFFFFFF);
+            g.fill(x - 4, y - 4, x + 5, y + 5, 0xFFFF3B3B);
+            g.fill(x - 1, y - 7, x + 2, y + 8, 0xFFFFFFFF);
+            g.fill(x - 7, y - 1, x + 8, y + 2, 0xFFFFFFFF);
+            String dist = String.format("%.1fm", start.distanceTo(end));
+            g.text(mc.font, dist, x + 9, y - 4, 0xFFFFFFFF, true);
         }
     }
 }

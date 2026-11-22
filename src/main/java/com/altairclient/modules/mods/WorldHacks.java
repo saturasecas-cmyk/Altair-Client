@@ -63,7 +63,7 @@ public final class WorldHacks {
 
     // ==================== Helpers ====================
 
-    private static boolean selectItem(LocalPlayer p, Predicate<ItemStack> wanted) {
+    static boolean selectItem(LocalPlayer p, Predicate<ItemStack> wanted) {
         if (wanted.test(p.getMainHandItem())) {
             return true;
         }
@@ -77,7 +77,7 @@ public final class WorldHacks {
     }
 
     /** Places the held block at pos by clicking a solid neighbour. Returns true if a click was sent. */
-    private static boolean placeAt(Minecraft mc, LocalPlayer p, BlockPos pos) {
+    static boolean placeAt(Minecraft mc, LocalPlayer p, BlockPos pos) {
         if (!mc.level.getBlockState(pos).canBeReplaced()) {
             return false;
         }

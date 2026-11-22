@@ -89,12 +89,7 @@ public final class Hacks {
     // Player
     public static final Mod NO_FALL = new Mod(0, 0, null);
     public static final Mod NO_SLOW = new Mod(0, 0, null);
-    public static final Mod TIMER = new Mod(15, 0, () -> {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null) {
-            mc.level.tickRateManager().setTickRate(20.0F);
-        }
-    });                                                                 // a = speed in tenths (15 = x1.5)
+    public static final Mod TIMER = new Mod(15, 0, () -> applyTimer(Minecraft.getInstance(), 1.0F));                                                                 // a = speed in tenths (15 = x1.5)
     public static final Mod BLINK = new Mod(0, 0, Hacks::flushBlink);
 
     private static final List<Packet<?>> BLINK_QUEUE = new ArrayList<>();
@@ -170,6 +165,31 @@ public final class Hacks {
         return p.fallDistance > 0.0F && p.getDeltaMovement().y < 0.0 && !p.isInWater() && !p.onClimbable();
     }
 
+    // ==================== Timer ====================
+
+    private static java.lang.reflect.Field msPerTickField;
+    private static Object timerObject;
+
+    /** Speeds up (or restores) the client game clock. The game only ever slows down by itself, so both the
+     *  tick rate and the timer's own milliseconds-per-tick have to change. */
+    private static void applyTimer(Minecraft mc, float speed) {
+        try {
+            if (msPerTickField == null) {
+                java.lang.reflect.Field d = Minecraft.class.getDeclaredField("deltaTracker");
+                d.setAccessible(true);
+                timerObject = d.get(mc);
+                msPerTickField = timerObject.getClass().getDeclaredField("msPerTick");
+                msPerTickField.setAccessible(true);
+            }
+            msPerTickField.setFloat(timerObject, 50.0F / speed);
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+            // field not available: only the tick rate changes
+        }
+        if (mc.level != null) {
+            mc.level.tickRateManager().setTickRate(20.0F * speed);
+        }
+    }
+
     // ==================== Tick ====================
 
     private static void setAttr(net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> attr, double value) {
@@ -179,13 +199,13 @@ public final class Hacks {
         }
     }
 
-    private static boolean moving(Minecraft mc) {
+    static boolean moving(Minecraft mc) {
         return mc.options.keyUp.isDown() || mc.options.keyDown.isDown()
                 || mc.options.keyLeft.isDown() || mc.options.keyRight.isDown();
     }
 
     /** Sets the horizontal velocity of an entity in the direction the player is steering. */
-    private static void steer(Minecraft mc, Entity e, double speed) {
+    static void steer(Minecraft mc, Entity e, double speed) {
         double f = (mc.options.keyUp.isDown() ? 1 : 0) - (mc.options.keyDown.isDown() ? 1 : 0);
         double s = (mc.options.keyLeft.isDown() ? 1 : 0) - (mc.options.keyRight.isDown() ? 1 : 0);
         if (f == 0 && s == 0) {
@@ -308,9 +328,19 @@ public final class Hacks {
         if (STEP.enabled) {
             setAttr(Attributes.STEP_HEIGHT, STEP.a);
         }
-        if (JESUS.enabled && p.isInWater() && !p.isShiftKeyDown()) {
-            Vec3 m = p.getDeltaMovement();
-            p.setDeltaMovement(m.x, Math.max(m.y, 0.12), m.z);
+        if (JESUS.enabled && !p.isShiftKeyDown() && !mc.options.keyJump.isDown()) {
+            BlockPos feet = p.blockPosition();
+            var fluid = mc.level.getFluidState(feet);
+            if (fluid.is(net.minecraft.tags.FluidTags.WATER) && mc.level.getFluidState(feet.above()).isEmpty()) {
+                double surface = feet.getY() + fluid.getHeight(mc.level, feet);
+                if (p.getY() <= surface + 0.15) {
+                    p.setPos(p.getX(), surface, p.getZ());
+                    Vec3 m = p.getDeltaMovement();
+                    p.setDeltaMovement(m.x, Math.max(0.0, m.y), m.z);
+                    p.setOnGround(true);
+                    p.resetFallDistance();
+                }
+            }
         }
         if (SPIDER.enabled && p.horizontalCollision && !p.isShiftKeyDown()) {
             Vec3 m = p.getDeltaMovement();
@@ -341,7 +371,7 @@ public final class Hacks {
             steer(mc, p, 0.12);
         }
         if (TIMER.enabled) {
-            mc.level.tickRateManager().setTickRate(20.0F * TIMER.a / 10.0F);
+            applyTimer(mc, TIMER.a / 10.0F);
         }
     }
 
@@ -376,13 +406,13 @@ public final class Hacks {
 
     private static void crystalAura(Minecraft mc, LocalPlayer p) {
         double range = CRYSTAL_AURA.a;
-        LivingEntity enemy = KillAura.findNearest(mc, 12, 1);
+        LivingEntity enemy = KillAura.findNearest(mc, 12, 2);
         if (enemy == null) {
             return;
         }
         // 1) break a crystal near the enemy that is not too close to us
         for (Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(range))) {
-            if (e instanceof EndCrystal && e.distanceToSqr(enemy) < 49.0 && p.distanceToSqr(e) > 9.0
+            if (e instanceof EndCrystal && e.distanceToSqr(enemy) < 49.0 && p.distanceToSqr(e) > 4.0
                     && p.distanceToSqr(e) <= range * range) {
                 mc.gameMode.attack(p, e);
                 p.swing(InteractionHand.MAIN_HAND);
@@ -391,7 +421,17 @@ public final class Hacks {
         }
         // 2) place a crystal on obsidian or bedrock close to the enemy
         if (!p.getMainHandItem().is(Items.END_CRYSTAL)) {
-            return;
+            boolean found = false;
+            for (int i = 0; i < 9; i++) {
+                if (p.getInventory().getItem(i).is(Items.END_CRYSTAL)) {
+                    p.getInventory().setSelectedSlot(i);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return;
+            }
         }
         BlockPos me = p.blockPosition();
         BlockPos best = null;
@@ -409,14 +449,14 @@ public final class Hacks {
                         continue;
                     }
                     Vec3 c = Vec3.atCenterOf(pos.above());
-                    if (p.position().distanceToSqr(c) < 16.0 || p.getEyePosition().distanceToSqr(c) > range * range) {
+                    if (p.position().distanceToSqr(c) < 9.0 || p.getEyePosition().distanceToSqr(c) > range * range) {
                         continue;
                     }
                     if (!mc.level.getEntities((Entity) null, new AABB(pos.above()), x -> true).isEmpty()) {
                         continue;
                     }
                     double d = enemy.position().distanceToSqr(c);
-                    if (d < 36.0 && d < bestD) {
+                    if (d < 64.0 && d < bestD) {
                         bestD = d;
                         best = pos;
                     }

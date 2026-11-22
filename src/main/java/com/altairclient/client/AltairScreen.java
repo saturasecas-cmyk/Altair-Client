@@ -27,6 +27,7 @@ import com.altairclient.modules.mods.TotemCounter;
 import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
+import com.altairclient.modules.mods.ExtraHacks;
 import com.altairclient.modules.mods.Hacks;
 import com.altairclient.modules.mods.RenderHacks;
 import com.altairclient.modules.mods.WorldHacks;
@@ -1201,11 +1202,331 @@ public final class AltairScreen extends Screen {
                 "Bed Aura",
                 "Bed explosions",
                 "In the Nether or the End only: places a bed next to the nearest player and right-clicks it to explode. Range is the main setting; Interval is ticks between actions. Dangerous for you too.",
-                Category.HACK_WORLD,
+                Category.HACK_COMBAT,
                 "\u2616",
                 () -> WorldHacks.BED_AURA.toggle(),
                 () -> WorldHacks.BED_AURA.enabled
         ).withSetting("Range", 2, 6, 1, () -> WorldHacks.BED_AURA.a, v -> WorldHacks.BED_AURA.a = v).withExtra("Interval", 1, 20, 1, () -> WorldHacks.BED_AURA.b, v -> WorldHacks.BED_AURA.b = v, null));
+
+        allModules.add(new ModuleEntry(
+                "Mace Aura",
+                "Smash attacks with the mace",
+                "Holds your mace and hits the nearest target when you fall onto it (the mace needs a fall of 1.5+ blocks). Auto jump jumps high from the ground to start the fall.",
+                Category.HACK_COMBAT,
+                "\u2692",
+                () -> ExtraHacks.MACE_AURA.toggle(),
+                () -> ExtraHacks.MACE_AURA.enabled
+        ).withSetting("Range", 2, 6, 1, () -> ExtraHacks.MACE_AURA.a, v -> ExtraHacks.MACE_AURA.a = v).withExtra("Auto jump", 0, 1, 1, () -> ExtraHacks.MACE_AURA.b, v -> ExtraHacks.MACE_AURA.b = v, ExtraHacks.OFF_ON));
+
+        allModules.add(new ModuleEntry(
+                "Anchor Aura",
+                "Respawn anchor explosions",
+                "Outside the Nether: places a respawn anchor next to the nearest target, charges it with glowstone and explodes it. Hotbar needs anchors and glowstone. Dangerous for you too.",
+                Category.HACK_COMBAT,
+                "\u2693",
+                () -> ExtraHacks.ANCHOR_AURA.toggle(),
+                () -> ExtraHacks.ANCHOR_AURA.enabled
+        ).withSetting("Range", 2, 6, 1, () -> ExtraHacks.ANCHOR_AURA.a, v -> ExtraHacks.ANCHOR_AURA.a = v).withExtra("Interval", 1, 20, 1, () -> ExtraHacks.ANCHOR_AURA.b, v -> ExtraHacks.ANCHOR_AURA.b = v, null));
+
+        allModules.add(new ModuleEntry(
+                "Auto Sword",
+                "Best weapon in hand",
+                "Switches to the best sword or axe in your hotbar when you attack or Kill Aura is on and something is close.",
+                Category.HACK_COMBAT,
+                "\u2694",
+                () -> ExtraHacks.AUTO_SWORD.toggle(),
+                () -> ExtraHacks.AUTO_SWORD.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Clicker",
+                "Clicks for you",
+                "While you hold attack on an entity, hits it at the chosen clicks per second.",
+                Category.HACK_COMBAT,
+                "\u261D",
+                () -> ExtraHacks.AUTO_CLICKER.toggle(),
+                () -> ExtraHacks.AUTO_CLICKER.enabled
+        ).withSetting("CPS", 1, 20, 1, () -> ExtraHacks.AUTO_CLICKER.a, v -> ExtraHacks.AUTO_CLICKER.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Trigger Bot",
+                "Hits what you aim at",
+                "Attacks the living thing under your crosshair as soon as your weapon has recharged.",
+                Category.HACK_COMBAT,
+                "\u2316",
+                () -> ExtraHacks.TRIGGER_BOT.toggle(),
+                () -> ExtraHacks.TRIGGER_BOT.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Fast Bow",
+                "Quick bow shots",
+                "Releases the bow after the chosen number of draw ticks (20 = full power; lower is faster but weaker). Keep the use button held to spam.",
+                Category.HACK_COMBAT,
+                "\u27B6",
+                () -> ExtraHacks.FAST_BOW.toggle(),
+                () -> ExtraHacks.FAST_BOW.enabled
+        ).withSetting("Ticks", 3, 20, 1, () -> ExtraHacks.FAST_BOW.a, v -> ExtraHacks.FAST_BOW.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Bow Aimbot",
+                "Aims the bow for you",
+                "While drawing a bow, aims at the closest target with lead and arc compensation. Strength is how fast it turns.",
+                Category.HACK_COMBAT,
+                "\u2299",
+                () -> ExtraHacks.BOW_AIMBOT.toggle(),
+                () -> ExtraHacks.BOW_AIMBOT.enabled
+        ).withSetting("Strength %", 10, 100, 10, () -> ExtraHacks.BOW_AIMBOT.a, v -> ExtraHacks.BOW_AIMBOT.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Shield Breaker",
+                "Axe against shields",
+                "Switches to an axe when the nearest target is blocking with a shield.",
+                Category.HACK_COMBAT,
+                "\u26CF",
+                () -> ExtraHacks.SHIELD_BREAKER.toggle(),
+                () -> ExtraHacks.SHIELD_BREAKER.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Shield",
+                "Raises your shield",
+                "Holds your shield up while an enemy is within 4 blocks.",
+                Category.HACK_COMBAT,
+                "\u26E8",
+                () -> ExtraHacks.AUTO_SHIELD.toggle(),
+                () -> ExtraHacks.AUTO_SHIELD.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Consume",
+                "Eats when hungry",
+                "Eats food from your hotbar when your food level falls to the setting (20 = full), then goes back to your slot. Skips golden apples and rotten flesh.",
+                Category.HACK_COMBAT,
+                "\u2615",
+                () -> ExtraHacks.AUTO_CONSUME.toggle(),
+                () -> ExtraHacks.AUTO_CONSUME.enabled
+        ).withSetting("Food level", 2, 19, 1, () -> ExtraHacks.AUTO_CONSUME.a, v -> ExtraHacks.AUTO_CONSUME.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Multi Aura",
+                "Hits everything around",
+                "Hits up to 6 living things in range at once, every Interval ticks.",
+                Category.HACK_COMBAT,
+                "\u2736",
+                () -> ExtraHacks.MULTI_AURA.toggle(),
+                () -> ExtraHacks.MULTI_AURA.enabled
+        ).withSetting("Range", 2, 6, 1, () -> ExtraHacks.MULTI_AURA.a, v -> ExtraHacks.MULTI_AURA.a = v).withExtra("Interval", 1, 20, 1, () -> ExtraHacks.MULTI_AURA.b, v -> ExtraHacks.MULTI_AURA.b = v, null));
+
+        allModules.add(new ModuleEntry(
+                "Auto Web",
+                "Cobwebs on targets",
+                "Places a cobweb on the nearest target (cobwebs in your hotbar).",
+                Category.HACK_COMBAT,
+                "\u2637",
+                () -> ExtraHacks.AUTO_WEB.toggle(),
+                () -> ExtraHacks.AUTO_WEB.enabled
+        ).withSetting("Range", 2, 6, 1, () -> ExtraHacks.AUTO_WEB.a, v -> ExtraHacks.AUTO_WEB.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Long Jump",
+                "Jump farther",
+                "While you jump, pushes you forward. Strength 1 to 5.",
+                Category.HACK_MOVE,
+                "\u21E5",
+                () -> ExtraHacks.LONG_JUMP.toggle(),
+                () -> ExtraHacks.LONG_JUMP.enabled
+        ).withSetting("Strength", 1, 5, 1, () -> ExtraHacks.LONG_JUMP.a, v -> ExtraHacks.LONG_JUMP.a = v));
+
+        allModules.add(new ModuleEntry(
+                "High Jump",
+                "Jump higher",
+                "Makes your jumps higher. Strength 1 to 5.",
+                Category.HACK_MOVE,
+                "\u21EA",
+                () -> ExtraHacks.HIGH_JUMP.toggle(),
+                () -> ExtraHacks.HIGH_JUMP.enabled
+        ).withSetting("Strength", 1, 5, 1, () -> ExtraHacks.HIGH_JUMP.a, v -> ExtraHacks.HIGH_JUMP.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Bunny Hop",
+                "Auto hop and speed",
+                "Keeps jumping while you walk, with extra speed.",
+                Category.HACK_MOVE,
+                "\u2608",
+                () -> ExtraHacks.BUNNY_HOP.toggle(),
+                () -> ExtraHacks.BUNNY_HOP.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Air Jump",
+                "Jump in the air",
+                "Press jump again in the air to jump again.",
+                Category.HACK_MOVE,
+                "\u2191",
+                () -> ExtraHacks.AIR_JUMP.toggle(),
+                () -> ExtraHacks.AIR_JUMP.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Safe Walk",
+                "Never fall off edges",
+                "Sneaks for you at the edge of a block so you do not fall.",
+                Category.HACK_MOVE,
+                "\u26A0",
+                () -> ExtraHacks.SAFE_WALK.toggle(),
+                () -> ExtraHacks.SAFE_WALK.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Parkour",
+                "Auto jump at edges",
+                "Jumps by itself when you walk off the edge of a block.",
+                Category.HACK_MOVE,
+                "\u21B1",
+                () -> ExtraHacks.PARKOUR.toggle(),
+                () -> ExtraHacks.PARKOUR.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Jump",
+                "Always jumping",
+                "Jumps by itself whenever you walk on the ground.",
+                Category.HACK_MOVE,
+                "\u2B06",
+                () -> ExtraHacks.AUTO_JUMP.toggle(),
+                () -> ExtraHacks.AUTO_JUMP.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Fast Ladder",
+                "Climb ladders faster",
+                "Climbs ladders and vines faster.",
+                Category.HACK_MOVE,
+                "\u2630",
+                () -> ExtraHacks.FAST_LADDER.toggle(),
+                () -> ExtraHacks.FAST_LADDER.enabled
+        ).withSetting("Speed", 1, 8, 1, () -> ExtraHacks.FAST_LADDER.a, v -> ExtraHacks.FAST_LADDER.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Fast Swim",
+                "Swim faster",
+                "Swims faster in water.",
+                Category.HACK_MOVE,
+                "\u2248",
+                () -> ExtraHacks.FAST_SWIM.toggle(),
+                () -> ExtraHacks.FAST_SWIM.enabled
+        ).withSetting("Speed", 1, 8, 1, () -> ExtraHacks.FAST_SWIM.a, v -> ExtraHacks.FAST_SWIM.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Auto Walk",
+                "Walks forward",
+                "Holds the forward key for you.",
+                Category.HACK_MOVE,
+                "\u21E7",
+                () -> ExtraHacks.AUTO_WALK.toggle(),
+                () -> ExtraHacks.AUTO_WALK.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Sneak",
+                "Always sneaking",
+                "Holds the sneak key for you.",
+                Category.HACK_MOVE,
+                "\u2193",
+                () -> ExtraHacks.SNEAK.toggle(),
+                () -> ExtraHacks.SNEAK.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Reverse Step",
+                "Fall down fast",
+                "Drops you quickly when the ground is within 3 blocks below.",
+                Category.HACK_MOVE,
+                "\u21A7",
+                () -> ExtraHacks.REVERSE_STEP.toggle(),
+                () -> ExtraHacks.REVERSE_STEP.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Respawn",
+                "Respawns right away",
+                "Respawns you as soon as you die.",
+                Category.HACK_PLAYER,
+                "\u21BA",
+                () -> ExtraHacks.AUTO_RESPAWN.toggle(),
+                () -> ExtraHacks.AUTO_RESPAWN.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Anti AFK",
+                "Avoids being kicked for AFK",
+                "Jumps and turns a little every 20 seconds.",
+                Category.HACK_PLAYER,
+                "\u23F3",
+                () -> ExtraHacks.ANTI_AFK.toggle(),
+                () -> ExtraHacks.ANTI_AFK.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Tool",
+                "Best tool for the block",
+                "Switches to the fastest tool in your hotbar for the block you are mining.",
+                Category.HACK_PLAYER,
+                "\u26CF",
+                () -> ExtraHacks.AUTO_TOOL.toggle(),
+                () -> ExtraHacks.AUTO_TOOL.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Chest Stealer",
+                "Takes everything from chests",
+                "Quickly moves every item out of a chest you open into your inventory.",
+                Category.HACK_PLAYER,
+                "\u2B07",
+                () -> ExtraHacks.CHEST_STEALER.toggle(),
+                () -> ExtraHacks.CHEST_STEALER.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Spin",
+                "Spins your view",
+                "Rotates you around. Speed 1 to 10.",
+                Category.HACK_PLAYER,
+                "\u21BB",
+                () -> ExtraHacks.SPIN.toggle(),
+                () -> ExtraHacks.SPIN.enabled
+        ).withSetting("Speed", 1, 10, 1, () -> ExtraHacks.SPIN.a, v -> ExtraHacks.SPIN.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Chest Aura",
+                "Opens nearby chests",
+                "Opens chests, barrels and shulker boxes within range, one every half second. Works well with Chest Stealer.",
+                Category.HACK_WORLD,
+                "\u2610",
+                () -> ExtraHacks.CHEST_AURA.toggle(),
+                () -> ExtraHacks.CHEST_AURA.enabled
+        ).withSetting("Range", 2, 6, 1, () -> ExtraHacks.CHEST_AURA.a, v -> ExtraHacks.CHEST_AURA.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Auto Tower",
+                "Builds up under you",
+                "While you hold jump in the air with blocks in your hotbar, places a block under you and keeps going up.",
+                Category.HACK_WORLD,
+                "\u25B2",
+                () -> ExtraHacks.AUTO_TOWER.toggle(),
+                () -> ExtraHacks.AUTO_TOWER.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Shear",
+                "Shears sheep",
+                "Shears sheep that are ready, within range (shears in your hotbar).",
+                Category.HACK_WORLD,
+                "\u2702",
+                () -> ExtraHacks.AUTO_SHEAR.toggle(),
+                () -> ExtraHacks.AUTO_SHEAR.enabled
+        ).withSetting("Range", 2, 6, 1, () -> ExtraHacks.AUTO_SHEAR.a, v -> ExtraHacks.AUTO_SHEAR.a = v));
 
         allModules.add(new ModuleEntry(
                 "Clock",
@@ -1556,6 +1877,7 @@ public final class AltairScreen extends Screen {
     @Override
     public void removed() {
         super.removed();
+        com.altairclient.modules.mods.RenderHacks.applyPendingReload();
         rememberPage();
         restoreBlur();
         AltairConfig.autoSaveNow();
