@@ -10,7 +10,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Shearable;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -305,7 +304,7 @@ public final class ExtraHacks {
             }
         }
         if (AUTO_SHEAR.enabled && noScreen && tick % 10 == 0) {
-            for (Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(AUTO_SHEAR.a), x -> x.getType() == EntityType.SHEEP)) {
+            for (Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(AUTO_SHEAR.a), x -> x instanceof Shearable)) {
                 if (e instanceof Shearable s && s.readyForShearing() && WorldHacks.selectItem(p, st -> st.is(Items.SHEARS))) {
                     mc.gameMode.interact(p, e, new EntityHitResult(e), InteractionHand.MAIN_HAND);
                     break;
