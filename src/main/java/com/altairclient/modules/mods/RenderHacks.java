@@ -83,8 +83,8 @@ public final class RenderHacks {
 
     private static void reloadChunks() {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.levelRenderer != null && mc.level != null) {
-            mc.levelRenderer.allChanged();
+        if (mc.level != null) {
+            mc.reloadResourcePacks();
         }
     }
 
