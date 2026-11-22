@@ -14,7 +14,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -205,8 +205,8 @@ public final class Hacks {
         return invIndex < 9 ? 36 + invIndex : invIndex;
     }
 
-    private static void click(Minecraft mc, LocalPlayer p, int menuSlot, int button, ClickType type) {
-        mc.gameMode.handleInventoryMouseClick(p.inventoryMenu.containerId, menuSlot, button, type, p);
+    private static void click(Minecraft mc, LocalPlayer p, int menuSlot, int button, ContainerInput type) {
+        mc.gameMode.handleContainerInput(p.inventoryMenu.containerId, menuSlot, button, type, p);
     }
 
     private static void onTick(TickEvent.ClientTickEvent.Post event) {
@@ -236,7 +236,7 @@ public final class Hacks {
         if (AUTO_TOTEM.enabled && noScreen && tick % 2 == 0 && !p.getOffhandItem().is(Items.TOTEM_OF_UNDYING)) {
             for (int i = 0; i < 36; i++) {
                 if (p.getInventory().getItem(i).is(Items.TOTEM_OF_UNDYING)) {
-                    click(mc, p, menuSlot(i), 40, ClickType.SWAP);
+                    click(mc, p, menuSlot(i), 40, ContainerInput.SWAP);
                     break;
                 }
             }
@@ -251,7 +251,7 @@ public final class Hacks {
                 for (int i = 0; i < 36; i++) {
                     ItemStack st = p.getInventory().getItem(i);
                     if (!st.isEmpty() && p.getEquipmentSlotForItem(st) == slot) {
-                        click(mc, p, menuSlot(i), 0, ClickType.QUICK_MOVE);
+                        click(mc, p, menuSlot(i), 0, ContainerInput.QUICK_MOVE);
                         break outer;
                     }
                 }
