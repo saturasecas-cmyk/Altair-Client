@@ -27,6 +27,7 @@ import com.altairclient.modules.mods.TotemCounter;
 import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
+import com.altairclient.modules.mods.KillAura;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.HealthDisplay;
 import com.altairclient.modules.mods.HitIndicator;
@@ -79,6 +80,7 @@ public final class AltairScreen extends Screen {
     public enum Section {
         MODS("Mods", "Module"),
         TEXTURES("Textures", "Texture"),
+        HACKS("Hacks", "Hack"),
         SETTINGS("Settings", "Setting");
 
         final String displayName;
@@ -108,6 +110,9 @@ public final class AltairScreen extends Screen {
         TEX_WALK(Section.TEXTURES, TextureModules.WALK, "Walk Effects", "Walk", "✧"),
         TEX_EXTRA(Section.TEXTURES, TextureModules.EXTRA, "Extra Visual Effects", "Extra", "✦"),
         TEX_MISC(Section.TEXTURES, TextureModules.MISC, "Misc", "Misc", "✺"),
+
+        // Carpeta Hacks
+        HACK_COMBAT(Section.HACKS, null, "Hack Combat", "Combat", "\u2694"),
 
         // Carpeta Settings
         SET_GENERAL(Section.SETTINGS, null, "Configuration", "Configuration", "⚙");
@@ -769,6 +774,21 @@ public final class AltairScreen extends Screen {
                 () -> DirectionHud.getInstance().isEnabled()
         ).withSetting("Size %", 50, 200, 10,
                 () -> DirectionHud.getInstance().getSizePercent(), v -> DirectionHud.getInstance().setSizePercent(v)));
+
+        allModules.add(new ModuleEntry(
+                "Kill Aura",
+                "Auto-hit nearby targets",
+                "Automatically hits the closest target within range. Range is the main setting (blocks); Targets chooses mobs, players or both; Interval is the number of ticks between hits (20 ticks = 1 second). Many servers ban this, so only use it where it is allowed.",
+                Category.HACK_COMBAT,
+                "\u2694",
+                () -> KillAura.toggle(),
+                () -> KillAura.isEnabled()
+        ).withSetting("Range", KillAura.MIN_RANGE, KillAura.MAX_RANGE, 1,
+                () -> KillAura.getRange(), v -> KillAura.setRange(v))
+                .withExtra("Targets", 0, KillAura.TARGET_NAMES.length - 1, 1,
+                        () -> KillAura.getTargets(), v -> KillAura.setTargets(v), KillAura.TARGET_NAMES)
+                .withExtra("Interval", KillAura.MIN_INTERVAL, KillAura.MAX_INTERVAL, 1,
+                        () -> KillAura.getInterval(), v -> KillAura.setInterval(v), null));
 
         allModules.add(new ModuleEntry(
                 "Clock",

@@ -40,6 +40,7 @@ public class AltairClient {
         com.altairclient.client.AltairLink.register();
         com.altairclient.client.AltairConfig.register();
         com.altairclient.client.SafetyGuard.register();
+        com.altairclient.modules.mods.KillAura.register();
         com.altairclient.client.TitleBackground.register();
         AltairHud.register();
         NametagHandler.register();
