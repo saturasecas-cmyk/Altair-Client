@@ -18,7 +18,21 @@ jobs:
         JARS=$(find $GITHUB_WORKSPACE/.gradle ~/.gradle -name '*.jar' ! -name '*sources*' 2>/dev/null | grep -E 'client-extra|forge-26.2|fastutil|joml|slf4j|asm|datafixer|brigadier|guava|gson|lwjgl|netty|commons|minecraft|mojang' )
         CP=$(echo "$JARS" | tr '\n' ':')
         echo "::group::classes"
-        for j in $JARS; do unzip -l $j 2>/dev/null | awk '{print $4}' | grep -E '\.class$' | grep -E 'world/inventory/(Click|Container[A-Z][a-z]*Input|ContainerInput)|world/inventory/[A-Za-z]*Click' | head -20; done
+        for j in $JARS; do unzip -l $j 2>/dev/null | awk '{print $4}' | grep -E '\.class$' | grep -E 'renderer/fog/|Tags\.class|ItemTags|BlockTags|world/item/BlockItem|CropBlock.class' | head -30; done | sort -u
         echo "::endgroup::"
-        d() { echo "::group::$1"; javap -p -cp "$CP" $1 2>&1 | grep -E 'handle|Container|PICKUP|SWAP|QUICK|class '; echo "::endgroup::"; }
-        for c in net.minecraft.client.multiplayer.MultiPlayerGameMode net.minecraft.world.inventory.ContainerInput; do d $c; done
+        d() { echo "::group::$1"; javap -p -cp "$CP" $1 2>&1 | grep -E "$2"; echo "::endgroup::"; }
+        d net.minecraft.world.level.block.Block 'shouldRenderFace'
+        d net.minecraft.world.entity.Entity 'isCurrentlyGlowing|getViewYRot|getViewXRot|getEyePosition|getBoundingBox\(\)'
+        d net.minecraft.world.entity.player.Player 'fishing'
+        d net.minecraft.client.Minecraft 'rightClickDelay|getDeltaTracker|getWindow|levelRenderer'
+        d net.minecraft.client.multiplayer.MultiPlayerGameMode 'destroyDelay|destroyProgress|startDestroyBlock|continueDestroyBlock|isDestroying|useItem\('
+        d net.minecraft.client.Options 'bobView|damageTiltStrength|fov\(|screenEffectScale|fovEffectScale'
+        d net.minecraft.client.particle.ParticleEngine 'add\(|createParticle'
+        d net.minecraft.client.multiplayer.ClientLevel 'setRainLevel|setThunderLevel'
+        d net.minecraft.world.level.Level 'setRainLevel|setThunderLevel|dimension\(\)|noCollision'
+        d net.minecraft.world.level.block.CropBlock 'isMaxAge|getAge|class '
+        d com.mojang.blaze3d.platform.Window 'getGuiScaledWidth|getGuiScaledHeight'
+        d net.minecraft.client.gui.GuiGraphicsExtractor 'guiWidth|guiHeight|fill\(|line|text\('
+        d net.minecraft.world.entity.projectile.FishingHook 'nibble|biting|hookedIn|getHookedIn|timeUntilHooked|currentState'
+        d net.minecraft.world.phys.Vec3 'directionFromRotation'
+        d net.minecraftforge.event.RenderLevelStageEvent 'class |Stage'
