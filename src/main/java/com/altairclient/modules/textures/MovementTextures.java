@@ -169,7 +169,6 @@ public final class MovementTextures {
             if (WALK_ALTAIR.isEnabled()) {
                 spawnColored(level, ParticleTypes.END_ROD, WALK_ALTAIR, p, 0.0, 0.1, rnd(0.3), 0.04, rnd(0.3));
             }
-        }
           }
         }
         if (WALK_PRINTS.isEnabled() && moving && stepDistance == 0.0) {
