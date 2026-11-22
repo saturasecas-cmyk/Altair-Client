@@ -91,7 +91,10 @@ public final class AltairHud {
         // La capa del HUD se oculta con F1, igual que el HUD de vanilla.
         event.getLayeredDraw().addWithCondition(
                 LAYER_ID,
-                (graphics, deltaTracker) -> renderAll(graphics),
+                (graphics, deltaTracker) -> {
+                    renderAll(graphics);
+                    com.altairclient.modules.mods.RenderHacks.render(graphics, deltaTracker.getGameTimeDeltaPartialTick(false));
+                },
                 () -> inWorld() && !Minecraft.getInstance().gui.hud.isHidden()
         );
     }

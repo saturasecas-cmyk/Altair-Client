@@ -28,6 +28,8 @@ import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
 import com.altairclient.modules.mods.Hacks;
+import com.altairclient.modules.mods.RenderHacks;
+import com.altairclient.modules.mods.WorldHacks;
 import com.altairclient.modules.mods.KillAura;
 import com.altairclient.modules.mods.FreecamHandler;
 import com.altairclient.modules.mods.HealthDisplay;
@@ -116,6 +118,8 @@ public final class AltairScreen extends Screen {
         HACK_COMBAT(Section.HACKS, null, "Hack Combat", "Combat", "\u2694"),
         HACK_MOVE(Section.HACKS, null, "Hack Movement", "Movement", "\u00BB"),
         HACK_PLAYER(Section.HACKS, null, "Hack Player", "Player", "\u2726"),
+        HACK_RENDER(Section.HACKS, null, "Hack Render", "Render", "\u25C9"),
+        HACK_WORLD(Section.HACKS, null, "Hack World", "World", "\u25A6"),
 
         // Carpeta Settings
         SET_GENERAL(Section.SETTINGS, null, "Configuration", "Configuration", "⚙");
@@ -1012,6 +1016,196 @@ public final class AltairScreen extends Screen {
                 () -> Hacks.BLINK.toggle(),
                 () -> Hacks.BLINK.enabled
         ));
+
+        allModules.add(new ModuleEntry(
+                "ESP",
+                "Boxes around things",
+                "Draws boxes you can see through walls. Show: All, Players, Mobs, Items or Chests+Spawners (chests, ender chests, barrels, shulkers, spawners). Range is the main setting. Drawn on the screen from your first-person view.",
+                Category.HACK_RENDER,
+                "\u25A2",
+                () -> RenderHacks.ESP.toggle(),
+                () -> RenderHacks.ESP.enabled
+        ).withSetting("Range", 16, 128, 16, () -> RenderHacks.ESP.a, v -> RenderHacks.ESP.a = v).withExtra("Show", 0, 4, 1, () -> RenderHacks.ESP.b, v -> RenderHacks.ESP.b = v, RenderHacks.ESP_SHOW));
+
+        allModules.add(new ModuleEntry(
+                "Tracers",
+                "Lines to targets",
+                "Draws lines from the bottom of the screen to players and/or mobs. Range is the main setting; Who chooses players, mobs or both.",
+                Category.HACK_RENDER,
+                "\u2571",
+                () -> RenderHacks.TRACERS.toggle(),
+                () -> RenderHacks.TRACERS.enabled
+        ).withSetting("Range", 16, 128, 16, () -> RenderHacks.TRACERS.a, v -> RenderHacks.TRACERS.a = v).withExtra("Who", 0, 2, 1, () -> RenderHacks.TRACERS.b, v -> RenderHacks.TRACERS.b = v, RenderHacks.TRACER_SHOW));
+
+        allModules.add(new ModuleEntry(
+                "Chams",
+                "Outline through walls",
+                "Gives players and/or mobs a glowing outline you can see through walls (uses the glow effect, not custom colors).",
+                Category.HACK_RENDER,
+                "\u25CD",
+                () -> RenderHacks.CHAMS.toggle(),
+                () -> RenderHacks.CHAMS.enabled
+        ).withSetting("Who", 0, 2, 1, () -> RenderHacks.CHAMS.a, v -> RenderHacks.CHAMS.a = v).withSettingNames(RenderHacks.TRACER_SHOW));
+
+        allModules.add(new ModuleEntry(
+                "Xray",
+                "See ores through blocks",
+                "Hides every block that is not in the list, so ores show through the ground. Mode: Ores, Ores+Containers, or Custom file (config/altairclient-xray.txt, one block id per line, created on first use). Turn on Full Bright to see better.",
+                Category.HACK_RENDER,
+                "\u2318",
+                () -> RenderHacks.toggleXray(),
+                () -> RenderHacks.XRAY.enabled
+        ).withSetting("Mode", 0, 2, 1, () -> RenderHacks.XRAY.a, v -> RenderHacks.XRAY.a = v).withSettingNames(RenderHacks.XRAY_MODES));
+
+        allModules.add(new ModuleEntry(
+                "Trajectories",
+                "Where it will land",
+                "Shows the path of arrows (bow while drawn), crossbow, trident, ender pearls, snowballs and eggs when held. Red dot = where it hits.",
+                Category.HACK_RENDER,
+                "\u2934",
+                () -> RenderHacks.TRAJECTORIES.toggle(),
+                () -> RenderHacks.TRAJECTORIES.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "No Fog",
+                "Removes fog",
+                "Pushes all fog (air, water, lava) far away.",
+                Category.HACK_RENDER,
+                "\u2601",
+                () -> RenderHacks.NO_FOG.toggle(),
+                () -> RenderHacks.NO_FOG.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "No Rain",
+                "Removes rain",
+                "Clears rain and thunder on your screen.",
+                Category.HACK_RENDER,
+                "\u2602",
+                () -> RenderHacks.NO_RAIN.toggle(),
+                () -> RenderHacks.NO_RAIN.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "No Particles",
+                "Removes particles",
+                "Stops particles from being drawn.",
+                Category.HACK_RENDER,
+                "\u2735",
+                () -> RenderHacks.NO_PARTICLES.toggle(),
+                () -> RenderHacks.NO_PARTICLES.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "No Animations",
+                "Removes bobbing",
+                "Turns off view bobbing and the camera tilt when you are hurt. Your old settings come back when you turn it off.",
+                Category.HACK_RENDER,
+                "\u21BB",
+                () -> RenderHacks.NO_ANIMATIONS.toggle(),
+                () -> RenderHacks.NO_ANIMATIONS.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Nuker",
+                "Breaks blocks around you",
+                "Breaks the blocks around you. Range is the main setting; Blocks per tick works only in creative. Be careful: it breaks everything in range except the block you stand on.",
+                Category.HACK_WORLD,
+                "\u26CF",
+                () -> WorldHacks.NUKER.toggle(),
+                () -> WorldHacks.NUKER.enabled
+        ).withSetting("Range", 2, 6, 1, () -> WorldHacks.NUKER.a, v -> WorldHacks.NUKER.a = v).withExtra("Blocks/tick", 1, 5, 1, () -> WorldHacks.NUKER.b, v -> WorldHacks.NUKER.b = v, null));
+
+        allModules.add(new ModuleEntry(
+                "Scaffold",
+                "Builds under your feet",
+                "Places the block you hold (or one from your hotbar) under your feet while you walk.",
+                Category.HACK_WORLD,
+                "\u25A4",
+                () -> WorldHacks.SCAFFOLD.toggle(),
+                () -> WorldHacks.SCAFFOLD.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Fast Place",
+                "No delay when placing",
+                "Removes the delay between placing blocks when you hold the button.",
+                Category.HACK_WORLD,
+                "\u25A3",
+                () -> WorldHacks.FAST_PLACE.toggle(),
+                () -> WorldHacks.FAST_PLACE.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Fast Break",
+                "Breaks faster",
+                "Removes the delay after breaking and adds extra progress each tick. The server may reject it.",
+                Category.HACK_WORLD,
+                "\u26A1",
+                () -> WorldHacks.FAST_BREAK.toggle(),
+                () -> WorldHacks.FAST_BREAK.enabled
+        ).withSetting("Boost", 0, 10, 1, () -> WorldHacks.FAST_BREAK.a, v -> WorldHacks.FAST_BREAK.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Auto Mine",
+                "Keeps mining",
+                "Holds the attack button while you look at a block.",
+                Category.HACK_WORLD,
+                "\u26CF",
+                () -> WorldHacks.AUTO_MINE.toggle(),
+                () -> WorldHacks.AUTO_MINE.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Farm",
+                "Harvests and replants",
+                "Breaks fully grown crops in range and replants seeds on empty farmland (hold or carry the seeds in your hotbar).",
+                Category.HACK_WORLD,
+                "\u2698",
+                () -> WorldHacks.AUTO_FARM.toggle(),
+                () -> WorldHacks.AUTO_FARM.enabled
+        ).withSetting("Range", 2, 6, 1, () -> WorldHacks.AUTO_FARM.a, v -> WorldHacks.AUTO_FARM.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Auto Fish",
+                "Fishes for you",
+                "Hold a fishing rod: it casts, reels in when it sees a bite and casts again.",
+                Category.HACK_WORLD,
+                "\u2693",
+                () -> WorldHacks.AUTO_FISH.toggle(),
+                () -> WorldHacks.AUTO_FISH.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Surround",
+                "Obsidian around your feet",
+                "Places obsidian (from your hotbar) on the four sides of your feet.",
+                Category.HACK_WORLD,
+                "\u25A6",
+                () -> WorldHacks.SURROUND.toggle(),
+                () -> WorldHacks.SURROUND.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Auto Trap",
+                "Traps the nearest player",
+                "Places obsidian around the nearest player within 5 blocks, one block per tick.",
+                Category.HACK_WORLD,
+                "\u25A9",
+                () -> WorldHacks.AUTO_TRAP.toggle(),
+                () -> WorldHacks.AUTO_TRAP.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Bed Aura",
+                "Bed explosions",
+                "In the Nether or the End only: places a bed next to the nearest player and right-clicks it to explode. Range is the main setting; Interval is ticks between actions. Dangerous for you too.",
+                Category.HACK_WORLD,
+                "\u2616",
+                () -> WorldHacks.BED_AURA.toggle(),
+                () -> WorldHacks.BED_AURA.enabled
+        ).withSetting("Range", 2, 6, 1, () -> WorldHacks.BED_AURA.a, v -> WorldHacks.BED_AURA.a = v).withExtra("Interval", 1, 20, 1, () -> WorldHacks.BED_AURA.b, v -> WorldHacks.BED_AURA.b = v, null));
 
         allModules.add(new ModuleEntry(
                 "Clock",

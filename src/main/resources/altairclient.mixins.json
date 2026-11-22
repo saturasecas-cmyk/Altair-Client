@@ -23,7 +23,10 @@
     "AbstractButtonMixin",
     "ClientPacketListenerMixin",
     "LocalPlayerMixin",
-    "EntityPickRadiusMixin"
+    "EntityPickRadiusMixin",
+    "BlockFaceMixin",
+    "EntityGlowMixin",
+    "NoFogMixin"
   ],
   "injectors": {
     "defaultRequire": 0

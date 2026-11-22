@@ -19,7 +19,7 @@ public abstract class ParticleEngineMixin {
     @Inject(method = "createParticle", at = @At("HEAD"), cancellable = true, require = 0)
     private void altair$dropParticle(ParticleOptions options, double x, double y, double z,
                                      double xa, double ya, double za, CallbackInfoReturnable<Particle> cir) {
-        if (PvpTextures.shouldDropParticle(options)) {
+        if (PvpTextures.shouldDropParticle(options) || com.altairclient.modules.mods.RenderHacks.NO_PARTICLES.enabled) {
             cir.setReturnValue(null);
         }
     }
@@ -36,7 +36,7 @@ public abstract class ParticleEngineMixin {
     /** Las partículas de romper bloques se crean directamente (no pasan por createParticle). */
     @Inject(method = "add", at = @At("HEAD"), cancellable = true, require = 0)
     private void altair$filterAdded(Particle particle, CallbackInfo ci) {
-        if (PvpTextures.shouldDropBreakParticle(particle)) {
+        if (PvpTextures.shouldDropBreakParticle(particle) || com.altairclient.modules.mods.RenderHacks.NO_PARTICLES.enabled) {
             ci.cancel();
         }
     }
