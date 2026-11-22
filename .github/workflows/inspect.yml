@@ -22,10 +22,5 @@ jobs:
         echo "::endgroup::"
         d() { echo "::group::$1"; javap -p -cp "$CP" $1 2>&1 | grep -E "$2" || true; echo "::endgroup::"; }
         d2() { echo "::group::$1"; javap -p -s -cp "$CP" $1 2>&1 | grep -A1 -E "$2" || true; echo "::endgroup::"; }
-        d2 net.minecraft.world.level.block.Block 'shouldRenderFace'
-        d net.minecraft.client.renderer.fog.FogData 'float|class ' || true
-        d net.minecraft.world.level.Level 'setRainLevel|setThunderLevel|getRainLevel' || true
-        d net.minecraft.client.multiplayer.ClientLevel 'setRainLevel|setThunderLevel' || true
-        d net.minecraft.world.level.block.CropBlock 'isMaxAge|class ' || true
-        d net.minecraft.world.level.block.BedBlock 'class ' || true
-        d net.minecraft.client.DeltaTracker 'getGameTimeDeltaPartialTick|getRealtimeDeltaTicks' || true
+        d net.minecraft.client.renderer.LevelRenderer 'allChanged|reload|setBlocksDirty|setSectionDirty|needsUpdate|refresh|dirty|Dirty|rebuild' || true
+        d net.minecraft.client.Minecraft 'reloadResourcePacks|levelRenderer' || true
