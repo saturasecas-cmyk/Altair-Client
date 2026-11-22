@@ -1,0 +1,24 @@
+name: Inspect Hacks
+on:
+  push:
+    branches: ['inspect/hacks']
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '25'
+    - uses: gradle/actions/setup-gradle@v4
+    - run: ./gradlew compileJava --no-daemon || true
+    - name: Dump
+      run: |
+        JARS=$(find $GITHUB_WORKSPACE/.gradle ~/.gradle -name '*.jar' ! -name '*sources*' 2>/dev/null | grep -E 'client-extra|forge-26.2|fastutil|joml|slf4j|asm|datafixer|brigadier|guava|gson|lwjgl|netty|commons|minecraft|mojang' )
+        CP=$(echo "$JARS" | tr '\n' ':')
+        echo "::group::classes"
+        for j in $JARS; do unzip -l $j 2>/dev/null | awk '{print $4}' | grep -E '\.class$' | grep -E 'world/inventory/(Click|Container[A-Z][a-z]*Input|ContainerInput)|world/inventory/[A-Za-z]*Click' | head -20; done
+        echo "::endgroup::"
+        d() { echo "::group::$1"; javap -p -cp "$CP" $1 2>&1 | grep -E 'handleInventoryMouseClick|getSelectedSlot|setSelectedSlot|getPickRadius|fallDistance|resetFallDistance|noPhysics|StatusOnly|tickRateManager|setTickRate|useItemOn|attack\(|getEquipmentSlotForItem|setFlyingSpeed|noCollision|getConnection|keyShift|keyJump|keySprint|hitResult|class |enum '; echo "::endgroup::"; }
+        for c in net.minecraft.client.multiplayer.MultiPlayerGameMode net.minecraft.world.entity.player.Inventory net.minecraft.world.entity.Entity net.minecraft.world.entity.LivingEntity net.minecraft.client.player.LocalPlayer 'net.minecraft.network.protocol.game.ServerboundMovePlayerPacket$StatusOnly' net.minecraft.client.multiplayer.ClientLevel net.minecraft.world.entity.player.Abilities net.minecraft.client.Minecraft net.minecraft.client.Options; do d $c; done
