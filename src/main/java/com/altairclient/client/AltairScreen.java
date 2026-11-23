@@ -28,6 +28,7 @@ import com.altairclient.modules.mods.FovHandler;
 import com.altairclient.modules.mods.NametagHandler;
 import com.altairclient.modules.mods.FullbrightHandler;
 import com.altairclient.modules.mods.ExtraHacks;
+import com.altairclient.modules.mods.ExtraHacks2;
 import com.altairclient.modules.mods.Hacks;
 import com.altairclient.modules.mods.RenderHacks;
 import com.altairclient.modules.mods.WorldHacks;
@@ -1527,6 +1528,76 @@ public final class AltairScreen extends Screen {
                 () -> ExtraHacks.AUTO_SHEAR.toggle(),
                 () -> ExtraHacks.AUTO_SHEAR.enabled
         ).withSetting("Range", 2, 6, 1, () -> ExtraHacks.AUTO_SHEAR.a, v -> ExtraHacks.AUTO_SHEAR.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Super Knockback",
+                "More knockback on hits",
+                "Releases and re-presses sprint every few ticks while attacking so each hit resets sprint (W-tap).",
+                Category.HACK_COMBAT,
+                "\u2694",
+                () -> ExtraHacks2.SUPER_KNOCKBACK.toggle(),
+                () -> ExtraHacks2.SUPER_KNOCKBACK.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Target Strafe",
+                "Circle your target",
+                "With Kill Aura on, circles around the nearest target at the chosen radius.",
+                Category.HACK_COMBAT,
+                "\u21BB",
+                () -> ExtraHacks2.TARGET_STRAFE.toggle(),
+                () -> ExtraHacks2.TARGET_STRAFE.enabled
+        ).withSetting("Radius", 2, 5, 1, () -> ExtraHacks2.TARGET_STRAFE.a, v -> ExtraHacks2.TARGET_STRAFE.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Low Hop",
+                "Low fast hops",
+                "Small quick hops while you walk.",
+                Category.HACK_MOVE,
+                "\u2197",
+                () -> ExtraHacks2.LOW_HOP.toggle(),
+                () -> ExtraHacks2.LOW_HOP.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Strafe",
+                "Air control",
+                "Lets you steer in mid-air keeping your speed.",
+                Category.HACK_MOVE,
+                "\u21C4",
+                () -> ExtraHacks2.STRAFE.toggle(),
+                () -> ExtraHacks2.STRAFE.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Anti Blind",
+                "No blindness/darkness/nausea",
+                "Removes the Blindness, Darkness and Nausea effects on your screen.",
+                Category.HACK_PLAYER,
+                "\u25C9",
+                () -> ExtraHacks2.ANTI_BLIND.toggle(),
+                () -> ExtraHacks2.ANTI_BLIND.enabled
+        ));
+
+        allModules.add(new ModuleEntry(
+                "Fast Eat",
+                "Eat faster",
+                "Shortens the eating/drinking time (client side; many servers undo it).",
+                Category.HACK_PLAYER,
+                "\u2615",
+                () -> ExtraHacks2.FAST_EAT.toggle(),
+                () -> ExtraHacks2.FAST_EAT.enabled
+        ).withSetting("Speed", 1, 20, 1, () -> ExtraHacks2.FAST_EAT.a, v -> ExtraHacks2.FAST_EAT.a = v));
+
+        allModules.add(new ModuleEntry(
+                "Auto Collect",
+                "Pick up nearby items",
+                "Walks to dropped items near you. Releases the forward key when nothing is left.",
+                Category.HACK_WORLD,
+                "\u2B07",
+                () -> ExtraHacks2.AUTO_COLLECT.toggle(),
+                () -> ExtraHacks2.AUTO_COLLECT.enabled
+        ).withSetting("Range", 2, 16, 1, () -> ExtraHacks2.AUTO_COLLECT.a, v -> ExtraHacks2.AUTO_COLLECT.a = v));
 
         allModules.add(new ModuleEntry(
                 "Clock",
