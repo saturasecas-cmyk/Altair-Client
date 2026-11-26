@@ -5,7 +5,6 @@ import com.altairclient.modules.mods.CustomCrosshair;
 import com.altairclient.modules.textures.ExtraTextures;
 import com.altairclient.modules.textures.HudTextures;
 import com.altairclient.modules.textures.PvpTextures;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class GuiHookMixin {
 
     @Inject(method = "render", at = @At("TAIL"), require = 0)
-    private void altair$render(GuiGraphics graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        AltairHud.renderOverlay(graphics, deltaTracker.getGameTimeDeltaPartialTick(false));
+    private void altair$render(GuiGraphics graphics, float partialTick, CallbackInfo ci) {
+        AltairHud.renderOverlay(graphics, partialTick);
     }
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true, require = 0)
