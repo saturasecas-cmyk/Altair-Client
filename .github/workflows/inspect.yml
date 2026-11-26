@@ -1,0 +1,10 @@
+name: Inspect Forge versions (temporal)
+on:
+  push:
+    branches: [inspect/versions]
+jobs:
+  v:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        curl -s https://maven.minecraftforge.net/net/minecraftforge/forge/maven-metadata.xml | grep -o '<version>[^<]*' | sed 's/<version>//' | awk -F- '{last[$1]=$0} END{for(k in last) print last[k]}' | sort -V
