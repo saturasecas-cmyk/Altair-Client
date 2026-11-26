@@ -186,7 +186,7 @@ public final class MovementTextures {
         }
         if (WALK_AURA.isEnabled() && !mc.options.getCameraType().isFirstPerson()) {
             // Aura intensa: varias partículas grandes por tick, en dos anillos y subiendo
-            ParticleOptions dust = new DustParticleOptions(dustColor(Palette.color(WALK_AURA.getColorIndex()) & 0xFFFFFF), 1.3F);
+            ParticleOptions dust = new DustParticleOptions((Palette.color(WALK_AURA.getColorIndex()) & 0xFFFFFF), 1.3F);
             for (int k = 0; k < 4; k++) {
                 double a = ThreadLocalRandom.current().nextDouble() * Math.PI * 2.0;
                 double r = 0.45 + ThreadLocalRandom.current().nextDouble() * 0.35;
