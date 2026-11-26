@@ -4,11 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.gui.screens.options.OptionsScreen;
+import net.minecraft.client.gui.screens.OptionsScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ScreenEvent;
 
@@ -167,9 +165,11 @@ public final class TitleBackground {
         }
         int drawH = Math.round(LOGO_DRAW_W * LOGO_TEX_H / (float) LOGO_TEX_W);
         int color = (Math.max(0, Math.min(255, Math.round(alpha * 255.0F))) << 24) | 0xFFFFFF;
-        RenderPipeline pipeline = RenderPipelines.GUI_TEXTURED;
-        g.blit(pipeline, LOGO, screenWidth / 2 - LOGO_DRAW_W / 2, y, 0.0F, 0.0F, LOGO_DRAW_W, drawH,
-                LOGO_TEX_W, LOGO_TEX_H, LOGO_TEX_W, LOGO_TEX_H, color);
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+        g.setColor(1.0F, 1.0F, 1.0F, alpha);
+        g.blit(LOGO, screenWidth / 2 - LOGO_DRAW_W / 2, y, LOGO_DRAW_W, drawH, 0.0F, 0.0F,
+                LOGO_TEX_W, LOGO_TEX_H, LOGO_TEX_W, LOGO_TEX_H);
+        g.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         return true;
     }
 

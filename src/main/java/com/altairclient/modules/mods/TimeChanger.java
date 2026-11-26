@@ -1,15 +1,9 @@
 package com.altairclient.modules.mods;
 
-import net.minecraft.client.ClientClockManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.Holder;
-import net.minecraft.world.clock.ClockNetworkState;
-import net.minecraft.world.clock.WorldClock;
 import net.minecraftforge.event.TickEvent;
 
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Time Changer: fija la hora del día solo en tu cliente. No cambia la hora del servidor
@@ -63,13 +57,8 @@ public final class TimeChanger {
         if (level == null) {
             return;
         }
-        Optional<Holder<WorldClock>> clock = level.dimensionType().defaultClock();
-        if (clock.isEmpty()) {
-            return; // dimensión con hora fija (Nether, End...)
-        }
-        ClientClockManager manager = level.clockManager();
-        long total = manager.getTotalTicks(clock.get());
+        long total = level.getDayTime();
         long target = total - Math.floorMod(total, DAY) + TICKS[mode];
-        manager.handleUpdates(level.getGameTime(), Map.of(clock.get(), new ClockNetworkState(target, 0.0F, 0.0F)));
+        level.setDayTime(target);
     }
 }

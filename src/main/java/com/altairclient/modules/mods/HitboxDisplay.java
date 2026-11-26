@@ -3,13 +3,11 @@ package com.altairclient.modules.mods;
 import com.altairclient.AltairClient;
 
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.gizmos.GizmoStyle;
-import net.minecraft.gizmos.Gizmos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Dibuja las cajas de colisión de las entidades en color morado Altair.
@@ -24,7 +22,6 @@ public class HitboxDisplay {
 
     /** Morado del cliente (ARGB). */
     private static final int PURPLE = 0xFF9B7BFF;
-    private static final GizmoStyle STYLE = GizmoStyle.stroke(PURPLE);
 
     private static final double MAX_DISTANCE = 128.0D;
     private static final double MAX_DISTANCE_SQR = MAX_DISTANCE * MAX_DISTANCE;
@@ -50,44 +47,47 @@ public class HitboxDisplay {
         return enabled;
     }
 
-    /** Se llama una vez por frame desde una capa del HUD. */
-    public void emit(DeltaTracker deltaTracker) {
-        if (!enabled) {
+    public static void register() {
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(HitboxDisplay::onRender);
+    }
+
+    private static void onRender(net.minecraftforge.client.event.RenderLevelStageEvent event) {
+        HitboxDisplay self = INSTANCE;
+        if (!self.enabled || event.getStage() != net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_ENTITIES) {
             return;
         }
-
         Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.level == null || mc.player == null) {
+        if (mc.level == null || mc.player == null) {
             return;
         }
-
         try {
-            float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
-            Camera camera = mc.gameRenderer.mainCamera();
-            Entity cameraEntity = camera.entity();
+            float partialTick = event.getPartialTick();
+            Camera camera = event.getCamera();
+            Vec3 cam = camera.getPosition();
+            Entity cameraEntity = mc.getCameraEntity();
             boolean hideCameraEntity = !camera.isDetached();
-
-            // Instala el colector de gizmos del frame; se restaura el anterior al cerrar.
-            try (Gizmos.TemporaryCollection ignored = mc.levelRenderer.collectPerFrameRenderThreadGizmos()) {
-                for (Entity entity : mc.level.entitiesForRendering()) {
-                    if (entity == cameraEntity && hideCameraEntity) {
-                        continue;
-                    }
-                    if (mc.player.distanceToSqr(entity) > MAX_DISTANCE_SQR) {
-                        continue;
-                    }
-
-                    double dx = Mth.lerp((double) partialTick, entity.xo, entity.getX()) - entity.getX();
-                    double dy = Mth.lerp((double) partialTick, entity.yo, entity.getY()) - entity.getY();
-                    double dz = Mth.lerp((double) partialTick, entity.zo, entity.getZ()) - entity.getZ();
-
-                    AABB box = entity.getBoundingBox().move(dx, dy, dz);
-                    Gizmos.cuboid(box, STYLE);
+            com.mojang.blaze3d.vertex.PoseStack ps = event.getPoseStack();
+            net.minecraft.client.renderer.MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+            com.mojang.blaze3d.vertex.VertexConsumer vc = buffers.getBuffer(net.minecraft.client.renderer.RenderType.lines());
+            float r = ((PURPLE >> 16) & 255) / 255.0F;
+            float g = ((PURPLE >> 8) & 255) / 255.0F;
+            float b = (PURPLE & 255) / 255.0F;
+            for (Entity entity : mc.level.entitiesForRendering()) {
+                if (entity == cameraEntity && hideCameraEntity) {
+                    continue;
                 }
+                if (mc.player.distanceToSqr(entity) > MAX_DISTANCE_SQR) {
+                    continue;
+                }
+                double dx = Mth.lerp((double) partialTick, entity.xo, entity.getX()) - entity.getX() - cam.x;
+                double dy = Mth.lerp((double) partialTick, entity.yo, entity.getY()) - entity.getY() - cam.y;
+                double dz = Mth.lerp((double) partialTick, entity.zo, entity.getZ()) - entity.getZ() - cam.z;
+                AABB box = entity.getBoundingBox().move(dx, dy, dz);
+                net.minecraft.client.renderer.LevelRenderer.renderLineBox(ps, vc, box, r, g, b, 1.0F);
             }
+            buffers.endBatch(net.minecraft.client.renderer.RenderType.lines());
         } catch (Throwable t) {
-            // Evita bloquear el juego si cambia la API interna: se desactiva y se avisa una vez.
-            enabled = false;
+            self.enabled = false;
             AltairClient.LOGGER.error("Hitbox Display disabled because of a rendering error", t);
         }
     }

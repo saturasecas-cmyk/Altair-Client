@@ -34,6 +34,7 @@ public final class AltairHud {
     }
 
     public static void register() {
+        HitboxDisplay.register();
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairHud::onOverlayPre);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairHud::onRenderGui);
     }

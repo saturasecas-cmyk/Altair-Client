@@ -3,7 +3,6 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.Palette;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderHighlightEvent;
@@ -58,18 +57,25 @@ public final class BlockOutline {
         if (!enabled) {
             return;
         }
-        event.setCustomRenderer((collector, stack, state) -> {
-            if (state.blockOutlineRenderState == null) {
-                return;
-            }
-            BlockPos pos = state.blockOutlineRenderState.pos();
-            Vec3 cam = state.cameraRenderState.pos;
-            stack.pushPose();
-            stack.translate(pos.getX() - cam.x, pos.getY() - cam.y, pos.getZ() - cam.z);
-            collector.submitShapeOutline(stack, state.blockOutlineRenderState.shape(),
-                    RenderTypes.lines(), Palette.color(colorIndex), (float) width, false);
-            stack.popPose();
-        });
-        return;
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+        if (mc.level == null) {
+            return;
+        }
+        event.setCanceled(true);
+        BlockPos pos = event.getTarget().getBlockPos();
+        net.minecraft.world.phys.shapes.VoxelShape shape = mc.level.getBlockState(pos)
+                .getShape(mc.level, pos, net.minecraft.world.phys.shapes.CollisionContext.of(event.getCamera().getEntity()));
+        Vec3 cam = event.getCamera().getPosition();
+        com.mojang.blaze3d.vertex.VertexConsumer vc = event.getMultiBufferSource()
+                .getBuffer(net.minecraft.client.renderer.RenderType.lines());
+        int c = Palette.color(colorIndex);
+        float r = ((c >> 16) & 255) / 255.0F;
+        float g = ((c >> 8) & 255) / 255.0F;
+        float b = (c & 255) / 255.0F;
+        com.mojang.blaze3d.systems.RenderSystem.lineWidth((float) width);
+        PoseStack ps = event.getPoseStack();
+        shape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> net.minecraft.client.renderer.LevelRenderer.renderLineBox(
+                ps, vc, x1 + pos.getX() - cam.x, y1 + pos.getY() - cam.y, z1 + pos.getZ() - cam.z,
+                x2 + pos.getX() - cam.x, y2 + pos.getY() - cam.y, z2 + pos.getZ() - cam.z, r, g, b, 1.0F));
     }
 }
