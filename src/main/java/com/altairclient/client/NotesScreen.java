@@ -261,10 +261,7 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics) {
-        int mouseX = 0;
-        int mouseY = 0;
-        float partialTick = 0.0F;
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         // Sin desenfoque: solo un velo suave para que se lea la ventana
         graphics.fill(0, 0, width, height, 0x40000000);
     }

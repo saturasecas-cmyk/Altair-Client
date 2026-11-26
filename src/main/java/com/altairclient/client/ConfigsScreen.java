@@ -72,10 +72,7 @@ public class ConfigsScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics graphics) {
-        int mouseX = 0;
-        int mouseY = 0;
-        float partialTick = 0.0F;
+    public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         graphics.fill(0, 0, width, height, 0x40000000);
     }
 
