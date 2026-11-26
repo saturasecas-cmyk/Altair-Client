@@ -1,7 +1,7 @@
 package com.altairclient.mixin;
 
 import com.altairclient.client.AltairHud;
-import com.altairclient.client.CustomCrosshair;
+import com.altairclient.modules.mods.CustomCrosshair;
 import com.altairclient.modules.textures.ExtraTextures;
 import com.altairclient.modules.textures.HudTextures;
 import com.altairclient.modules.textures.PvpTextures;
