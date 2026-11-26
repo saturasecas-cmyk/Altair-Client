@@ -10,8 +10,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class LoadingScreenArt {
 
-    private static final ResourceLocation EMBLEM = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem.png");
-    private static final ResourceLocation GLOW = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem_glow.png");
+    private static final ResourceLocation EMBLEM = new ResourceLocation("altairclient", "textures/gui/loading/emblem.png");
+    private static final ResourceLocation GLOW = new ResourceLocation("altairclient", "textures/gui/loading/emblem_glow.png");
     private static final int EMBLEM_W = 408;
     private static final int EMBLEM_H = 488;
     private static final int GLOW_W = 520;
