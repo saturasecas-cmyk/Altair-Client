@@ -58,7 +58,7 @@ public final class WorldHacks {
             return;
         }
         registered = true;
-        TickEvent.ClientTickEvent.Post.BUS.addListener(WorldHacks::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(WorldHacks::onTick);
     }
 
     // ==================== Helpers ====================
@@ -69,7 +69,7 @@ public final class WorldHacks {
         }
         for (int i = 0; i < 9; i++) {
             if (wanted.test(p.getInventory().getItem(i))) {
-                p.getInventory().setSelectedSlot(i);
+                p.getInventory().selected = i;
                 return true;
             }
         }
@@ -127,14 +127,17 @@ public final class WorldHacks {
 
     // ==================== Tick ====================
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.level == null || mc.gameMode == null || !p.isAlive()) {
             return;
         }
         tick++;
-        boolean noScreen = mc.gui.screen() == null;
+        boolean noScreen = mc.screen == null;
 
         if (FAST_PLACE.enabled) {
             if (rightClickDelay == null) {

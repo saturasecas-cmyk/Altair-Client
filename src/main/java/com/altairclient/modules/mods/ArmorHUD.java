@@ -1,7 +1,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -82,7 +82,7 @@ public class ArmorHUD {
         return 78;
     }
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -145,7 +145,7 @@ public class ArmorHUD {
                 int color = percent > 50 ? GREEN : (percent > 25 ? YELLOW : RED);
                 String durText = durability + "";
 
-                graphics.text(
+                graphics.drawString(
                         minecraft.font,
                         durText,
                         x + 20,
@@ -154,7 +154,7 @@ public class ArmorHUD {
                         false
                 );
             } else {
-                graphics.text(
+                graphics.drawString(
                         minecraft.font,
                         "100%",
                         x + 20,

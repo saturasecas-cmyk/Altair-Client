@@ -108,7 +108,7 @@ public final class Hacks {
             return;
         }
         registered = true;
-        TickEvent.ClientTickEvent.Post.BUS.addListener(Hacks::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(Hacks::onTick);
     }
 
     // ==================== Hooks used by mixins and Kill Aura ====================
@@ -229,14 +229,17 @@ public final class Hacks {
         mc.gameMode.handleContainerInput(p.inventoryMenu.containerId, menuSlot, button, type, p);
     }
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.level == null || mc.gameMode == null || !p.isAlive()) {
             return;
         }
         tick++;
-        boolean noScreen = mc.gui.screen() == null;
+        boolean noScreen = mc.screen == null;
         Vec3 dm = p.getDeltaMovement();
 
         // ---- Combat ----
@@ -384,7 +387,7 @@ public final class Hacks {
             boolean healthy = p.getHealth() > AUTO_GAPPLE.a;
             if ((gappleTicks > 4 && !p.isUsingItem()) || healthy || gappleTicks > 60) {
                 mc.options.keyUse.setDown(false);
-                p.getInventory().setSelectedSlot(gappleSaved);
+                p.getInventory().selected = gappleSaved;
                 gappleSaved = -1;
             }
             return;
@@ -395,9 +398,9 @@ public final class Hacks {
         for (int i = 0; i < 9; i++) {
             ItemStack st = p.getInventory().getItem(i);
             if (st.is(Items.GOLDEN_APPLE) || st.is(Items.ENCHANTED_GOLDEN_APPLE)) {
-                gappleSaved = p.getInventory().getSelectedSlot();
+                gappleSaved = p.getInventory().selected;
                 gappleTicks = 0;
-                p.getInventory().setSelectedSlot(i);
+                p.getInventory().selected = i;
                 mc.options.keyUse.setDown(true);
                 return;
             }
@@ -424,7 +427,7 @@ public final class Hacks {
             boolean found = false;
             for (int i = 0; i < 9; i++) {
                 if (p.getInventory().getItem(i).is(Items.END_CRYSTAL)) {
-                    p.getInventory().setSelectedSlot(i);
+                    p.getInventory().selected = i;
                     found = true;
                     break;
                 }

@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.Anim;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 /**
  * Memory Display: RAM usada por el juego, como porcentaje, como gráfico de los últimos
@@ -89,7 +89,7 @@ public class MemoryDisplay extends HudElement {
     }
 
     @Override
-    protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
+    protected void draw(GuiGraphics graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         int[] data = history;
         int percent;
@@ -116,8 +116,8 @@ public class MemoryDisplay extends HudElement {
             String label = "RAM: ";
             String value = percent + "%";
             int textY = showGraph() ? y + (GRAPH_H - 8) / 2 : y;
-            graphics.text(mc.font, label, x, textY, WHITE, false);
-            graphics.text(mc.font, value, x + mc.font.width(label), textY, percentAnim.color(colorFor(percent)), false);
+            graphics.drawString(mc.font, label, x, textY, WHITE, false);
+            graphics.drawString(mc.font, value, x + mc.font.width(label), textY, percentAnim.color(colorFor(percent)), false);
             gx = x + mc.font.width("RAM: 100%") + 6;
         }
 

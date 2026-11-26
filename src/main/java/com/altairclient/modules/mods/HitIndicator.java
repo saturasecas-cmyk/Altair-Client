@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.AltairScreen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
@@ -47,7 +47,7 @@ public class HitIndicator {
         this.lastHitTime = System.currentTimeMillis();
     }
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -104,7 +104,7 @@ public class HitIndicator {
     @SubscribeEvent
     public static void onRenderChatOverlay(CustomizeGuiOverlayEvent.Chat event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.gui.screen() == null) {
+        if (mc.screen == null) {
             INSTANCE.render(event.getGuiGraphics());
         }
     }

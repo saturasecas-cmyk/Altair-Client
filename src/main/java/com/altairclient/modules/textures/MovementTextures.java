@@ -3,7 +3,7 @@ package com.altairclient.modules.textures;
 import com.altairclient.client.Palette;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -73,13 +73,16 @@ public final class MovementTextures {
     public static void register() {
         if (!registered) {
             registered = true;
-            TickEvent.ClientTickEvent.Post.BUS.addListener(MovementTextures::onTick);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(MovementTextures::onTick);
         }
     }
 
     // ==================== Tick ====================
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         updateBobbing(mc);
 
@@ -238,7 +241,7 @@ public final class MovementTextures {
 
     // ==================== HUD: líneas de velocidad ====================
 
-    public static void renderSpeedLines(GuiGraphicsExtractor graphics) {
+    public static void renderSpeedLines(GuiGraphics graphics) {
         if (!SPEED_LINES.isEnabled()) {
             return;
         }
@@ -280,7 +283,7 @@ public final class MovementTextures {
      * Desenfoque ligero al girar la cámara. No es un desenfoque real de la imagen (eso necesita un shader):
      * se dibujan franjas translúcidas en los bordes que crecen con la velocidad del giro.
      */
-    public static void renderMotionBlur(GuiGraphicsExtractor graphics) {
+    public static void renderMotionBlur(GuiGraphics graphics) {
         if (!MOTION_BLUR.isEnabled()) {
             blurInit = false;
             return;

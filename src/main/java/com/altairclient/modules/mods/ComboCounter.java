@@ -5,7 +5,7 @@ import com.altairclient.client.Anim;
 import com.altairclient.client.AltairScreen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
@@ -103,14 +103,14 @@ public class ComboCounter {
         return combo;
     }
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
         renderContent(graphics, "Combo: " + getCombo());
     }
 
-    public void renderPreview(GuiGraphicsExtractor graphics) {
+    public void renderPreview(GuiGraphics graphics) {
         renderContent(graphics, "Combo: 3");
     }
 
@@ -119,7 +119,7 @@ public class ComboCounter {
     private String lastText = "";
     private float pop = 0.0F;
 
-    private void renderContent(GuiGraphicsExtractor graphics, String text) {
+    private void renderContent(GuiGraphics graphics, String text) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft == null || minecraft.font == null) {
             return;
@@ -162,7 +162,7 @@ public class ComboCounter {
         );
 
         // Texto del Combo
-        graphics.text(
+        graphics.drawString(
                 minecraft.font,
                 text,
                 x,
@@ -185,7 +185,7 @@ public class ComboCounter {
     @SubscribeEvent
     public static void onRenderChatOverlay(CustomizeGuiOverlayEvent.Chat event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.gui.screen() == null) {
+        if (mc.screen == null) {
             INSTANCE.render(event.getGuiGraphics());
         }
     }

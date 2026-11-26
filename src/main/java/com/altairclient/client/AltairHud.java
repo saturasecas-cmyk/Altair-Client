@@ -25,30 +25,30 @@ import com.altairclient.modules.textures.HudTextures;
 import com.altairclient.modules.textures.MovementTextures;
 import com.altairclient.modules.textures.PvpTextures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 
 /** Dibuja los módulos del HUD encima del juego. */
 public final class AltairHud {
 
-    private static final Identifier LAYER_ID =
-            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "hud");
+    private static final ResourceLocation LAYER_ID =
+            ResourceLocation.fromNamespaceAndPath(AltairClient.MOD_ID, "hud");
 
-    private static final Identifier HITBOX_LAYER_ID =
-            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "hitboxes");
+    private static final ResourceLocation HITBOX_LAYER_ID =
+            ResourceLocation.fromNamespaceAndPath(AltairClient.MOD_ID, "hitboxes");
 
-    private static final Identifier CROSSHAIR_LAYER_ID =
-            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "crosshair");
+    private static final ResourceLocation CROSSHAIR_LAYER_ID =
+            ResourceLocation.fromNamespaceAndPath(AltairClient.MOD_ID, "crosshair");
 
-    private static final Identifier FIRE_LAYER_ID =
-            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "texture_fire");
+    private static final ResourceLocation FIRE_LAYER_ID =
+            ResourceLocation.fromNamespaceAndPath(AltairClient.MOD_ID, "texture_fire");
 
     private AltairHud() {
     }
 
     public static void register() {
-        AddGuiOverlayLayersEvent.BUS.addListener(AltairHud::onAddLayers);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairHud::onAddLayers);
     }
 
     private static void onAddLayers(AddGuiOverlayLayersEvent event) {
@@ -105,7 +105,7 @@ public final class AltairHud {
         return mc.level != null && mc.player != null;
     }
 
-    public static void renderAll(GuiGraphicsExtractor graphics) {
+    public static void renderAll(GuiGraphics graphics) {
         CPSCounter.getInstance().poll();
 
         FPSDisplay.getInstance().render(graphics);

@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.Anim;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.EntityHitResult;
@@ -85,7 +85,7 @@ public class HealthDisplay {
         return String.format(Locale.US, "%.1f", points / 2.0F);
     }
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -115,14 +115,14 @@ public class HealthDisplay {
         renderContent(graphics, name, shown.getHealth(), shown.getMaxHealth());
     }
 
-    public void renderPreview(GuiGraphicsExtractor graphics) {
+    public void renderPreview(GuiGraphics graphics) {
         renderContent(graphics, "Player", 15.0F, 20.0F);
     }
 
     private final Anim.Counter healthAnim = new Anim.Counter(0.5F);
     private final Anim.Smooth widthAnim = new Anim.Smooth();
 
-    private void renderContent(GuiGraphicsExtractor graphics, String name, float health, float maxHealth) {
+    private void renderContent(GuiGraphics graphics, String name, float health, float maxHealth) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) {
             return;
@@ -140,10 +140,10 @@ public class HealthDisplay {
         graphics.fill(x - 5, y - 4, x - 2, y + 14, RED);
 
         int cx = x;
-        graphics.text(mc.font, label, cx, y, MUTED, false);
+        graphics.drawString(mc.font, label, cx, y, MUTED, false);
         cx += mc.font.width(label);
-        graphics.text(mc.font, heart, cx, y, RED, false);
+        graphics.drawString(mc.font, heart, cx, y, RED, false);
         cx += mc.font.width(heart);
-        graphics.text(mc.font, value, cx, y, healthAnim.color(WHITE), false);
+        graphics.drawString(mc.font, value, cx, y, healthAnim.color(WHITE), false);
     }
 }

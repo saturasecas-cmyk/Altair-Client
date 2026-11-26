@@ -3,7 +3,7 @@ package com.altairclient.modules.textures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.network.chat.Component;
@@ -47,11 +47,11 @@ public final class ExtraTextures {
             return;
         }
         registered = true;
-        RenderNameTagEvent.BUS.addListener(ExtraTextures::onNameTag);
-        ScreenEvent.RenderInventoryMobEffects.BUS.addListener(ExtraTextures::onInventoryEffects);
-        ScreenEvent.Opening.BUS.addListener(ExtraTextures::onScreenOpening);
-        ScreenEvent.Render.Post.BUS.addListener(ExtraTextures::onScreenRendered);
-        TickEvent.ClientTickEvent.Post.BUS.addListener(ExtraTextures::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onNameTag);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onInventoryEffects);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onScreenOpening);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onScreenRendered);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onTick);
     }
 
     // ==================== Minimal Nametag ====================
@@ -81,7 +81,10 @@ public final class ExtraTextures {
 
     // ==================== Chat sin fondo / inventario sin desenfoque ====================
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.options == null) {
             return;
@@ -144,7 +147,7 @@ public final class ExtraTextures {
         return TABLIST.isEnabled();
     }
 
-    private static void renderTablist(GuiGraphicsExtractor graphics, Minecraft mc, int w) {
+    private static void renderTablist(GuiGraphics graphics, Minecraft mc, int w) {
         ClientPacketListener connection = mc.getConnection();
         if (connection == null || !mc.options.keyPlayerList.isDown()) {
             return;
@@ -175,14 +178,14 @@ public final class ExtraTextures {
         for (int i = 0; i < names.size(); i++) {
             int col = i / perColumn;
             int row = i % perColumn;
-            graphics.text(font, names.get(i), x0 + 5 + col * colWidth, y0 + 4 + row * 10, 0xFFFFFFFF, true);
+            graphics.drawString(font, names.get(i), x0 + 5 + col * colWidth, y0 + 4 + row * 10, 0xFFFFFFFF, true);
         }
     }
 
     // ==================== Low Armor Overlay ====================
 
     /** Cuatro barritas discretas (casco, peto, pantalones, botas) con la durabilidad de cada pieza. */
-    private static void renderArmor(GuiGraphicsExtractor graphics, Minecraft mc, int w, int h) {
+    private static void renderArmor(GuiGraphics graphics, Minecraft mc, int w, int h) {
         boolean any = false;
         for (EquipmentSlot slot : ARMOR_SLOTS) {
             any |= !mc.player.getItemBySlot(slot).isEmpty();
@@ -213,7 +216,7 @@ public final class ExtraTextures {
 
     // ==================== HUD ====================
 
-    public static void render(GuiGraphicsExtractor graphics) {
+    public static void render(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.gui.hud.isHidden()) {
             return;

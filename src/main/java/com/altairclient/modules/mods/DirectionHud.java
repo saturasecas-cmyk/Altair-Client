@@ -1,7 +1,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
 /** Direction HUD: brújula con las direcciones cardinales y los grados hacia donde miras. */
@@ -42,7 +42,7 @@ public class DirectionHud extends HudElement {
     }
 
     @Override
-    protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
+    protected void draw(GuiGraphics graphics, boolean preview) {
         float k = sizePercent / 100.0F;
         graphics.pose().pushMatrix();
         graphics.pose().translate((float) getX(), (float) getY());
@@ -52,7 +52,7 @@ public class DirectionHud extends HudElement {
         graphics.pose().popMatrix();
     }
 
-    private void drawCompass(GuiGraphicsExtractor graphics, boolean preview) {
+    private void drawCompass(GuiGraphics graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         float bearing;
         if (preview || mc.player == null) {
@@ -80,7 +80,7 @@ public class DirectionHud extends HudElement {
             int rgb = LABELS[i].equals("N") ? 0xFF5C77 : (LABELS[i].length() == 1 ? 0xFFFFFF : 0x929DBD);
             String label = LABELS[i];
             int lx = cx + Math.round(delta) - mc.font.width(label) / 2;
-            graphics.text(mc.font, label, lx, y, (alpha << 24) | rgb, false);
+            graphics.drawString(mc.font, label, lx, y, (alpha << 24) | rgb, false);
         }
 
         // Marcas pequeñas cada 15 grados y marcador central
@@ -95,6 +95,6 @@ public class DirectionHud extends HudElement {
         graphics.fill(cx, y + 9, cx + 1, y + 15, CYAN);
 
         String deg = Math.round(bearing) % 360 + "\u00B0";
-        graphics.text(mc.font, deg, cx - mc.font.width(deg) / 2, y + 16, GOLD, false);
+        graphics.drawString(mc.font, deg, cx - mc.font.width(deg) / 2, y + 16, GOLD, false);
     }
 }

@@ -1,7 +1,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 public class Keystrokes {
 
     private static final Keystrokes INSTANCE = new Keystrokes();
@@ -74,7 +74,7 @@ public class Keystrokes {
         return 74; // W (20) + ASD (20) + LMB/RMB (20) + Espacio (10) + gaps
     }
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -112,7 +112,7 @@ public class Keystrokes {
     }
 
     private void drawKey(
-            GuiGraphicsExtractor graphics,
+            GuiGraphics graphics,
             Minecraft mc,
             String text,
             int kx,
@@ -138,7 +138,7 @@ public class Keystrokes {
         int tw = mc.font.width(text);
         int tx = kx + (kw - tw) / 2;
         int ty = ky + (kh - 8) / 2;
-        graphics.text(mc.font, text, tx, ty, textColor, false);
+        graphics.drawString(mc.font, text, tx, ty, textColor, false);
     }
 
 }

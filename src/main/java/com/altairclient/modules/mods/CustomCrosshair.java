@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.Palette;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +59,7 @@ public final class CustomCrosshair {
     }
 
     /** Dibuja la mira en el centro de la pantalla. */
-    public static void render(GuiGraphicsExtractor graphics) {
+    public static void render(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.player == null || mc.getWindow() == null) {
             return;
@@ -68,7 +68,7 @@ public final class CustomCrosshair {
     }
 
     /** Dibuja la mira centrada en (cx, cy). También sirve para la vista previa. */
-    public static void drawAt(GuiGraphicsExtractor graphics, int cx, int cy) {
+    public static void drawAt(GuiGraphics graphics, int cx, int cy) {
         List<int[]> rects = shape(cx, cy);
         // Contorno oscuro de 1 px para que se vea sobre cualquier fondo, y después el color.
         for (int[] r : rects) {

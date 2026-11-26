@@ -2,7 +2,7 @@ package com.altairclient.client;
 
 import java.util.List;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -72,7 +72,7 @@ public class ConfigsScreen extends Screen {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         graphics.fill(0, 0, width, height, 0x40000000);
     }
 
@@ -82,9 +82,9 @@ public class ConfigsScreen extends Screen {
         return 34 + extra + rows * ROW_H + 18;
     }
 
-    private void button(GuiGraphicsExtractor g, int x, int y, int w, int h, String label, boolean hot, int color) {
+    private void button(GuiGraphics g, int x, int y, int w, int h, String label, boolean hot, int color) {
         g.fill(x, y, x + w, y + h, hot ? BTN_HOT : BTN);
-        g.text(font, label, x + (w - font.width(label)) / 2, y + (h - 8) / 2, color, false);
+        g.drawString(font, label, x + (w - font.width(label)) / 2, y + (h - 8) / 2, color, false);
     }
 
     private static boolean in(double mx, double my, int x, int y, int w, int h) {
@@ -92,7 +92,7 @@ public class ConfigsScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.extractRenderState(g, mouseX, mouseY, partialTick);
         wh = TITLE_H + bodyHeight();
         wx = Math.max(0, Math.min(width - W, wx));
@@ -101,35 +101,35 @@ public class ConfigsScreen extends Screen {
         g.fill(wx - 1, wy - 1, wx + W + 1, wy + wh + 1, BORDER);
         g.fill(wx, wy, wx + W, wy + wh, WIN_BG);
         g.fill(wx, wy, wx + W, wy + TITLE_H, TITLE_BG);
-        g.text(font, "⚙ Configs", wx + 6, wy + 4, TEXT, false);
+        g.drawString(font, "⚙ Configs", wx + 6, wy + 4, TEXT, false);
         // Title buttons: minimize, maximize (decoration) and close
-        g.text(font, "–", wx + W - 40, wy + 4, MUTED, false);
-        g.text(font, "□", wx + W - 28, wy + 4, MUTED, false);
+        g.drawString(font, "–", wx + W - 40, wy + 4, MUTED, false);
+        g.drawString(font, "□", wx + W - 28, wy + 4, MUTED, false);
         boolean closeHot = in(mouseX, mouseY, wx + W - 16, wy, 16, TITLE_H);
-        g.text(font, "✕", wx + W - 12, wy + 4, closeHot ? RED : MUTED, false);
+        g.drawString(font, "✕", wx + W - 12, wy + 4, closeHot ? RED : MUTED, false);
 
         int y = wy + TITLE_H + 6;
         boolean addHot = in(mouseX, mouseY, wx + 8, y, 60, 16);
         button(g, wx + 8, y, 60, 16, "+ Add", addHot, GREEN);
-        g.text(font, status, wx + 76, y + 4, MUTED, false);
+        g.drawString(font, status, wx + 76, y + 4, MUTED, false);
         y += 22;
 
         if (adding) {
             g.fill(wx + 8, y, wx + W - 76, y + 16, 0xFF0C1022);
             g.fill(wx + 8, y, wx + W - 76, y + 1, BORDER);
             boolean blink = (System.currentTimeMillis() / 500) % 2 == 0;
-            g.text(font, nameInput + (blink ? "_" : ""), wx + 12, y + 4, TEXT, false);
+            g.drawString(font, nameInput + (blink ? "_" : ""), wx + 12, y + 4, TEXT, false);
             button(g, wx + W - 70, y, 36, 16, "Save", in(mouseX, mouseY, wx + W - 70, y, 36, 16), GREEN);
             button(g, wx + W - 30, y, 22, 16, "✕", in(mouseX, mouseY, wx + W - 30, y, 22, 16), RED);
             y += 28;
         }
 
         if (names.isEmpty()) {
-            g.text(font, "No saved configs yet. Press + Add.", wx + 8, y + 6, MUTED, false);
+            g.drawString(font, "No saved configs yet. Press + Add.", wx + 8, y + 6, MUTED, false);
         }
         for (String n : names) {
             g.fill(wx + 8, y, wx + W - 8, y + ROW_H - 3, 0xFF141A36);
-            g.text(font, n, wx + 12, y + 5, TEXT, false);
+            g.drawString(font, n, wx + 12, y + 5, TEXT, false);
             int ax = wx + W - 8 - 50 - 44 - 4;
             button(g, ax, y + 2, 44, 14, "Apply", in(mouseX, mouseY, ax, y + 2, 44, 14), GREEN);
             int dx = wx + W - 8 - 50;

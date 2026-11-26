@@ -51,7 +51,7 @@ import com.altairclient.modules.mods.AltairSky;
 import com.altairclient.modules.mods.NoAnimation;
 import com.altairclient.modules.textures.TextureModules;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -2142,7 +2142,7 @@ public final class AltairScreen extends Screen {
 
     @Override
     public void extractRenderState(
-            GuiGraphicsExtractor graphics,
+            GuiGraphics graphics,
             int mouseX,
             int mouseY,
             float partialTick
@@ -2191,8 +2191,8 @@ public final class AltairScreen extends Screen {
         graphics.fill(panelX, panelY + headerHeight, panelX + panelWidth, panelY + headerHeight + 1, BORDER_COLOR);
 
         // Logo e Identidad (Izquierda del Header)
-        graphics.text(font, "✦", panelX + 14, panelY + 12, CYAN, false);
-        graphics.text(font, "Altair Client", panelX + 28, panelY + 13, WHITE, false);
+        graphics.drawString(font, "✦", panelX + 14, panelY + 12, CYAN, false);
+        graphics.drawString(font, "Altair Client", panelX + 28, panelY + 13, WHITE, false);
 
         // Barra de búsqueda simulada (Centro del Header)
         int searchWidth = SEARCH_WIDTH;
@@ -2207,7 +2207,7 @@ public final class AltairScreen extends Screen {
         graphics.fill(searchX, searchY + 1, searchX + 1, searchY + searchHeight, searchBorder);
         graphics.fill(searchX + searchWidth - 1, searchY, searchX + searchWidth, searchY + searchHeight, searchBorder);
 
-        graphics.text(font, "🔍", searchX + 8, searchY + 6, MUTED, false);
+        graphics.drawString(font, "🔍", searchX + 8, searchY + 6, MUTED, false);
         if (searchBox != null) {
             searchBox.extractRenderState(graphics, mouseX, mouseY, partialTick);
         }
@@ -2223,10 +2223,10 @@ public final class AltairScreen extends Screen {
         if (gearHover || inSettings) {
             graphics.fill(gearX - 3, winBtnY - 1, gearX + 13, winBtnY + 15, gearHover ? 0xFF272952 : 0xFF1F2750);
         }
-        graphics.text(font, "\u2699", gearX + 1, winBtnY + 3, (gearHover || inSettings) ? CYAN : MUTED, false);
-        graphics.text(font, "—", winCloseX - 32, winBtnY + 2, MUTED, false);
-        graphics.text(font, "□", winCloseX - 16, winBtnY + 2, MUTED, false);
-        graphics.text(font, "✕", winCloseX, winBtnY + 2, closeHover ? RED : MUTED, false);
+        graphics.drawString(font, "\u2699", gearX + 1, winBtnY + 3, (gearHover || inSettings) ? CYAN : MUTED, false);
+        graphics.drawString(font, "—", winCloseX - 32, winBtnY + 2, MUTED, false);
+        graphics.drawString(font, "□", winCloseX - 16, winBtnY + 2, MUTED, false);
+        graphics.drawString(font, "✕", winCloseX, winBtnY + 2, closeHover ? RED : MUTED, false);
 
         // ==================== 4. SIDEBAR IZQUIERDA ====================
         int sidebarWidth = SIDEBAR_WIDTH;
@@ -2261,7 +2261,7 @@ public final class AltairScreen extends Screen {
                 graphics.fill(panelX + 8, ry, panelX + sidebarWidth - 8, ry + row.h, bg);
                 graphics.fill(panelX + 8, ry, panelX + 11, ry + row.h, folderOpen ? CYAN : PURPLE);
                 int textColor = Anim.mix(folderOpen ? WHITE : MUTED, CYAN, hov);
-                graphics.text(font, (folderOpen ? "▾ " : "▸ ") + row.section.displayName, panelX + 18, ry + 8, textColor, false);
+                graphics.drawString(font, (folderOpen ? "▾ " : "▸ ") + row.section.displayName, panelX + 18, ry + 8, textColor, false);
             } else {
                 // Apartado dentro de la carpeta abierta, con sangría
                 Category cat = row.category;
@@ -2279,7 +2279,7 @@ public final class AltairScreen extends Screen {
                 }
                 int textColor = Anim.mix(Anim.mix(MUTED, CYAN, hov), WHITE, sel);
                 int textX = panelX + 22 + Math.round(2.0F * sel);
-                graphics.text(font, fit(cat.icon + " " + cat.shortName, panelX + sidebarWidth - 12 - textX), textX, ry + 6, textColor, false);
+                graphics.drawString(font, fit(cat.icon + " " + cat.shortName, panelX + sidebarWidth - 12 - textX), textX, ry + 6, textColor, false);
             }
         }
         graphics.disableScissor();
@@ -2297,7 +2297,7 @@ public final class AltairScreen extends Screen {
             graphics.fill(cbX, cbY + 1, cbX + 1, cbY + 24, cbBorder);
             graphics.fill(cbX + cbW - 1, cbY, cbX + cbW, cbY + 24, cbBorder);
             String cbText = "\u2699 Configs";
-            graphics.text(font, cbText, cbX + (cbW - font.width(cbText)) / 2, cbY + 8, WHITE, false);
+            graphics.drawString(font, cbText, cbX + (cbW - font.width(cbText)) / 2, cbY + 8, WHITE, false);
         }
 
         // Botón inferior de HUD Editor
@@ -2320,7 +2320,7 @@ public final class AltairScreen extends Screen {
 
         String hudText = "⊞ HUD Editor";
         int hudTextW = font.width(hudText);
-        graphics.text(font, hudText, hudBtnX + (hudBtnW - hudTextW) / 2, hudBtnY + 8, WHITE, false);
+        graphics.drawString(font, hudText, hudBtnX + (hudBtnW - hudTextW) / 2, hudBtnY + 8, WHITE, false);
 
         // ==================== 5. PANEL DERECHO (DETALLES DEL MÓDULO) ====================
         int rightPanelWidth = 160;
@@ -2340,9 +2340,9 @@ public final class AltairScreen extends Screen {
             graphics.pose().pushMatrix();
             graphics.pose().translate((1.0F - selectT) * 10.0F, 0.0F);
             int iconBoxY = contentY + 16;
-            graphics.text(font, selectedModule.icon, rightPanelX + 16, iconBoxY + 2, selectedModule.accent(), false);
-            graphics.text(font, fit(selectedModule.name, rightPanelWidth - 34 - 14), rightPanelX + 34, iconBoxY + 2, WHITE, false);
-            graphics.text(font, fit(selectedModule.category.displayName + " • " + selectedModule.category.section.kind, rightPanelWidth - 32),
+            graphics.drawString(font, selectedModule.icon, rightPanelX + 16, iconBoxY + 2, selectedModule.accent(), false);
+            graphics.drawString(font, fit(selectedModule.name, rightPanelWidth - 34 - 14), rightPanelX + 34, iconBoxY + 2, WHITE, false);
+            graphics.drawString(font, fit(selectedModule.category.displayName + " • " + selectedModule.category.section.kind, rightPanelWidth - 32),
                     rightPanelX + 16, iconBoxY + 17, MUTED, false);
 
             graphics.fill(rightPanelX + 14, iconBoxY + 31, panelX + panelWidth - 14, iconBoxY + 32, BORDER_COLOR);
@@ -2351,7 +2351,7 @@ public final class AltairScreen extends Screen {
             List<FormattedCharSequence> wrappedLines = splitCached(selectedModule.fullDesc, rightPanelWidth - 28);
             for (FormattedCharSequence line : wrappedLines) {
                 if (descY + 10 > panelY + panelHeight - (selectedModule.hasSetting() ? 105 + 20 * selectedModule.extras.size() : 65)) break;
-                graphics.text(font, line, rightPanelX + 14, descY, MUTED, false);
+                graphics.drawString(font, line, rightPanelX + 14, descY, MUTED, false);
                 descY += 11;
             }
 
@@ -2362,31 +2362,31 @@ public final class AltairScreen extends Screen {
                 boolean minusHover = mouseX >= minusX && mouseX <= minusX + 16 && mouseY >= setY && mouseY <= setY + 14;
                 boolean plusHover = mouseX >= plusX && mouseX <= plusX + 16 && mouseY >= setY && mouseY <= setY + 14;
 
-                graphics.text(font, fit(selectedModule.settingLabel + ": " + selectedModule.settingText(), minusX - (rightPanelX + 14) - 6),
+                graphics.drawString(font, fit(selectedModule.settingLabel + ": " + selectedModule.settingText(), minusX - (rightPanelX + 14) - 6),
                         rightPanelX + 14, setY + 3, WHITE, false);
 
                 graphics.fill(minusX, setY, minusX + 16, setY + 14, minusHover ? 0xFF2E3550 : 0xFF22283D);
                 graphics.fill(plusX, setY, plusX + 16, setY + 14, plusHover ? 0xFF2E3550 : 0xFF22283D);
-                graphics.text(font, "-", minusX + 6, setY + 3, WHITE, false);
-                graphics.text(font, "+", plusX + 5, setY + 3, WHITE, false);
+                graphics.drawString(font, "-", minusX + 6, setY + 3, WHITE, false);
+                graphics.drawString(font, "+", plusX + 5, setY + 3, WHITE, false);
 
                 for (int ei = 0; ei < selectedModule.extras.size(); ei++) {
                     ModuleEntry.Extra extra = selectedModule.extras.get(ei);
                     int ey = setY - 20 * (ei + 1);
                     boolean emHover = mouseX >= minusX && mouseX <= minusX + 16 && mouseY >= ey && mouseY <= ey + 14;
                     boolean epHover = mouseX >= plusX && mouseX <= plusX + 16 && mouseY >= ey && mouseY <= ey + 14;
-                    graphics.text(font, fit(extra.label + ": " + extra.text(), minusX - (rightPanelX + 14) - 6),
+                    graphics.drawString(font, fit(extra.label + ": " + extra.text(), minusX - (rightPanelX + 14) - 6),
                             rightPanelX + 14, ey + 3, WHITE, false);
                     graphics.fill(minusX, ey, minusX + 16, ey + 14, emHover ? 0xFF2E3550 : 0xFF22283D);
                     graphics.fill(plusX, ey, plusX + 16, ey + 14, epHover ? 0xFF2E3550 : 0xFF22283D);
-                    graphics.text(font, "-", minusX + 6, ey + 3, WHITE, false);
-                    graphics.text(font, "+", plusX + 5, ey + 3, WHITE, false);
+                    graphics.drawString(font, "-", minusX + 6, ey + 3, WHITE, false);
+                    graphics.drawString(font, "+", plusX + 5, ey + 3, WHITE, false);
                 }
             }
 
             boolean isModEnabled = selectedModule.isEnabled();
-            graphics.text(font, "Status:", rightPanelX + 14, panelY + panelHeight - 62, MUTED, false);
-            graphics.text(font, isModEnabled ? "ENABLED" : "DISABLED", rightPanelX + 60, panelY + panelHeight - 62, isModEnabled ? GREEN : MUTED, false);
+            graphics.drawString(font, "Status:", rightPanelX + 14, panelY + panelHeight - 62, MUTED, false);
+            graphics.drawString(font, isModEnabled ? "ENABLED" : "DISABLED", rightPanelX + 60, panelY + panelHeight - 62, isModEnabled ? GREEN : MUTED, false);
 
             int bigBtnX = rightPanelX + 14;
             int bigBtnY = panelY + panelHeight - 44;
@@ -2406,7 +2406,7 @@ public final class AltairScreen extends Screen {
             graphics.fill(bigBtnX + bigBtnW - 1, bigBtnY, bigBtnX + bigBtnW, bigBtnY + bigBtnH, bigBorder);
 
             String statusLabel = isModEnabled ? "Enabled" : "Disabled";
-            graphics.text(font, statusLabel, bigBtnX + 10, bigBtnY + 9, WHITE, false);
+            graphics.drawString(font, statusLabel, bigBtnX + 10, bigBtnY + 9, WHITE, false);
 
             int pillX = bigBtnX + bigBtnW - 28;
             int pillY = bigBtnY + 7;
@@ -2429,14 +2429,14 @@ public final class AltairScreen extends Screen {
 
         boolean searching = !searchQuery.isEmpty();
         String gridTitle = searching ? "Results" : currentCategory.displayName;
-        graphics.text(font, gridTitle, gridStartX, gridStartY, WHITE, false);
-        graphics.text(font, searching ? "\"" + searchQuery + "\"" : "Select a card to see its options",
+        graphics.drawString(font, gridTitle, gridStartX, gridStartY, WHITE, false);
+        graphics.drawString(font, searching ? "\"" + searchQuery + "\"" : "Select a card to see its options",
                 gridStartX + font.width(gridTitle) + 10, gridStartY + 1, MUTED, false);
 
         List<ModuleEntry> categoryModules = getVisibleModules();
 
         if (searching && categoryModules.isEmpty()) {
-            graphics.text(font, "No results", gridStartX, gridStartY + 22, MUTED, false);
+            graphics.drawString(font, "No results", gridStartX, gridStartY + 22, MUTED, false);
         }
 
         int cols = 3;
@@ -2489,8 +2489,8 @@ public final class AltairScreen extends Screen {
             // Textos con 8 px de margen a cada lado, recortados si no caben
             int textWidth = cardWidth - 16;
             int accent = entry.accent();
-            graphics.text(font, entry.icon, cx + 8, cy + 8, accent, false);
-            graphics.text(font, fit(entry.name, textWidth - 14), cx + 22, cy + 8, WHITE, false);
+            graphics.drawString(font, entry.icon, cx + 8, cy + 8, accent, false);
+            graphics.drawString(font, fit(entry.name, textWidth - 14), cx + 22, cy + 8, WHITE, false);
             if (entry.colorSupplier != null) {
                 // Cuadrado con el color de la paleta que usa la textura (abajo a la izquierda, con el mismo margen)
                 graphics.fill(cx + 8, cy + cardHeight - 18, cx + 18, cy + cardHeight - 8, BORDER_COLOR);
@@ -2499,7 +2499,7 @@ public final class AltairScreen extends Screen {
 
             List<FormattedCharSequence> descLines = splitCached(entry.shortDesc, textWidth);
             for (int l = 0; l < Math.min(2, descLines.size()); l++) {
-                graphics.text(font, descLines.get(l), cx + 8, cy + 23 + l * 11, MUTED, false);
+                graphics.drawString(font, descLines.get(l), cx + 8, cy + 23 + l * 11, MUTED, false);
             }
 
             // Switch toggle en la tarjeta

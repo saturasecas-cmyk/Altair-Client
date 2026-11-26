@@ -33,16 +33,19 @@ public final class ExtraHacks2 {
             return;
         }
         registered = true;
-        TickEvent.ClientTickEvent.Post.BUS.addListener(ExtraHacks2::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraHacks2::onTick);
     }
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.level == null || mc.gameMode == null || !p.isAlive()) {
             return;
         }
-        boolean noScreen = mc.gui.screen() == null;
+        boolean noScreen = mc.screen == null;
         Vec3 dm = p.getDeltaMovement();
 
         if (sprintBack) {

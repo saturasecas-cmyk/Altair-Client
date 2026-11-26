@@ -1,6 +1,6 @@
 package com.altairclient.client;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 
 /** Fondo de boton con bordes redondeados en azul oscuro del cliente. */
@@ -16,7 +16,7 @@ public final class RoundedButtons {
     private RoundedButtons() {
     }
 
-    public static void draw(GuiGraphicsExtractor g, AbstractWidget w) {
+    public static void draw(GuiGraphics g, AbstractWidget w) {
         int x = w.getX();
         int y = w.getY();
         int width = w.getWidth();
@@ -34,7 +34,7 @@ public final class RoundedButtons {
     }
 
     /** Rectangulo con las esquinas recortadas en escalera (radio ~3 px). */
-    private static void round(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int color) {
+    private static void round(GuiGraphics g, int x1, int y1, int x2, int y2, int color) {
         int h = y2 - y1;
         int w = x2 - x1;
         if (h < 6 || w < 8) {

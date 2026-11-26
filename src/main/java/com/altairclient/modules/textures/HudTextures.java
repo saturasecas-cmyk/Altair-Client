@@ -4,7 +4,7 @@ import com.altairclient.client.Anim;
 import com.altairclient.client.Palette;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -42,7 +42,7 @@ public final class HudTextures {
     }
 
     /** Dibuja todo lo de este apartado en el HUD. */
-    public static void render(GuiGraphicsExtractor graphics) {
+    public static void render(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.gui.hud.isHidden()) {
@@ -54,7 +54,7 @@ public final class HudTextures {
         if (MIN_HOTBAR.isEnabled()) {
             renderMinimalHotbar(graphics, mc, p, w, h);
         } else if (HIGHLIGHT.isEnabled()) {
-            outline(graphics, w / 2 - 91 + p.getInventory().getSelectedSlot() * 20, h - 22, 22, 22,
+            outline(graphics, w / 2 - 91 + p.getInventory().selected * 20, h - 22, 22, 22,
                     Palette.color(HIGHLIGHT.getColorIndex()));
         }
         if (SIMPLE_XP.isEnabled()) {
@@ -65,12 +65,12 @@ public final class HudTextures {
         }
     }
 
-    private static void renderMinimalHotbar(GuiGraphicsExtractor graphics, Minecraft mc, LocalPlayer p, int w, int h) {
+    private static void renderMinimalHotbar(GuiGraphics graphics, Minecraft mc, LocalPlayer p, int w, int h) {
         int x0 = w / 2 - 91;
         int y0 = h - 22;
         graphics.fill(x0, y0, x0 + 182, y0 + 22, 0x990A0E1C);
         Inventory inv = p.getInventory();
-        int selected = inv.getSelectedSlot();
+        int selected = inv.selected;
         int color = Palette.color(MIN_HOTBAR.getColorIndex());
         for (int i = 0; i < 9; i++) {
             if (i == selected) {
@@ -87,7 +87,7 @@ public final class HudTextures {
         outline(graphics, x0 + selected * 20, y0, 22, 22, color);
     }
 
-    private static void renderSimpleXp(GuiGraphicsExtractor graphics, Minecraft mc, LocalPlayer p, int w, int h) {
+    private static void renderSimpleXp(GuiGraphics graphics, Minecraft mc, LocalPlayer p, int w, int h) {
         int x0 = w / 2 - 91;
         int y = h - 27;
         int color = Palette.color(SIMPLE_XP.getColorIndex());
@@ -98,11 +98,11 @@ public final class HudTextures {
         }
         if (p.experienceLevel > 0) {
             String level = String.valueOf(p.experienceLevel);
-            graphics.text(mc.font, level, w / 2 - mc.font.width(level) / 2, y - 10, color, true);
+            graphics.drawString(mc.font, level, w / 2 - mc.font.width(level) / 2, y - 10, color, true);
         }
     }
 
-    private static void renderBreakBar(GuiGraphicsExtractor graphics, Minecraft mc, int w, int h) {
+    private static void renderBreakBar(GuiGraphics graphics, Minecraft mc, int w, int h) {
         MultiPlayerGameMode gm = mc.gameMode;
         if (gm == null || !gm.isDestroying()) {
             return;
@@ -117,7 +117,7 @@ public final class HudTextures {
         graphics.fill(x, y, x + Math.round(bw * fraction), y + 3, color);
     }
 
-    private static void outline(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
+    private static void outline(GuiGraphics graphics, int x, int y, int width, int height, int color) {
         graphics.fill(x, y, x + width, y + 1, color);
         graphics.fill(x, y + height - 1, x + width, y + height, color);
         graphics.fill(x, y, x + 1, y + height, color);

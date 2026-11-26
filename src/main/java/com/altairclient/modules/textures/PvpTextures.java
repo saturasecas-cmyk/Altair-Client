@@ -4,7 +4,7 @@ import com.altairclient.client.Anim;
 import com.altairclient.client.Palette;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.core.particles.ParticleOptions;
@@ -56,7 +56,7 @@ public final class PvpTextures {
     public static void register() {
         if (!registered) {
             registered = true;
-            RenderBlockScreenEffectEvent.BUS.addListener(PvpTextures::onScreenEffect);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(PvpTextures::onScreenEffect);
         }
     }
 
@@ -93,7 +93,7 @@ public final class PvpTextures {
     }
 
     /** Fuego bajo y/o semitransparente con la paleta del cliente, desde abajo de la pantalla. */
-    public static void renderFire(GuiGraphicsExtractor graphics) {
+    public static void renderFire(GuiGraphics graphics) {
         boolean low = LOW_FIRE.isEnabled();
         boolean transparent = TRANSPARENT_FIRE.isEnabled();
         if (!low && !transparent) {

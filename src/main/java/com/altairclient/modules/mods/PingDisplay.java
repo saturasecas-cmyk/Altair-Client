@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.Anim;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.PlayerInfo;
 
 /** Muestra la latencia (ping) al servidor en ms. */
@@ -80,7 +80,7 @@ public class PingDisplay {
         return -1;
     }
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -93,14 +93,14 @@ public class PingDisplay {
         renderContent(graphics, currentPing(mc));
     }
 
-    public void renderPreview(GuiGraphicsExtractor graphics) {
+    public void renderPreview(GuiGraphics graphics) {
         renderContent(graphics, 42);
     }
 
     private final Anim.Counter pingAnim = new Anim.Counter(8.0F);
     private final Anim.Smooth widthAnim = new Anim.Smooth();
 
-    private void renderContent(GuiGraphicsExtractor graphics, int ping) {
+    private void renderContent(GuiGraphics graphics, int ping) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) {
             return;
@@ -122,7 +122,7 @@ public class PingDisplay {
         graphics.fill(x - 5, y - 4, x + width + 8, y + 14, BACKGROUND);
         graphics.fill(x - 5, y - 4, x - 2, y + 14, CYAN);
 
-        graphics.text(mc.font, label, x, y, WHITE, false);
-        graphics.text(mc.font, value, x + mc.font.width(label), y, valueColor, false);
+        graphics.drawString(mc.font, label, x, y, WHITE, false);
+        graphics.drawString(mc.font, value, x + mc.font.width(label), y, valueColor, false);
     }
 }

@@ -4,7 +4,7 @@ import com.altairclient.client.AltairConfig;
 import com.altairclient.client.LoadingScreenArt;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.LoadingOverlay;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,9 +28,9 @@ public abstract class LoadingOverlayMixin {
     @Unique
     private long altair$fadeSeenAt = 0L;
 
-    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;IIF)V",
+    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphics;IIF)V",
             at = @At("RETURN"), require = 0)
-    private void altair$loadingScreen(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void altair$loadingScreen(GuiGraphics graphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (!AltairConfig.isTitleBackground()) {
             return;
         }

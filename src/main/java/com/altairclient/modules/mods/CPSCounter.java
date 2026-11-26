@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.Anim;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +121,7 @@ public class CPSCounter {
     private final Anim.Counter rightAnim = new Anim.Counter(2.0F);
     private final Anim.Smooth widthAnim = new Anim.Smooth();
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -158,7 +158,7 @@ public class CPSCounter {
         );
 
         // Texto CPS
-        graphics.text(
+        graphics.drawString(
                 minecraft.font,
                 text,
                 x,

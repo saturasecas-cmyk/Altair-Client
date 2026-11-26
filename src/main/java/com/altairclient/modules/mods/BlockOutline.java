@@ -25,7 +25,7 @@ public final class BlockOutline {
     public static void register() {
         if (!registered) {
             registered = true;
-            RenderHighlightEvent.Block.BUS.addListener(BlockOutline::onHighlight);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(BlockOutline::onHighlight);
         }
     }
 

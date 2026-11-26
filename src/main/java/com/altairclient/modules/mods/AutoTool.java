@@ -31,7 +31,7 @@ public final class AutoTool {
     }
 
     public static void tick(Minecraft mc) {
-        if (!enabled || mc.player == null || mc.level == null || mc.gui.screen() != null) {
+        if (!enabled || mc.player == null || mc.level == null || mc.screen != null) {
             restore(mc);
             return;
         }
@@ -46,7 +46,7 @@ public final class AutoTool {
                 return;
             }
 
-            int current = inv.getSelectedSlot();
+            int current = inv.selected;
             int best = current;
             float bestSpeed = inv.getItem(current).getDestroySpeed(state);
             for (int i = 0; i < 9; i++) {
@@ -61,7 +61,7 @@ public final class AutoTool {
                 if (previousSlot < 0) {
                     previousSlot = current;
                 }
-                inv.setSelectedSlot(best);
+                inv.selected = best;
             }
         } else {
             restore(mc);
@@ -70,7 +70,7 @@ public final class AutoTool {
 
     private static void restore(Minecraft mc) {
         if (previousSlot >= 0 && mc.player != null) {
-            mc.player.getInventory().setSelectedSlot(previousSlot);
+            mc.player.getInventory().selected = previousSlot;
         }
         previousSlot = -1;
     }

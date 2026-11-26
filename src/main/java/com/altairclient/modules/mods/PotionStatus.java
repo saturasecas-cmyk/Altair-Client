@@ -1,7 +1,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 
@@ -80,7 +80,7 @@ public class PotionStatus {
         return 22;
     }
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -117,11 +117,11 @@ public class PotionStatus {
             String time = String.format("%02d:%02d", durationSecs / 60, durationSecs % 60);
 
             // Nombre del efecto
-            graphics.text(mc.font, name, curX + 2, lineY + 1, WHITE, false);
+            graphics.drawString(mc.font, name, curX + 2, lineY + 1, WHITE, false);
 
             // Tiempo restante alineado a la derecha
             int timeW = mc.font.width(time);
-            graphics.text(mc.font, time, curX + boxW - timeW - 5, lineY + 1, MUTED, false);
+            graphics.drawString(mc.font, time, curX + boxW - timeW - 5, lineY + 1, MUTED, false);
 
             lineY += rowHeight;
         }

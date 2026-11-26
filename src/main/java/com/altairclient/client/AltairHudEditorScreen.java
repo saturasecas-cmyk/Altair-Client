@@ -19,7 +19,7 @@ import com.altairclient.modules.mods.PotionStatus;
 import com.altairclient.modules.mods.ReachDisplay;
 import com.altairclient.modules.mods.WorldInfo;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -46,7 +46,7 @@ public final class AltairHudEditorScreen extends Screen {
         void setY(int y);
         int getWidth();
         int getHeight();
-        void render(GuiGraphicsExtractor graphics);
+        void render(GuiGraphics graphics);
     }
 
     private static AltairHudEditorScreen model;
@@ -105,7 +105,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { FPSDisplay.getInstance().setY(y); }
             @Override public int getWidth() { return FPSDisplay.getInstance().getWidth(); }
             @Override public int getHeight() { return FPSDisplay.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { FPSDisplay.getInstance().render(g); }
+            @Override public void render(GuiGraphics g) { FPSDisplay.getInstance().render(g); }
         });
 
         // 2. CPS Counter
@@ -119,7 +119,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { CPSCounter.getInstance().setY(y); }
             @Override public int getWidth() { return CPSCounter.getInstance().getWidth(); }
             @Override public int getHeight() { return CPSCounter.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { CPSCounter.getInstance().render(g); }
+            @Override public void render(GuiGraphics g) { CPSCounter.getInstance().render(g); }
         });
 
         // 3. Combo Counter
@@ -133,7 +133,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { ComboCounter.getInstance().setY(y); }
             @Override public int getWidth() { return ComboCounter.getInstance().getWidth(); }
             @Override public int getHeight() { return ComboCounter.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { ComboCounter.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { ComboCounter.getInstance().renderPreview(g); }
         });
 
         // 4. Reach Display
@@ -147,7 +147,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { ReachDisplay.getInstance().setY(y); }
             @Override public int getWidth() { return ReachDisplay.getInstance().getWidth(); }
             @Override public int getHeight() { return ReachDisplay.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { ReachDisplay.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { ReachDisplay.getInstance().renderPreview(g); }
         });
 
         // 5. Armor HUD
@@ -161,7 +161,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { ArmorHUD.getInstance().setY(y); }
             @Override public int getWidth() { return ArmorHUD.getInstance().getWidth(); }
             @Override public int getHeight() { return ArmorHUD.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { ArmorHUD.getInstance().render(g); }
+            @Override public void render(GuiGraphics g) { ArmorHUD.getInstance().render(g); }
         });
 
         // 6. Keystrokes
@@ -175,7 +175,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { Keystrokes.getInstance().setY(y); }
             @Override public int getWidth() { return Keystrokes.getInstance().getWidth(); }
             @Override public int getHeight() { return Keystrokes.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { Keystrokes.getInstance().render(g); }
+            @Override public void render(GuiGraphics g) { Keystrokes.getInstance().render(g); }
         });
 
         // 7. Potion Status
@@ -189,7 +189,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { PotionStatus.getInstance().setY(y); }
             @Override public int getWidth() { return PotionStatus.getInstance().getWidth(); }
             @Override public int getHeight() { return PotionStatus.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { PotionStatus.getInstance().render(g); }
+            @Override public void render(GuiGraphics g) { PotionStatus.getInstance().render(g); }
         });
 
         // 8. World Info
@@ -203,7 +203,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { WorldInfo.getInstance().setY(y); }
             @Override public int getWidth() { return WorldInfo.getInstance().getWidth(); }
             @Override public int getHeight() { return WorldInfo.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { WorldInfo.getInstance().render(g); }
+            @Override public void render(GuiGraphics g) { WorldInfo.getInstance().render(g); }
         });
 
         // Ping Display
@@ -217,7 +217,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { PingDisplay.getInstance().setY(y); }
             @Override public int getWidth() { return PingDisplay.getInstance().getWidth(); }
             @Override public int getHeight() { return PingDisplay.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { PingDisplay.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { PingDisplay.getInstance().renderPreview(g); }
         });
 
         // Health Display
@@ -231,7 +231,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { HealthDisplay.getInstance().setY(y); }
             @Override public int getWidth() { return HealthDisplay.getInstance().getWidth(); }
             @Override public int getHeight() { return HealthDisplay.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { HealthDisplay.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { HealthDisplay.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {
@@ -244,7 +244,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { TotemCounter.getInstance().setY(y); }
             @Override public int getWidth() { return TotemCounter.getInstance().getWidth(); }
             @Override public int getHeight() { return TotemCounter.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { TotemCounter.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { TotemCounter.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {
@@ -257,7 +257,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { ArrowCounter.getInstance().setY(y); }
             @Override public int getWidth() { return ArrowCounter.getInstance().getWidth(); }
             @Override public int getHeight() { return ArrowCounter.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { ArrowCounter.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { ArrowCounter.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {
@@ -270,7 +270,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { MemoryDisplay.getInstance().setY(y); }
             @Override public int getWidth() { return MemoryDisplay.getInstance().getWidth(); }
             @Override public int getHeight() { return MemoryDisplay.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { MemoryDisplay.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { MemoryDisplay.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {
@@ -283,7 +283,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { DamageIndicator.getInstance().setY(y); }
             @Override public int getWidth() { return DamageIndicator.getInstance().getWidth(); }
             @Override public int getHeight() { return DamageIndicator.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { DamageIndicator.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { DamageIndicator.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {
@@ -296,7 +296,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { ItemNameDisplay.getInstance().setY(y); }
             @Override public int getWidth() { return ItemNameDisplay.getInstance().getWidth(); }
             @Override public int getHeight() { return ItemNameDisplay.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { ItemNameDisplay.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { ItemNameDisplay.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {
@@ -309,7 +309,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { ServerAddress.getInstance().setY(y); }
             @Override public int getWidth() { return ServerAddress.getInstance().getWidth(); }
             @Override public int getHeight() { return ServerAddress.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { ServerAddress.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { ServerAddress.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {
@@ -322,7 +322,7 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { ClockHud.getInstance().setY(y); }
             @Override public int getWidth() { return ClockHud.getInstance().getWidth(); }
             @Override public int getHeight() { return ClockHud.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { ClockHud.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { ClockHud.getInstance().renderPreview(g); }
         });
 
         targets.add(new HudTarget() {
@@ -335,13 +335,13 @@ public final class AltairHudEditorScreen extends Screen {
             @Override public void setY(int y) { DirectionHud.getInstance().setY(y); }
             @Override public int getWidth() { return DirectionHud.getInstance().getWidth(); }
             @Override public int getHeight() { return DirectionHud.getInstance().getHeight(); }
-            @Override public void render(GuiGraphicsExtractor g) { DirectionHud.getInstance().renderPreview(g); }
+            @Override public void render(GuiGraphics g) { DirectionHud.getInstance().renderPreview(g); }
         });
     }
 
     @Override
     public void extractRenderState(
-            GuiGraphicsExtractor graphics,
+            GuiGraphics graphics,
             int mouseX,
             int mouseY,
             float partialTick
@@ -357,11 +357,11 @@ public final class AltairHudEditorScreen extends Screen {
 
         String title = "\u2726 A L T A I R   H U D   E D I T O R \u2726";
         int titleWidth = font.width(title);
-        graphics.text(font, title, (width - titleWidth) / 2, 6, WHITE, false);
+        graphics.drawString(font, title, (width - titleWidth) / 2, 6, WHITE, false);
 
         String hint = "Drag the active modules to position them • ESC to save and go back";
         int hintWidth = font.width(hint);
-        graphics.text(font, hint, (width - hintWidth) / 2, 17, MUTED, false);
+        graphics.drawString(font, hint, (width - hintWidth) / 2, 17, MUTED, false);
 
         int activeCount = 0;
         for (HudTarget target : targets) {
@@ -389,14 +389,14 @@ public final class AltairHudEditorScreen extends Screen {
             graphics.fill(bx, by + 1, bx + 1, by + bh, borderColor);
             graphics.fill(bx + bw - 1, by, bx + bw, by + bh, borderColor);
 
-            graphics.text(font, target.getName(), bx + 2, by - 9, GREEN, false);
+            graphics.drawString(font, target.getName(), bx + 2, by - 9, GREEN, false);
 
             target.render(graphics);
         }
 
         if (activeCount == 0) {
             String empty = "No HUD modules are active. Enable them in the modules menu.";
-            graphics.text(font, empty, (width - font.width(empty)) / 2, height / 2 - 4, MUTED, false);
+            graphics.drawString(font, empty, (width - font.width(empty)) / 2, height / 2 - 4, MUTED, false);
         }
     }
 

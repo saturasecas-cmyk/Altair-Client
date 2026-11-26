@@ -130,7 +130,7 @@ public class FreecamHandler {
             reset();
             return false;
         }
-        if (mc.gui.screen() != null) {
+        if (mc.screen != null) {
             return true;
         }
 
@@ -161,7 +161,7 @@ public class FreecamHandler {
     /** Mueve la cámara según las teclas de movimiento. Se llama una vez por tick. */
     public static void tickMovement() {
         Minecraft mc = Minecraft.getInstance();
-        if (!active || isStale(mc) || mc.gui.screen() != null) {
+        if (!active || isStale(mc) || mc.screen != null) {
             return;
         }
 

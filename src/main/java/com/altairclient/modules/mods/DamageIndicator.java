@@ -2,7 +2,7 @@ package com.altairclient.modules.mods;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -98,7 +98,7 @@ public class DamageIndicator extends HudElement {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (mc != null && mc.player != null) {
             placeDefault(mc);
@@ -107,7 +107,7 @@ public class DamageIndicator extends HudElement {
     }
 
     @Override
-    public void renderPreview(GuiGraphicsExtractor graphics) {
+    public void renderPreview(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (mc != null) {
             placeDefault(mc);
@@ -116,7 +116,7 @@ public class DamageIndicator extends HudElement {
     }
 
     @Override
-    protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
+    protected void draw(GuiGraphics graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         int x = getX();
         int y = getY();
@@ -136,10 +136,10 @@ public class DamageIndicator extends HudElement {
         }
     }
 
-    private void drawPop(GuiGraphicsExtractor graphics, Minecraft mc, String text, int x, int y, float t, boolean big) {
+    private void drawPop(GuiGraphics graphics, Minecraft mc, String text, int x, int y, float t, boolean big) {
         int alpha = (int) (255 * Math.max(0.05F, 1.0F - t * t));
         int rgb = big ? 0xFF5C3A : 0xFFE14A;
         Component component = Component.literal(text).withStyle(ChatFormatting.BOLD);
-        graphics.text(mc.font, component, x, y, (alpha << 24) | rgb, true);
+        graphics.drawString(mc.font, component, x, y, (alpha << 24) | rgb, true);
     }
 }

@@ -5,7 +5,7 @@ import com.altairclient.client.Anim;
 import com.altairclient.client.AltairScreen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -94,7 +94,7 @@ public class ReachDisplay {
     private final Anim.Counter reachAnim = new Anim.Counter(0.3F);
     private final Anim.Smooth widthAnim = new Anim.Smooth();
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -107,11 +107,11 @@ public class ReachDisplay {
         renderContent(graphics, text);
     }
 
-    public void renderPreview(GuiGraphicsExtractor graphics) {
+    public void renderPreview(GuiGraphics graphics) {
         renderContent(graphics, "Reach: 2.87m");
     }
 
-    private void renderContent(GuiGraphicsExtractor graphics, String text) {
+    private void renderContent(GuiGraphics graphics, String text) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft == null || minecraft.font == null) {
             return;
@@ -138,7 +138,7 @@ public class ReachDisplay {
         );
 
         // Texto Reach
-        graphics.text(
+        graphics.drawString(
                 minecraft.font,
                 text,
                 x,
@@ -168,7 +168,7 @@ public class ReachDisplay {
     @SubscribeEvent
     public static void onRenderChatOverlay(CustomizeGuiOverlayEvent.Chat event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.gui.screen() == null) {
+        if (mc.screen == null) {
             INSTANCE.render(event.getGuiGraphics());
         }
     }

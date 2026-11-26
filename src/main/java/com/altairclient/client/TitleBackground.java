@@ -1,7 +1,7 @@
 package com.altairclient.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
@@ -9,7 +9,7 @@ import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ScreenEvent;
 
 import java.util.Random;
@@ -33,7 +33,7 @@ public final class TitleBackground {
     private static final float[] BY = new float[BIG_STARS];
     private static final float[] BPHASE = new float[BIG_STARS];
 
-    private static final Identifier LOGO = Identifier.fromNamespaceAndPath("altairclient", "textures/gui/title/altair_logo.png");
+    private static final ResourceLocation LOGO = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/title/altair_logo.png");
     private static final int LOGO_TEX_W = 768;
     private static final int LOGO_TEX_H = 172;
     private static final int LOGO_DRAW_W = 232;
@@ -95,12 +95,12 @@ public final class TitleBackground {
     public static void register() {
         if (!registered) {
             registered = true;
-            ScreenEvent.BackgroundRendered.BUS.addListener(TitleBackground::onBackground);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(TitleBackground::onBackground);
         }
     }
 
     /** Lo llama TitleScreenMixin: dibuja el fondo de Altair en el título. Devuelve false si está desactivado. */
-    public static boolean drawForTitle(GuiGraphicsExtractor g, int w, int h) {
+    public static boolean drawForTitle(GuiGraphics g, int w, int h) {
         if (!AltairConfig.isTitleBackground()) {
             return false;
         }
@@ -129,7 +129,7 @@ public final class TitleBackground {
     }
 
     /** Cielo de foto nocturna: azul marino, neblina azulada abajo a la derecha y estrellas que derivan despacio. */
-    public static void drawStarfield(GuiGraphicsExtractor g, int w, int h, float alpha) {
+    public static void drawStarfield(GuiGraphics g, int w, int h, float alpha) {
         float t = (System.currentTimeMillis() % 3_600_000L) / 1000.0F;
 
         final int cell = 12;
@@ -161,7 +161,7 @@ public final class TitleBackground {
     }
 
     /** Dibuja el logo Altair Edition en lugar del de Minecraft. Devuelve false si está desactivado (se usa el de vanilla). */
-    public static boolean drawLogo(GuiGraphicsExtractor g, int screenWidth, float alpha, int y) {
+    public static boolean drawLogo(GuiGraphics g, int screenWidth, float alpha, int y) {
         if (!AltairConfig.isTitleBackground()) {
             return false;
         }
@@ -181,7 +181,7 @@ public final class TitleBackground {
         return (int) (x & 0x7FFFFFFF);
     }
 
-    private static void draw(GuiGraphicsExtractor g, int w, int h) {
+    private static void draw(GuiGraphics g, int w, int h) {
         long ms = System.currentTimeMillis();
         float t = (ms % 3_600_000L) / 1000.0F;
 
@@ -220,7 +220,7 @@ public final class TitleBackground {
         drawTerrain(g, w, h);
     }
 
-    private static void drawShootingStars(GuiGraphicsExtractor g, int w, int h, float t, float alphaScale) {
+    private static void drawShootingStars(GuiGraphics g, int w, int h, float t, float alphaScale) {
         final float dur = 1.3F;
         for (int slot = 0; slot < 3; slot++) {
             float period = 7.0F + slot * 2.3F;
@@ -249,7 +249,7 @@ public final class TitleBackground {
         }
     }
 
-    private static void drawTerrain(GuiGraphicsExtractor g, int w, int h) {
+    private static void drawTerrain(GuiGraphics g, int w, int h) {
         final int cell = 8;
         // Colinas del fondo, con árboles
         for (int x = 0; x < w; x += cell) {

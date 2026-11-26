@@ -29,7 +29,7 @@ public final class NoAnimation {
     public static void register() {
         if (!registered) {
             registered = true;
-            TickEvent.ClientTickEvent.Post.BUS.addListener(NoAnimation::onTick);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(NoAnimation::onTick);
         }
     }
 
@@ -41,7 +41,10 @@ public final class NoAnimation {
         enabled = !enabled;
     }
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.options == null) {
             return;

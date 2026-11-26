@@ -1,7 +1,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 /** Base de los módulos de HUD: posición movible en el editor, activar/desactivar y vista previa. */
 public abstract class HudElement {
@@ -57,9 +57,9 @@ public abstract class HudElement {
     public abstract int getHeight();
 
     /** Dibuja el módulo. En la vista previa (editor del HUD) se usan datos de ejemplo. */
-    protected abstract void draw(GuiGraphicsExtractor graphics, boolean preview);
+    protected abstract void draw(GuiGraphics graphics, boolean preview);
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (!enabled || mc == null || mc.player == null || mc.font == null) {
             return;
@@ -67,7 +67,7 @@ public abstract class HudElement {
         draw(graphics, false);
     }
 
-    public void renderPreview(GuiGraphicsExtractor graphics) {
+    public void renderPreview(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         if (mc == null || mc.font == null) {
             return;
@@ -76,13 +76,13 @@ public abstract class HudElement {
     }
 
     /** Fondo con la barra de color a la izquierda, como el resto de módulos del HUD. */
-    protected void box(GuiGraphicsExtractor graphics, int width, int height, int accent) {
+    protected void box(GuiGraphics graphics, int width, int height, int accent) {
         graphics.fill(x - 5, y - 4, x + width + 8, y + height - 4, BACKGROUND);
         graphics.fill(x - 5, y - 4, x - 2, y + height - 4, accent);
     }
 
     /** Solo el fondo, sin la barra de color. */
-    protected void plainBox(GuiGraphicsExtractor graphics, int width, int height) {
+    protected void plainBox(GuiGraphics graphics, int width, int height) {
         graphics.fill(x - 5, y - 4, x + width + 8, y + height - 4, BACKGROUND);
     }
 }

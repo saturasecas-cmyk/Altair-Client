@@ -1,7 +1,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -32,10 +32,10 @@ public class ClockHud extends HudElement {
     }
 
     @Override
-    protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
+    protected void draw(GuiGraphics graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         box(graphics, getWidth(), getHeight(), CYAN);
-        graphics.text(mc.font, "⏰ ", getX(), getY(), MUTED, false);
-        graphics.text(mc.font, LocalTime.now().format(FORMAT), getX() + mc.font.width("⏰ "), getY(), WHITE, false);
+        graphics.drawString(mc.font, "⏰ ", getX(), getY(), MUTED, false);
+        graphics.drawString(mc.font, LocalTime.now().format(FORMAT), getX() + mc.font.width("⏰ "), getY(), WHITE, false);
     }
 }

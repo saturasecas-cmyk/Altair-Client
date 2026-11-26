@@ -1,7 +1,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -41,7 +41,7 @@ public class ItemNameDisplay extends HudElement {
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         // Con la mano vacía no se dibuja nada.
         if (isEnabled() && mc != null && mc.player != null && mc.player.getMainHandItem().isEmpty()) {
@@ -51,13 +51,13 @@ public class ItemNameDisplay extends HudElement {
     }
 
     @Override
-    protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
+    protected void draw(GuiGraphics graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         Component name = currentName(mc, preview);
         if (name == null) {
             return;
         }
         box(graphics, mc.font.width(name), getHeight(), GOLD);
-        graphics.text(mc.font, name, getX(), getY(), WHITE, false);
+        graphics.drawString(mc.font, name, getX(), getY(), WHITE, false);
     }
 }

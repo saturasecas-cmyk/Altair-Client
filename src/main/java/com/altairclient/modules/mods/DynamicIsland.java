@@ -6,7 +6,7 @@ import com.altairclient.client.Palette;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.client.event.ScreenEvent;
 
 import java.io.BufferedReader;
@@ -61,7 +61,7 @@ public final class DynamicIsland {
             return;
         }
         registered = true;
-        ScreenEvent.MouseButtonPressed.Pre.BUS.addListener(DynamicIsland::onClick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(DynamicIsland::onClick);
         Runtime.getRuntime().addShutdownHook(new Thread(DynamicIsland::stop, "altair-island-stop"));
     }
 
@@ -289,7 +289,7 @@ public final class DynamicIsland {
         return s + "...";
     }
 
-    public static void render(GuiGraphicsExtractor g) {
+    public static void render(GuiGraphics g) {
         if (!enabled || !hasMedia) {
             return;
         }
@@ -324,9 +324,9 @@ public final class DynamicIsland {
 
         if (!expanded || boxH < 40) {
             // Compacta: nota + título, y una línea de progreso en el borde de abajo
-            g.text(font, note, boxX + 8, boxY + 5, accent, true);
+            g.drawString(font, note, boxX + 8, boxY + 5, accent, true);
             String label = artist.isBlank() ? title : title + " - " + artist;
-            g.text(font, fit(font, label, boxW - 30), boxX + 20, boxY + 5, 0xFFFFFFFF, true);
+            g.drawString(font, fit(font, label, boxW - 30), boxX + 20, boxY + 5, 0xFFFFFFFF, true);
             if (fraction > 0.0F) {
                 g.fill(boxX + 6, boxY + boxH - 2, boxX + 6 + Math.round((boxW - 12) * fraction), boxY + boxH - 1, accent);
             }
@@ -336,17 +336,17 @@ public final class DynamicIsland {
         // Expandida: título, artista, barra de progreso, tiempos y botones
         int left = boxX + 10;
         int inner = boxW - 20;
-        g.text(font, fit(font, title, inner), left, boxY + 7, 0xFFFFFFFF, true);
-        g.text(font, fit(font, artist.isBlank() ? source : artist, inner), left, boxY + 18, 0xFF9AA3C7, true);
+        g.drawString(font, fit(font, title, inner), left, boxY + 7, 0xFFFFFFFF, true);
+        g.drawString(font, fit(font, artist.isBlank() ? source : artist, inner), left, boxY + 18, 0xFF9AA3C7, true);
 
         int barY = boxY + 31;
         g.fill(left, barY, left + inner, barY + 3, 0xFF1A2038);
         if (fraction > 0.0F) {
             g.fill(left, barY, left + Math.round(inner * fraction), barY + 3, accent);
         }
-        g.text(font, time(pos), left, barY + 5, 0xFFB8C0E0, false);
+        g.drawString(font, time(pos), left, barY + 5, 0xFFB8C0E0, false);
         String total = durationSec > 0 ? time(durationSec) : "--:--";
-        g.text(font, total, left + inner - font.width(total), barY + 5, 0xFFB8C0E0, false);
+        g.drawString(font, total, left + inner - font.width(total), barY + 5, 0xFFB8C0E0, false);
 
         buttonY = boxY + boxH - BUTTON_H - 3;
         int center = boxX + boxW / 2;
@@ -358,10 +358,10 @@ public final class DynamicIsland {
         button(g, font, nextX, ">>", accent);
     }
 
-    private static void button(GuiGraphicsExtractor g, Font font, int x, String label, int accent) {
+    private static void button(GuiGraphics g, Font font, int x, String label, int accent) {
         g.fill(x, buttonY, x + BUTTON_W, buttonY + BUTTON_H, Anim.scaleAlpha(accent, 0.22F));
         g.fill(x, buttonY, x + BUTTON_W, buttonY + 1, Anim.scaleAlpha(accent, 0.6F));
-        g.text(font, label, x + (BUTTON_W - font.width(label)) / 2, buttonY + 3, 0xFFFFFFFF, true);
+        g.drawString(font, label, x + (BUTTON_W - font.width(label)) / 2, buttonY + 3, 0xFFFFFFFF, true);
     }
 
     // ==================== Clic ====================

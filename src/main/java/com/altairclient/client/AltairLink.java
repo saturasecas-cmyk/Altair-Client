@@ -37,10 +37,10 @@ public final class AltairLink {
             return;
         }
         registered = true;
-        TickEvent.ClientTickEvent.Post.BUS.addListener(AltairLink::onTick);
-        ClientChatReceivedEvent.Player.BUS.addListener(AltairLink::onPlayerChat);
-        ClientChatReceivedEvent.BUS.addListener(AltairLink::onChat);
-        SystemMessageReceivedEvent.BUS.addListener(AltairLink::onSystem);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onPlayerChat);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onChat);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onSystem);
     }
 
     // ==================== Recepcion ====================
@@ -119,7 +119,10 @@ public final class AltairLink {
 
     // ==================== Envio ====================
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         ticks++;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.getConnection() == null) {

@@ -22,9 +22,9 @@ public final class ChatTimestamps {
     public static void register() {
         if (!registered) {
             registered = true;
-            ClientChatReceivedEvent.BUS.addListener(ChatTimestamps::onChat);
-            ClientChatReceivedEvent.Player.BUS.addListener(ChatTimestamps::onPlayerChat);
-            SystemMessageReceivedEvent.BUS.addListener(ChatTimestamps::onSystem);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatTimestamps::onChat);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatTimestamps::onPlayerChat);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatTimestamps::onSystem);
         }
     }
 

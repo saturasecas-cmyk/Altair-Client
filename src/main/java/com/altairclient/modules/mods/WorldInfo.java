@@ -2,7 +2,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.core.Direction;
 public class WorldInfo {
@@ -72,7 +72,7 @@ public class WorldInfo {
         return 58; // 4 líneas x 12px + padding
     }
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -122,20 +122,20 @@ public class WorldInfo {
         graphics.fill(curX + boxW - 2, curY - 3, curX + boxW, curY + boxH - 3, PURPLE);
 
         // Línea 1: XYZ
-        graphics.text(mc.font, "XYZ:", curX + 2, curY + 2, CYAN, false);
-        graphics.text(mc.font, coordsText, curX + 30, curY + 2, WHITE, false);
+        graphics.drawString(mc.font, "XYZ:", curX + 2, curY + 2, CYAN, false);
+        graphics.drawString(mc.font, coordsText, curX + 30, curY + 2, WHITE, false);
 
         // Línea 2: Dirección
-        graphics.text(mc.font, "Dir:", curX + 2, curY + 15, CYAN, false);
-        graphics.text(mc.font, dirText, curX + 30, curY + 15, MUTED, false);
+        graphics.drawString(mc.font, "Dir:", curX + 2, curY + 15, CYAN, false);
+        graphics.drawString(mc.font, dirText, curX + 30, curY + 15, MUTED, false);
 
         // Línea 3: Ping
-        graphics.text(mc.font, "Ping:", curX + 2, curY + 28, CYAN, false);
-        graphics.text(mc.font, pingText, curX + 30, curY + 28, WHITE, false);
+        graphics.drawString(mc.font, "Ping:", curX + 2, curY + 28, CYAN, false);
+        graphics.drawString(mc.font, pingText, curX + 30, curY + 28, WHITE, false);
 
         // Línea 4: Hora
-        graphics.text(mc.font, "Time:", curX + 2, curY + 41, CYAN, false);
-        graphics.text(mc.font, timeText, curX + 30, curY + 41, MUTED, false);
+        graphics.drawString(mc.font, "Time:", curX + 2, curY + 41, CYAN, false);
+        graphics.drawString(mc.font, timeText, curX + 30, curY + 41, MUTED, false);
     }
 
     private String formatDirection(Direction dir) {

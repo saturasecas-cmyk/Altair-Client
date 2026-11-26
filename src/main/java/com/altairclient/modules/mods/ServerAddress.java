@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.Anim;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ServerData;
 
 /** Server Address: muestra la IP del servidor en el que juegas. */
@@ -45,12 +45,12 @@ public class ServerAddress extends HudElement {
     }
 
     @Override
-    protected void draw(GuiGraphicsExtractor graphics, boolean preview) {
+    protected void draw(GuiGraphics graphics, boolean preview) {
         Minecraft mc = Minecraft.getInstance();
         lastText = preview ? "IP: play.example.net" : currentText(mc);
         int width = Math.round(widthAnim.update(mc.font.width(lastText), 20.0F));
         box(graphics, width, getHeight(), CYAN);
-        graphics.text(mc.font, "IP: ", getX(), getY(), MUTED, false);
-        graphics.text(mc.font, lastText.substring(4), getX() + mc.font.width("IP: "), getY(), WHITE, false);
+        graphics.drawString(mc.font, "IP: ", getX(), getY(), MUTED, false);
+        graphics.drawString(mc.font, lastText.substring(4), getX() + mc.font.width("IP: "), getY(), WHITE, false);
     }
 }

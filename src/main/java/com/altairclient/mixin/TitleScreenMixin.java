@@ -2,7 +2,7 @@ package com.altairclient.mixin;
 
 import com.altairclient.client.TitleBackground;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class TitleScreenMixin {
 
     @Inject(method = "extractBackground", at = @At("HEAD"), cancellable = true, require = 0)
-    private void altair$background(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void altair$background(GuiGraphics g, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         Screen self = (Screen) (Object) this;
         if (TitleBackground.drawForTitle(g, self.width, self.height)) {
             ci.cancel();

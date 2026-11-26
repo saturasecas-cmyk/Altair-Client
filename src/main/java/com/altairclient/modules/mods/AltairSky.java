@@ -32,7 +32,7 @@ public final class AltairSky {
     public static void register() {
         if (!registered) {
             registered = true;
-            ViewportEvent.ComputeFogColor.BUS.addListener(AltairSky::onFogColor);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairSky::onFogColor);
         }
     }
 

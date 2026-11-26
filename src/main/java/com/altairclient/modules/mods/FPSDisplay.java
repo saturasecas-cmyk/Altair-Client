@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import com.altairclient.client.Anim;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 public class FPSDisplay {
 
     private static final FPSDisplay INSTANCE = new FPSDisplay();
@@ -66,7 +66,7 @@ public class FPSDisplay {
     private final Anim.Counter fpsAnim = new Anim.Counter(4.0F);
     private final Anim.Smooth widthAnim = new Anim.Smooth();
 
-    public void render(GuiGraphicsExtractor graphics) {
+    public void render(GuiGraphics graphics) {
         if (!enabled) {
             return;
         }
@@ -100,7 +100,7 @@ public class FPSDisplay {
         );
 
         // Texto FPS
-        graphics.text(
+        graphics.drawString(
                 minecraft.font,
                 text,
                 x,

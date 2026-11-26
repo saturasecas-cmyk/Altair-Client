@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -261,7 +261,7 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         // Sin desenfoque: solo un velo suave para que se lea la ventana
         graphics.fill(0, 0, width, height, 0x40000000);
     }
@@ -758,7 +758,7 @@ public class NotesScreen extends Screen {
     // ==================== Dibujo ====================
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.extractRenderState(g, mouseX, mouseY, partialTick);
         clampWindow();
         if (dirty || lastTextW != contentW() - 8) {
@@ -773,9 +773,9 @@ public class NotesScreen extends Screen {
         g.fill(wx - 1, wy - 1, wx + ww + 1, wy + wh + 1, BORDER);
         g.fill(wx, wy, wx + ww, wy + wh, WIN_BG);
         g.fill(wx, wy, wx + ww, wy + TITLE_H, TITLE_BG);
-        g.text(font, "✎ Altair Notes", wx + 6, wy + 4, TEXT, false);
+        g.drawString(font, "✎ Altair Notes", wx + 6, wy + 4, TEXT, false);
         boolean closeHot = mouseX >= wx + ww - 16 && mouseX < wx + ww && mouseY >= wy && mouseY < wy + TITLE_H;
-        g.text(font, "✕", wx + ww - 12, wy + 4, closeHot ? RED : MUTED, false);
+        g.drawString(font, "✕", wx + ww - 12, wy + 4, closeHot ? RED : MUTED, false);
 
         // Barra de herramientas
         for (Btn b : toolbar()) {
@@ -829,7 +829,7 @@ public class NotesScreen extends Screen {
             }
             FormattedCharSequence seq = styled(label, flags);
             int tw = font.width(seq);
-            g.text(font, seq, b.x + (b.w - tw) / 2, b.y + 4, on ? 0xFFFFFFFF : TEXT, false);
+            g.drawString(font, seq, b.x + (b.w - tw) / 2, b.y + 4, on ? 0xFFFFFFFF : TEXT, false);
         }
 
         // Papel
@@ -889,7 +889,7 @@ public class NotesScreen extends Screen {
                     for (int k = r.line - 1; k >= 0 && data.lines.get(k).list == NotesData.LIST_NUMBER; k--) {
                         n++;
                     }
-                    g.text(font, n + ".", baseX, ry + 1, CYAN, false);
+                    g.drawString(font, n + ".", baseX, ry + 1, CYAN, false);
                 } else {
                     g.fill(baseX + 1, ry, baseX + 10, ry + 9, 0xFF55E6FF);
                     g.fill(baseX + 2, ry + 1, baseX + 9, ry + 8, line.checked ? 0xFF2D8C5A : PAPER);
@@ -915,7 +915,7 @@ public class NotesScreen extends Screen {
                 if (line.list == NotesData.LIST_CHECK && line.checked) {
                     color = Anim.mix(color, 0xFF5A6188, 0.65F);
                 }
-                g.text(font, styled(line.text.substring(p, q), st), x, ry + 1, color, false);
+                g.drawString(font, styled(line.text.substring(p, q), st), x, ry + 1, color, false);
                 x += run;
                 p = q;
             }

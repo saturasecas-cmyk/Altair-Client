@@ -38,7 +38,7 @@ public final class KillAura {
             return;
         }
         registered = true;
-        TickEvent.ClientTickEvent.Post.BUS.addListener(KillAura::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(KillAura::onTick);
     }
 
     public static boolean isEnabled() {
@@ -74,12 +74,15 @@ public final class KillAura {
         interval = Math.max(MIN_INTERVAL, Math.min(MAX_INTERVAL, v));
     }
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         if (!enabled) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null || mc.gameMode == null || mc.gui.screen() != null
+        if (mc.player == null || mc.level == null || mc.gameMode == null || mc.screen != null
                 || !mc.player.isAlive() || mc.player.isSpectator()) {
             return;
         }

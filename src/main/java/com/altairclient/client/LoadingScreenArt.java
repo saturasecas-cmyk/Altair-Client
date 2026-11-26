@@ -2,9 +2,9 @@ package com.altairclient.client;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Pantalla de carga de Altair: cielo estrellado, el emblema azul brillante que da una vuelta cada 4 segundos
@@ -12,8 +12,8 @@ import net.minecraft.resources.Identifier;
  */
 public final class LoadingScreenArt {
 
-    private static final Identifier EMBLEM = Identifier.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem.png");
-    private static final Identifier GLOW = Identifier.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem_glow.png");
+    private static final ResourceLocation EMBLEM = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem.png");
+    private static final ResourceLocation GLOW = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem_glow.png");
     private static final int EMBLEM_W = 408;
     private static final int EMBLEM_H = 488;
     private static final int GLOW_W = 520;
@@ -28,7 +28,7 @@ public final class LoadingScreenArt {
     }
 
     /** @param progress 0..1  @param alpha 0..1 (para el fundido de salida) */
-    public static void draw(GuiGraphicsExtractor g, int w, int h, float progress, float alpha) {
+    public static void draw(GuiGraphics g, int w, int h, float progress, float alpha) {
         TitleBackground.drawStarfield(g, w, h, alpha);
 
         float t = (System.currentTimeMillis() % 3_600_000L) / 1000.0F;
@@ -61,7 +61,7 @@ public final class LoadingScreenArt {
         }
     }
 
-    private static void drawTexture(GuiGraphicsExtractor g, Identifier texture, int cx, int cy,
+    private static void drawTexture(GuiGraphics g, ResourceLocation texture, int cx, int cy,
                                     int texW, int texH, float k, float squash, float alpha) {
         int dw = Math.round(texW * k * squash);
         int dh = Math.round(texH * k);

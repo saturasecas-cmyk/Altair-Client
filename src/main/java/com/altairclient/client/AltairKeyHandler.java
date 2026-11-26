@@ -26,7 +26,7 @@ import com.altairclient.modules.mods.ZoomHandler;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
@@ -36,7 +36,7 @@ public final class AltairKeyHandler {
 
     // Se traduce con la clave "key.category.altairclient.altair_client" del archivo de idioma.
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
-            Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "altair_client")
+            ResourceLocation.fromNamespaceAndPath(AltairClient.MOD_ID, "altair_client")
     );
 
     public static final KeyMapping ZOOM_KEY = new KeyMapping(
@@ -186,11 +186,11 @@ public final class AltairKeyHandler {
 
     /** Registra el evento de teclas, el tick del cliente, el FOV (zoom) y la cámara (freecam). */
     public static void register() {
-        RegisterKeyMappingsEvent.BUS.addListener(AltairKeyHandler::registerKeys);
-        TickEvent.ClientTickEvent.Pre.BUS.addListener(AltairKeyHandler::onClientTickPre);
-        TickEvent.ClientTickEvent.Post.BUS.addListener(AltairKeyHandler::onClientTick);
-        ViewportEvent.ComputeFov.BUS.addListener(AltairKeyHandler::onComputeFov);
-        ViewportEvent.ComputeCameraAngles.BUS.addListener(AltairKeyHandler::onComputeCameraAngles);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::registerKeys);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onClientTickPre);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onClientTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onComputeFov);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onComputeCameraAngles);
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {
@@ -216,7 +216,10 @@ public final class AltairKeyHandler {
     }
 
     /** Antes de cada tick: el giro del ratón pasa a la cámara y la cámara se mueve con WASD. */
-    private static void onClientTickPre(TickEvent.ClientTickEvent.Pre event) {
+    private static void onClientTickPre(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.START) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
 
         NoHurtCamera.apply(mc);
@@ -250,7 +253,10 @@ public final class AltairKeyHandler {
         event.setFOV(ZoomHandler.applyZoom(FovHandler.apply(event.getFOV())));
     }
 
-    private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft minecraft = Minecraft.getInstance();
 
         // Cuenta los clics también a nivel de tick (además de en cada frame del HUD).

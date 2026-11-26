@@ -30,8 +30,8 @@ public final class AutoGG {
     public static void register() {
         if (!registered) {
             registered = true;
-            SystemMessageReceivedEvent.BUS.addListener(AutoGG::onSystem);
-            ClientChatReceivedEvent.BUS.addListener(AutoGG::onChat);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AutoGG::onSystem);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AutoGG::onChat);
         }
     }
 

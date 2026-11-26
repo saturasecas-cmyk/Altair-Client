@@ -40,7 +40,7 @@ public final class FastGame {
     public static void register() {
         if (!registered) {
             registered = true;
-            RenderLivingEvent.Pre.BUS.addListener(FastGame::onRenderLiving);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(FastGame::onRenderLiving);
         }
     }
 

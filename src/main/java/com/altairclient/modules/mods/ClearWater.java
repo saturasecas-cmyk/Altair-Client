@@ -17,7 +17,7 @@ public final class ClearWater {
     public static void register() {
         if (!registered) {
             registered = true;
-            RenderBlockScreenEffectEvent.BUS.addListener(ClearWater::onOverlay);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ClearWater::onOverlay);
         }
     }
 

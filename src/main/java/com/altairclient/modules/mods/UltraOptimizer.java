@@ -45,8 +45,8 @@ public final class UltraOptimizer {
             return;
         }
         registered = true;
-        TickEvent.ClientTickEvent.Post.BUS.addListener(UltraOptimizer::onTick);
-        RenderLivingEvent.Pre.BUS.addListener((RenderLivingEvent.Pre event) -> shouldSkip(event));
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(UltraOptimizer::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((RenderLivingEvent.Pre event) -> shouldSkip(event));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 Minecraft mc = Minecraft.getInstance();
@@ -97,7 +97,10 @@ public final class UltraOptimizer {
 
     // ==================== Ajustes de vídeo ====================
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.options == null) {
             return;

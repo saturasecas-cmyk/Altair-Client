@@ -21,7 +21,7 @@ public final class ScreenshotModule {
         if (pendingTicks <= 0 || mc.player == null) {
             return;
         }
-        if (mc.gui.screen() != null) {
+        if (mc.screen != null) {
             return; // se espera a que no haya ningún menú abierto
         }
 

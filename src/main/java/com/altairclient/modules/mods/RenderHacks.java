@@ -1,7 +1,7 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -70,7 +70,7 @@ public final class RenderHacks {
             return;
         }
         registered = true;
-        TickEvent.ClientTickEvent.Post.BUS.addListener(RenderHacks::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(RenderHacks::onTick);
     }
 
     // ==================== Xray ====================
@@ -173,7 +173,10 @@ public final class RenderHacks {
         savedTilt = null;
     }
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.options == null) {
             return;
@@ -288,7 +291,7 @@ public final class RenderHacks {
         return true;
     }
 
-    private static void box(GuiGraphicsExtractor g, AABB bb, int color) {
+    private static void box(GuiGraphics g, AABB bb, int color) {
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
         double maxX = -Double.MAX_VALUE;
@@ -318,7 +321,7 @@ public final class RenderHacks {
         g.fill(x1 - 1, y0, x1, y1, color);
     }
 
-    private static void line(GuiGraphicsExtractor g, double x0, double y0, double x1, double y1, int color) {
+    private static void line(GuiGraphics g, double x0, double y0, double x1, double y1, int color) {
         double dx = x1 - x0;
         double dy = y1 - y0;
         int steps = (int) Math.min(600, Math.max(Math.abs(dx), Math.abs(dy)) / 1.5);
@@ -345,7 +348,7 @@ public final class RenderHacks {
 
     // ==================== Render (called from the HUD layer) ====================
 
-    public static void render(GuiGraphicsExtractor g, float partial) {
+    public static void render(GuiGraphics g, float partial) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.level == null || (!ESP.enabled && !TRACERS.enabled && !TRAJECTORIES.enabled)) {
@@ -399,7 +402,7 @@ public final class RenderHacks {
         };
     }
 
-    private static void trajectory(GuiGraphicsExtractor g, Minecraft mc, LocalPlayer p) {
+    private static void trajectory(GuiGraphics g, Minecraft mc, LocalPlayer p) {
         ItemStack st = p.getMainHandItem();
         double speed;
         double grav;
@@ -471,7 +474,7 @@ public final class RenderHacks {
             g.fill(x - 1, y - 7, x + 2, y + 8, 0xFFFFFFFF);
             g.fill(x - 7, y - 1, x + 8, y + 2, 0xFFFFFFFF);
             String dist = String.format("%.1fm", start.distanceTo(end));
-            g.text(mc.font, dist, x + 9, y - 4, 0xFFFFFFFF, true);
+            g.drawString(mc.font, dist, x + 9, y - 4, 0xFFFFFFFF, true);
         }
     }
 }

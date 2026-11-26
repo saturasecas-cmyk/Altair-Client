@@ -86,7 +86,7 @@ public final class ExtraHacks {
             return;
         }
         registered = true;
-        TickEvent.ClientTickEvent.Post.BUS.addListener(ExtraHacks::onTick);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraHacks::onTick);
     }
 
     private static boolean has(LocalPlayer p, java.util.function.Predicate<ItemStack> pred) {
@@ -114,7 +114,10 @@ public final class ExtraHacks {
         return p.onGround() && mc.level.getBlockState(ahead).getCollisionShape(mc.level, ahead).isEmpty();
     }
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.level == null || mc.gameMode == null) {
@@ -128,7 +131,7 @@ public final class ExtraHacks {
             return;
         }
         tick++;
-        boolean noScreen = mc.gui.screen() == null;
+        boolean noScreen = mc.screen == null;
         Vec3 dm = p.getDeltaMovement();
         boolean jumpKey = mc.options.keyJump.isDown();
 
@@ -160,8 +163,8 @@ public final class ExtraHacks {
                     }
                 }
             }
-            if (best >= 0 && best != p.getInventory().getSelectedSlot()) {
-                p.getInventory().setSelectedSlot(best);
+            if (best >= 0 && best != p.getInventory().selected) {
+                p.getInventory().selected = best;
             }
         }
         if (AUTO_CLICKER.enabled && noScreen && mc.options.keyAttack.isDown()
@@ -265,7 +268,7 @@ public final class ExtraHacks {
         }
         if (AUTO_TOOL.enabled && noScreen && mc.options.keyAttack.isDown() && mc.hitResult instanceof BlockHitResult bhr) {
             BlockState st = mc.level.getBlockState(bhr.getBlockPos());
-            int best = p.getInventory().getSelectedSlot();
+            int best = p.getInventory().selected;
             float bestSpeed = p.getInventory().getItem(best).getDestroySpeed(st);
             for (int i = 0; i < 9; i++) {
                 float sp = p.getInventory().getItem(i).getDestroySpeed(st);
@@ -274,11 +277,11 @@ public final class ExtraHacks {
                     best = i;
                 }
             }
-            if (best != p.getInventory().getSelectedSlot()) {
-                p.getInventory().setSelectedSlot(best);
+            if (best != p.getInventory().selected) {
+                p.getInventory().selected = best;
             }
         }
-        if (CHEST_STEALER.enabled && mc.gui.screen() instanceof ContainerScreen && tick % 2 == 0
+        if (CHEST_STEALER.enabled && mc.screen instanceof ContainerScreen && tick % 2 == 0
                 && p.containerMenu != p.inventoryMenu) {
             AbstractContainerMenu menu = p.containerMenu;
             int chestSlots = menu.slots.size() - 36;
@@ -350,7 +353,7 @@ public final class ExtraHacks {
             eatTicks++;
             if ((eatTicks > 4 && !p.isUsingItem()) || p.getFoodData().getFoodLevel() >= 20 || eatTicks > 80) {
                 mc.options.keyUse.setDown(false);
-                p.getInventory().setSelectedSlot(eatSaved);
+                p.getInventory().selected = eatSaved;
                 eatSaved = -1;
             }
             return;
@@ -362,9 +365,9 @@ public final class ExtraHacks {
             ItemStack st = p.getInventory().getItem(i);
             if (!st.isEmpty() && st.has(DataComponents.FOOD) && !st.is(Items.ENCHANTED_GOLDEN_APPLE)
                     && !st.is(Items.GOLDEN_APPLE) && !st.is(Items.ROTTEN_FLESH)) {
-                eatSaved = p.getInventory().getSelectedSlot();
+                eatSaved = p.getInventory().selected;
                 eatTicks = 0;
-                p.getInventory().setSelectedSlot(i);
+                p.getInventory().selected = i;
                 mc.options.keyUse.setDown(true);
                 return;
             }

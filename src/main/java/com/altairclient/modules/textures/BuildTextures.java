@@ -9,7 +9,7 @@ import com.mojang.logging.LogUtils;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.VanillaPackResources;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -68,7 +68,7 @@ public final class BuildTextures {
     public static void register() {
         if (!registered) {
             registered = true;
-            TickEvent.ClientTickEvent.Post.BUS.addListener(BuildTextures::onTick);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(BuildTextures::onTick);
         }
     }
 
@@ -164,13 +164,16 @@ public final class BuildTextures {
         return sb.toString();
     }
 
-    private static void onTick(TickEvent.ClientTickEvent.Post event) {
+    private static void onTick(TickEvent.ClientTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
         Minecraft mc = Minecraft.getInstance();
         if (busy || !mc.isGameLoadFinished()) {
             return;
         }
         // Los cambios se aplican al salir del menú de Altair (recargar recursos con el menú abierto lo congela).
-        if (mc.gui.screen() instanceof com.altairclient.client.AltairScreen) {
+        if (mc.screen instanceof com.altairclient.client.AltairScreen) {
             return;
         }
         String sig = signature();
