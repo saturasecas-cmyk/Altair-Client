@@ -14,7 +14,14 @@
     "EntityPickRadiusMixin",
     "BlockFaceMixin",
     "EntityGlowMixin",
-    "CameraCaptureMixin"
+    "CameraCaptureMixin",
+    "SkyColorMixin",
+    "StarBrightnessMixin",
+    "LogoRendererMixin",
+    "ItemInHandRendererMixin",
+    "LoadingOverlayMixin",
+    "LevelLoadingScreenMixin",
+    "AbstractButtonMixin"
   ],
   "injectors": {
     "defaultRequire": 0
