@@ -1,38 +1,56 @@
-plugins {
-    id 'java-library'
-    id 'net.minecraftforge.gradle' version '7.0.40'
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:6.0.+'
+        classpath 'org.spongepowered:mixingradle:0.7.+'
+    }
 }
 
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'java'
+
 group = mod_group_id
-version = mod_version
+version = "${mod_version}-${minecraft_version}"
 
 base {
     archivesName = mod_id
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(25)
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version as int)
+}
+
+minecraft {
+    mappings channel: 'official', version: minecraft_version
 }
 
 repositories {
     mavenCentral()
-    minecraft.mavenizer(it)
-    maven fg.forgeMaven
-    maven fg.minecraftLibsMaven
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
 dependencies {
-    // Minecraft 26.x no está ofuscado, así que no hacen falta mappings.
-    implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+mixin {
+    add sourceSets.main, 'altairclient.refmap.json'
+    config 'altairclient.mixins.json'
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-// Forge carga los mixins desde este atributo del manifiesto del JAR (no desde mods.toml).
 tasks.named('jar') {
     manifest {
         attributes('MixinConfigs': 'altairclient.mixins.json')
     }
+    finalizedBy 'reobfJar'
 }
