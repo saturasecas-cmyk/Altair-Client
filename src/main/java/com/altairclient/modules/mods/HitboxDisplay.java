@@ -66,7 +66,8 @@ public class HitboxDisplay {
             Vec3 cam = camera.getPosition();
             Entity cameraEntity = mc.getCameraEntity();
             boolean hideCameraEntity = !camera.isDetached();
-            com.mojang.blaze3d.vertex.PoseStack ps = event.getPoseStack();
+            com.mojang.blaze3d.vertex.PoseStack ps = new com.mojang.blaze3d.vertex.PoseStack();
+            ps.mulPose(event.getPoseStack());
             net.minecraft.client.renderer.MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
             com.mojang.blaze3d.vertex.VertexConsumer vc = buffers.getBuffer(net.minecraft.client.renderer.RenderType.lines());
             float r = ((PURPLE >> 16) & 255) / 255.0F;

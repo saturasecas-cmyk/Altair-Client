@@ -6,6 +6,6 @@ public record CharacterEvent(char chr) {
     }
 
     public boolean isAllowedChatCharacter() {
-        return net.minecraft.SharedConstants.isAllowedChatCharacter(chr);
+        return net.minecraft.util.StringUtil.isAllowedChatCharacter(chr);
     }
 }
