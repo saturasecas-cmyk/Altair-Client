@@ -1094,13 +1094,12 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollDelta) {
-        double scrollY = scrollDelta;
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (mouseX >= wx && mouseX < wx + ww && mouseY >= wy && mouseY < wy + wh) {
             scroll -= (int) (scrollY * 22);
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollDelta);
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override

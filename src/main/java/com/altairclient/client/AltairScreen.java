@@ -2537,8 +2537,7 @@ public final class AltairScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollDelta) {
-        double scrollY = scrollDelta;
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         // Rueda sobre la barra izquierda: desplaza las carpetas
         if (mouseX < panelX + SIDEBAR_WIDTH && sidebarMaxScroll > 0) {
             sidebarScroll = Math.max(0, Math.min(sidebarMaxScroll, sidebarScroll - (int) (scrollY * 16)));
@@ -2548,7 +2547,7 @@ public final class AltairScreen extends Screen {
             scrollTarget = Anim.clamp(scrollTarget - (float) (scrollY * 22), 0.0F, maxScroll);
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollDelta);
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override

@@ -495,7 +495,7 @@ public final class BuildTextures {
         if (root == null || !root.has("pack") || !root.get("pack").isJsonObject()) {
             root = new JsonObject();
             JsonObject pack = new JsonObject();
-            pack.addProperty("pack_format", 15);
+            pack.addProperty("pack_format", SharedConstants.getCurrentVersion().getPackVersion(net.minecraft.server.packs.PackType.CLIENT_RESOURCES));
             root.add("pack", pack);
         }
         root.getAsJsonObject("pack").addProperty("description", "Altair Build Textures (auto-generated)");
