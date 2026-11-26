@@ -468,7 +468,7 @@ public final class AltairHudEditorScreen extends Screen {
     @Override
     public void onClose() {
         if (minecraft != null) {
-            minecraft.gui.setScreen(parentScreen);
+            minecraft.setScreen(parentScreen);
         }
     }
 

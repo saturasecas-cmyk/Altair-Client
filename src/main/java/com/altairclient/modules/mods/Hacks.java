@@ -236,7 +236,7 @@ public final class Hacks {
             return;
         }
         tick++;
-        boolean noScreen = mc.gui.screen() == null;
+        boolean noScreen = mc.screen == null;
         Vec3 dm = p.getDeltaMovement();
 
         // ---- Combat ----

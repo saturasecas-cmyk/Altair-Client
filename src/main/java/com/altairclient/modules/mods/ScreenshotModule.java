@@ -21,14 +21,15 @@ public final class ScreenshotModule {
         if (pendingTicks <= 0 || mc.player == null) {
             return;
         }
-        if (mc.gui.screen() != null) {
+        if (mc.screen != null) {
             return; // se espera a que no haya ningún menú abierto
         }
 
         pendingTicks--;
         if (pendingTicks == 0) {
             // Usa la captura estándar del juego (guarda en screenshots/ y avisa en el chat).
-            Screenshot.grab(mc, false);
+            Screenshot.grab(mc.gameDirectory, mc.getMainRenderTarget(),
+                    c -> mc.execute(() -> mc.gui.getChat().addMessage(c)));
         }
     }
 }

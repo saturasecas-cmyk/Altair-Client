@@ -31,7 +31,7 @@ public final class AutoTool {
     }
 
     public static void tick(Minecraft mc) {
-        if (!enabled || mc.player == null || mc.level == null || mc.gui.screen() != null) {
+        if (!enabled || mc.player == null || mc.level == null || mc.screen != null) {
             restore(mc);
             return;
         }

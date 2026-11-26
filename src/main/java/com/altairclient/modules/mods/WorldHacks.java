@@ -134,7 +134,7 @@ public final class WorldHacks {
             return;
         }
         tick++;
-        boolean noScreen = mc.gui.screen() == null;
+        boolean noScreen = mc.screen == null;
 
         if (FAST_PLACE.enabled) {
             if (rightClickDelay == null) {

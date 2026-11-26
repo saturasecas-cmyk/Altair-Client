@@ -64,7 +64,7 @@ public final class AltairHud {
         event.getLayeredDraw().addWithCondition(
                 CROSSHAIR_LAYER_ID,
                 (graphics, deltaTracker) -> CustomCrosshair.render(graphics),
-                () -> CustomCrosshair.isEnabled() && inWorld() && !Minecraft.getInstance().gui.hud.isHidden()
+                () -> CustomCrosshair.isEnabled() && inWorld() && !Minecraft.getInstance().options.hideGui
         );
 
         // Texturas PvP: la máscara de calabaza se oculta si Transparent Pumpkin Overlay está activo,
@@ -85,7 +85,7 @@ public final class AltairHud {
                     ExtraTextures.render(graphics);
                     com.altairclient.modules.mods.DynamicIsland.render(graphics);
                 },
-                () -> inWorld() && !Minecraft.getInstance().gui.hud.isHidden()
+                () -> inWorld() && !Minecraft.getInstance().options.hideGui
         );
 
         // La capa del HUD se oculta con F1, igual que el HUD de vanilla.
@@ -95,7 +95,7 @@ public final class AltairHud {
                     renderAll(graphics);
                     com.altairclient.modules.mods.RenderHacks.render(graphics, deltaTracker.getGameTimeDeltaPartialTick(false));
                 },
-                () -> inWorld() && !Minecraft.getInstance().gui.hud.isHidden()
+                () -> inWorld() && !Minecraft.getInstance().options.hideGui
         );
     }
 

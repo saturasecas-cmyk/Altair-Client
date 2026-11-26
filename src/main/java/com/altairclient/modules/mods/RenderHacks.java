@@ -94,7 +94,7 @@ public final class RenderHacks {
     private static void reloadChunks() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && camera != null && mc.levelRenderer != null) {
-            mc.levelRenderer.invalidateCompiledGeometry(mc.level, mc.options, camera, mc.getBlockColors());
+            mc.levelRenderer.allChanged();
         }
     }
 

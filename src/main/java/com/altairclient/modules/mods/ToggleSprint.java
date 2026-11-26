@@ -24,7 +24,7 @@ public final class ToggleSprint {
 
     /** Se llama antes de cada tick del cliente, antes de que el jugador lea los controles. */
     public static void tick(Minecraft mc) {
-        if (!enabled || mc.player == null || mc.gui.screen() != null || FreecamHandler.isActive()) {
+        if (!enabled || mc.player == null || mc.screen != null || FreecamHandler.isActive()) {
             release(mc);
             return;
         }

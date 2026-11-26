@@ -238,7 +238,7 @@ public class NotesScreen extends Screen {
     public void onClose() {
         saveNow();
         if (minecraft != null) {
-            minecraft.gui.setScreen(parent);
+            minecraft.setScreen(parent);
         }
     }
 

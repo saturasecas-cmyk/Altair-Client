@@ -215,7 +215,7 @@ public final class ExtraTextures {
 
     public static void render(GuiGraphicsExtractor graphics) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.gui.hud.isHidden()) {
+        if (mc.player == null || mc.options.hideGui) {
             return;
         }
         int w = mc.getWindow().getGuiScaledWidth();

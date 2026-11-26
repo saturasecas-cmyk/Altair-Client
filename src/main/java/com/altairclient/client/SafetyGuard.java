@@ -109,7 +109,7 @@ public final class SafetyGuard {
             pendingNotice = null;
         }
         // Vigilante de FPS: solo dentro de un mundo, con la ventana activa y sin menús
-        if (mc.level == null || mc.player == null || !mc.isWindowActive() || mc.gui.screen() != null) {
+        if (mc.level == null || mc.player == null || !mc.isWindowActive() || mc.screen != null) {
             lowTicks = 0;
             worldTicks = mc.level == null ? 0 : worldTicks;
             return;

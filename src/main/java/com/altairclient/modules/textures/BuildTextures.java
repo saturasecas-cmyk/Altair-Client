@@ -170,7 +170,7 @@ public final class BuildTextures {
             return;
         }
         // Los cambios se aplican al salir del menú de Altair (recargar recursos con el menú abierto lo congela).
-        if (mc.gui.screen() instanceof com.altairclient.client.AltairScreen) {
+        if (mc.screen instanceof com.altairclient.client.AltairScreen) {
             return;
         }
         String sig = signature();
