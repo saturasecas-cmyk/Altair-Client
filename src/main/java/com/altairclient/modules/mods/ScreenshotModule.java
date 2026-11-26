@@ -29,7 +29,7 @@ public final class ScreenshotModule {
         if (pendingTicks == 0) {
             // Usa la captura estándar del juego (guarda en screenshots/ y avisa en el chat).
             Screenshot.grab(mc.gameDirectory, mc.getMainRenderTarget(),
-                    c -> mc.execute(() -> mc.gui.getChat().addMessage(c)));
+                    c -> mc.execute(() -> mc.player.sendSystemMessage(c)));
         }
     }
 }
