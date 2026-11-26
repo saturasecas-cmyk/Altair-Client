@@ -46,7 +46,7 @@ public final class UltraOptimizer {
         }
         registered = true;
         TickEvent.ClientTickEvent.Post.BUS.addListener(UltraOptimizer::onTick);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener((RenderLivingEvent.Pre event) -> shouldSkip(event));
+        RenderLivingEvent.Pre.BUS.addListener((RenderLivingEvent.Pre event) -> shouldSkip(event));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 Minecraft mc = Minecraft.getInstance();

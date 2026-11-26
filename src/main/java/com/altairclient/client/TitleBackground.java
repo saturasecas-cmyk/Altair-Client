@@ -165,7 +165,7 @@ public final class TitleBackground {
         }
         int drawH = Math.round(LOGO_DRAW_W * LOGO_TEX_H / (float) LOGO_TEX_W);
         int color = (Math.max(0, Math.min(255, Math.round(alpha * 255.0F))) << 24) | 0xFFFFFF;
-        g.blit(net.minecraft.client.renderer.RenderType::guiTextured, LOGO, screenWidth / 2 - LOGO_DRAW_W / 2, y, 0.0F, 0.0F,
+        g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, LOGO, screenWidth / 2 - LOGO_DRAW_W / 2, y, 0.0F, 0.0F,
                 LOGO_DRAW_W, drawH, LOGO_TEX_W, LOGO_TEX_H, LOGO_TEX_W, LOGO_TEX_H, color);
         return true;
     }

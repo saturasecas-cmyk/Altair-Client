@@ -67,7 +67,7 @@ public final class LoadingScreenArt {
             return;
         }
         int color = (Math.max(0, Math.min(255, Math.round(alpha * 255.0F))) << 24) | 0xFFFFFF;
-        g.blit(net.minecraft.client.renderer.RenderType::guiTextured, texture, cx - dw / 2, cy - dh / 2, 0.0F, 0.0F, dw, dh,
+        g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, cx - dw / 2, cy - dh / 2, 0.0F, 0.0F, dw, dh,
                 texW, texH, texW, texH, color);
     }
 }

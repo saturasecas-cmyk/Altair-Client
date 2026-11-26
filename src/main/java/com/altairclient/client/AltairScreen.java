@@ -2154,10 +2154,10 @@ public final class AltairScreen extends Screen {
             float pivotX = panelX + panelWidth / 2.0F;
             float pivotY = panelY + panelHeight / 2.0F;
             float openScale = 0.94F + 0.06F * open;
-            graphics.pose().pushPose();
-            graphics.pose().translate(pivotX, pivotY, 0.0F);
-            graphics.pose().scale(openScale, openScale, 1.0F);
-            graphics.pose().translate(-pivotX, -pivotY, 0.0F);
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(pivotX, pivotY);
+            graphics.pose().scale(openScale, openScale);
+            graphics.pose().translate(-pivotX, -pivotY);
         }
 
         // 2. Marco contenedor principal
@@ -2321,8 +2321,8 @@ public final class AltairScreen extends Screen {
         float selectT = Anim.easeOut((System.nanoTime() - selectStart) / 300_000_000.0F);
 
         if (selectedModule != null) {
-            graphics.pose().pushPose();
-            graphics.pose().translate((1.0F - selectT) * 10.0F, 0.0F, 0.0F);
+            graphics.pose().pushMatrix();
+            graphics.pose().translate((1.0F - selectT) * 10.0F, 0.0F);
             int iconBoxY = contentY + 16;
             graphics.drawString(font, selectedModule.icon, rightPanelX + 16, iconBoxY + 2, selectedModule.accent(), false);
             graphics.drawString(font, fit(selectedModule.name, rightPanelWidth - 34 - 14), rightPanelX + 34, iconBoxY + 2, WHITE, false);
@@ -2399,7 +2399,7 @@ public final class AltairScreen extends Screen {
             int knobX = pillX + 2 + Math.round(8.0F * pillT);
             graphics.fill(knobX, pillY + 2, knobX + 8, pillY + 10, WHITE);
 
-            graphics.pose().popPose();
+            graphics.pose().popMatrix();
             if (selectT < 1.0F) {
                 graphics.fill(rightPanelX + 1, contentY, panelX + panelWidth - 1, panelY + panelHeight - 1,
                         Anim.scaleAlpha(0xFF141B33, 1.0F - selectT));
@@ -2512,7 +2512,7 @@ public final class AltairScreen extends Screen {
         }
 
         if (opening) {
-            graphics.pose().popPose();
+            graphics.pose().popMatrix();
         }
 
         // 7. Overlays activos en pantalla (previsualización fiel)

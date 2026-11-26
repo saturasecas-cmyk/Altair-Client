@@ -183,7 +183,7 @@ public final class AltairKeyHandler {
 
     /** Registra el evento de teclas, el tick del cliente, el FOV (zoom) y la cámara (freecam). */
     public static void register() {
-        RegisterKeyMappingsEvent.BUS.addListener(AltairKeyHandler::registerKeys);
+        RegisterKeyMappingsEvent.getBus(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModBusGroup()).addListener(AltairKeyHandler::registerKeys);
         TickEvent.ClientTickEvent.Pre.BUS.addListener(AltairKeyHandler::onClientTickPre);
         TickEvent.ClientTickEvent.Post.BUS.addListener(AltairKeyHandler::onClientTick);
         ViewportEvent.ComputeFov.BUS.addListener(AltairKeyHandler::onComputeFov);
