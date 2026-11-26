@@ -12,6 +12,7 @@
     "ClientPacketListenerMixin",
     "LocalPlayerMixin",
     "EntityPickRadiusMixin",
+    "GuiHookMixin",
     "BlockFaceMixin",
     "EntityGlowMixin",
     "CameraCaptureMixin"

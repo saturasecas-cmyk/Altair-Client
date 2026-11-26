@@ -25,15 +25,6 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build --no-daemon --stacktrace
 
-    - name: Inspect forge classes (temp)
-      if: always()
-      run: |
-        j=$(find ~/.gradle -name 'forge-1.21.1-52*universal*.jar' | head -1); echo "J $j"
-        unzip -l "$j" | awk '{print $4}' | grep -E "^net/minecraftforge/(client|event)/" | grep -v '\$' | sed 's#net/minecraftforge/##' | tr '\n' ' '
-        echo
-        j2=$(find ~/.gradle -name '*.jar' -path '*minecraft*1.21.1*' | head -3); echo "$j2"
-        for jj in $j2; do unzip -l "$jj" | awk '{print $4}' | grep -E "OptionsScreen|gui/Gui.class|BossHealthOverlay" ; done
-
     - name: Verify JAR contents
       run: |
         jar=$(ls build/libs/*.jar | head -n1)

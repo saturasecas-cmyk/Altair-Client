@@ -35,35 +35,13 @@ public final class AltairHud {
 
     public static void register() {
         HitboxDisplay.register();
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairHud::onOverlayPre);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairHud::onRenderGui);
     }
 
-    private static boolean is(net.minecraftforge.client.event.RenderGuiOverlayEvent.Pre event,
-                              net.minecraftforge.client.gui.overlay.NamedGuiOverlay overlay) {
-        return event.getOverlay().id().equals(overlay.id());
-    }
-
-    /** Oculta partes del HUD de vanilla cuando Altair dibuja la suya. */
-    private static void onOverlayPre(net.minecraftforge.client.event.RenderGuiOverlayEvent.Pre event) {
-        boolean hide = (is(event, net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.CROSSHAIR.type()) && CustomCrosshair.isEnabled())
-                || (is(event, net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.HELMET.type()) && PvpTextures.hideCameraOverlay())
-                || (is(event, net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.HOTBAR.type()) && HudTextures.hideVanillaHotbar())
-                || (is(event, net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.EXPERIENCE_BAR.type()) && HudTextures.hideVanillaXpBar())
-                || (is(event, net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.SCOREBOARD.type()) && HudTextures.hideScoreboard())
-                || (is(event, net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.PLAYER_LIST.type()) && ExtraTextures.hideVanillaTablist())
-                || (is(event, net.minecraftforge.client.gui.overlay.VanillaGuiOverlay.BOSS_EVENT_PROGRESS.type()) && HudTextures.hideBossBar());
-        if (hide) {
-            event.setCanceled(true);
-        }
-    }
-
-    private static void onRenderGui(net.minecraftforge.client.event.RenderGuiEvent.Post event) {
+    public static void renderOverlay(GuiGraphics graphics, float partialTick) {
         Minecraft mc = Minecraft.getInstance();
         if (!inWorld() || mc.options.hideGui) {
             return;
         }
-        GuiGraphics graphics = event.getGuiGraphics();
         if (CustomCrosshair.isEnabled()) {
             CustomCrosshair.render(graphics);
         }
@@ -74,7 +52,7 @@ public final class AltairHud {
         ExtraTextures.render(graphics);
         com.altairclient.modules.mods.DynamicIsland.render(graphics);
         renderAll(graphics);
-        com.altairclient.modules.mods.RenderHacks.render(graphics, event.getPartialTick());
+        com.altairclient.modules.mods.RenderHacks.render(graphics, partialTick);
     }
 
     /** Altair's HUD and texture overlays only draw while playing in a world, never on menu screens. */
