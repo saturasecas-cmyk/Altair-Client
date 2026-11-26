@@ -362,7 +362,7 @@ public final class ExtraHacks {
         }
         for (int i = 0; i < 9; i++) {
             ItemStack st = p.getInventory().getItem(i);
-            if (!st.isEmpty() && st.isEdible() && !st.is(Items.ENCHANTED_GOLDEN_APPLE)
+            if (!st.isEmpty() && st.has(net.minecraft.core.component.DataComponents.FOOD) && !st.is(Items.ENCHANTED_GOLDEN_APPLE)
                     && !st.is(Items.GOLDEN_APPLE) && !st.is(Items.ROTTEN_FLESH)) {
                 eatSaved = p.getInventory().selected;
                 eatTicks = 0;

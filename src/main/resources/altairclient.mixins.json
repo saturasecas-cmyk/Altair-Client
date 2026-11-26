@@ -3,7 +3,7 @@
   "refmap": "altairclient.refmap.json",
   "minVersion": "0.8",
   "package": "com.altairclient.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "client": [
     "ParticleEngineMixin",
     "CameraMixin",

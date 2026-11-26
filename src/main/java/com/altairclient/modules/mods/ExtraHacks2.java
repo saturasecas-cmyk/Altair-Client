@@ -88,7 +88,7 @@ public final class ExtraHacks2 {
             p.removeEffect(MobEffects.CONFUSION);
         }
 
-        if (FAST_EAT.enabled && p.isUsingItem() && p.getUseItem().isEdible()) {
+        if (FAST_EAT.enabled && p.isUsingItem() && p.getUseItem().has(net.minecraft.core.component.DataComponents.FOOD)) {
             try {
                 if (!useLookedUp) {
                     useLookedUp = true;

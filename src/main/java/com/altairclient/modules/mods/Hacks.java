@@ -62,7 +62,7 @@ public final class Hacks {
     // Combat
     public static final Mod AUTO_CRIT = new Mod(0, 0, null);
     public static final Mod VELOCITY = new Mod(0, 100, null);          // a = % horizontal kept, b = % vertical kept
-    public static final Mod REACH = new Mod(5, 0, () -> setAttr(net.minecraftforge.common.ForgeMod.ENTITY_REACH.get(), 3.0));
+    public static final Mod REACH = new Mod(5, 0, () -> setAttr(net.minecraft.world.entity.ai.attributes.Attributes.ENTITY_INTERACTION_RANGE, 3.0));
     public static final Mod HITBOXES = new Mod(3, 0, null);            // a = extra size in tenths of a block
     public static final Mod AUTO_TOTEM = new Mod(0, 0, null);
     public static final Mod AUTO_ARMOR = new Mod(0, 0, null);
@@ -189,11 +189,11 @@ public final class Hacks {
     private static void resetStep() {
         LocalPlayer p = Minecraft.getInstance().player;
         if (p != null) {
-            p.setMaxUpStep(0.6F);
+            setAttr(net.minecraft.world.entity.ai.attributes.Attributes.STEP_HEIGHT, 0.6);
         }
     }
 
-    private static void setAttr(net.minecraft.world.entity.ai.attributes.Attribute attr, double value) {
+    private static void setAttr(net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> attr, double value) {
         LocalPlayer p = Minecraft.getInstance().player;
         if (p != null && p.getAttribute(attr) != null) {
             p.getAttribute(attr).setBaseValue(value);
@@ -255,7 +255,7 @@ public final class Hacks {
             lastHurt = p.hurtTime;
         }
         if (REACH.enabled) {
-            setAttr(net.minecraftforge.common.ForgeMod.ENTITY_REACH.get(), REACH.a);
+            setAttr(net.minecraft.world.entity.ai.attributes.Attributes.ENTITY_INTERACTION_RANGE, REACH.a);
         }
         if (AUTO_TOTEM.enabled && noScreen && tick % 2 == 0 && !p.getOffhandItem().is(Items.TOTEM_OF_UNDYING)) {
             for (int i = 0; i < 36; i++) {
@@ -330,7 +330,7 @@ public final class Hacks {
             p.setSprinting(true);
         }
         if (STEP.enabled) {
-            p.setMaxUpStep(STEP.a);
+            setAttr(net.minecraft.world.entity.ai.attributes.Attributes.STEP_HEIGHT, STEP.a);
         }
         if (JESUS.enabled && !p.isShiftKeyDown() && !mc.options.keyJump.isDown()) {
             BlockPos feet = p.blockPosition();
