@@ -71,7 +71,6 @@ public final class AltairHud {
         // y el fuego de Altair (bajo / semitransparente) sustituye al de vanilla.
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.CAMERA_OVERLAY, () -> !PvpTextures.hideCameraOverlay());
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.HOTBAR_AND_DECOS, () -> !HudTextures.hideVanillaHotbar());
-        event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.CONTEXTUAL_INFO, () -> !HudTextures.hideVanillaXpBar());
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.SCOREBOARD, () -> !HudTextures.hideScoreboard());
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.TAB_LIST, () -> !ExtraTextures.hideVanillaTablist());
         event.getLayeredDraw().addConditionTo(ForgeLayeredDraw.BOSS_OVERLAY, () -> !HudTextures.hideBossBar());
