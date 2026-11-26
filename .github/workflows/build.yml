@@ -28,8 +28,11 @@ jobs:
     - name: Inspect forge classes (temp)
       if: always()
       run: |
-        for j in $(find ~/.gradle -name 'forge-1.21.1-52*.jar' | head -3); do echo "JAR $j"; unzip -l "$j" | grep -E "net/minecraftforge/client/(event|gui)/[A-Za-z/]*(Gui|Overlay|Layer)[A-Za-z$]*\.class" | awk '{print $4}' | head -60; done
-        j=$(find ~/.gradle -name 'forge-1.21.1-52*.jar' | head -1); mkdir -p /tmp/x && cd /tmp/x && unzip -qo "$j" 'net/minecraft/client/gui/screens/OptionsScreen.class' 'net/minecraft/client/gui/screens/options/OptionsScreen.class' 2>&1 | head -3; find /tmp/x -name 'OptionsScreen*'
+        j=$(find ~/.gradle -name 'forge-1.21.1-52*universal*.jar' | head -1); echo "J $j"
+        unzip -l "$j" | awk '{print $4}' | grep -E "^net/minecraftforge/(client|event)/" | grep -v '\$' | sed 's#net/minecraftforge/##' | tr '\n' ' '
+        echo
+        j2=$(find ~/.gradle -name '*.jar' -path '*minecraft*1.21.1*' | head -3); echo "$j2"
+        for jj in $j2; do unzip -l "$jj" | awk '{print $4}' | grep -E "OptionsScreen|gui/Gui.class|BossHealthOverlay" ; done
 
     - name: Verify JAR contents
       run: |
