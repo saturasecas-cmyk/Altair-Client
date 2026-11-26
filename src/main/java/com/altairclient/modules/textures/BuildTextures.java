@@ -169,7 +169,7 @@ public final class BuildTextures {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (busy || !mc.isGameLoadFinished()) {
+        if (busy || !(mc.getOverlay() == null)) {
             return;
         }
         // Los cambios se aplican al salir del menú de Altair (recargar recursos con el menú abierto lo congela).
@@ -495,14 +495,7 @@ public final class BuildTextures {
         if (root == null || !root.has("pack") || !root.get("pack").isJsonObject()) {
             root = new JsonObject();
             JsonObject pack = new JsonObject();
-            JsonArray min = new JsonArray();
-            min.add(SharedConstants.RESOURCE_PACK_FORMAT_MAJOR);
-            min.add(SharedConstants.RESOURCE_PACK_FORMAT_MINOR);
-            JsonArray max = new JsonArray();
-            max.add(SharedConstants.RESOURCE_PACK_FORMAT_MAJOR);
-            max.add(SharedConstants.RESOURCE_PACK_FORMAT_MINOR);
-            pack.add("min_format", min);
-            pack.add("max_format", max);
+            pack.addProperty("pack_format", 15);
             root.add("pack", pack);
         }
         root.getAsJsonObject("pack").addProperty("description", "Altair Build Textures (auto-generated)");

@@ -94,7 +94,7 @@ public final class RenderHacks {
     private static void reloadChunks() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level != null && camera != null && mc.levelRenderer != null) {
-            mc.levelRenderer.invalidateCompiledGeometry(mc.level, mc.options, camera, mc.getBlockColors());
+            mc.levelRenderer.allChanged();
         }
     }
 
@@ -240,13 +240,13 @@ public final class RenderHacks {
         double pitch;
         double fovDeg;
         if (cam != null && cam.isInitialized()) {
-            Vec3 pos = cam.position();
+            Vec3 pos = cam.getPosition();
             ex = pos.x;
             ey = pos.y;
             ez = pos.z;
-            yaw = Math.toRadians(cam.yRot());
-            pitch = Math.toRadians(cam.xRot());
-            fovDeg = cam.getFov();
+            yaw = Math.toRadians(cam.getYRot());
+            pitch = Math.toRadians(cam.getXRot());
+            fovDeg = (double) Minecraft.getInstance().options.fov().get();
         } else {
             Vec3 eye = p.getEyePosition(partial);
             ex = eye.x;
@@ -459,7 +459,7 @@ public final class RenderHacks {
             } else {
                 havePrev = false;
             }
-            if (hit || entityHit || next.y < mc.level.getMinY()) {
+            if (hit || entityHit || next.y < mc.level.getMinBuildHeight()) {
                 end = next;
                 break;
             }

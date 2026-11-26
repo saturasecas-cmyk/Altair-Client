@@ -132,8 +132,8 @@ public class ArmorHUD {
             }
 
             // Renderizar el icono del item
-            graphics.item(stack, x, currentY);
-            graphics.itemDecorations(minecraft.font, stack, x, currentY);
+            graphics.renderItem(stack, x, currentY);
+            graphics.renderItemDecorations(minecraft.font, stack, x, currentY);
 
             // Texto de durabilidad
             if (stack.isDamageableItem()) {

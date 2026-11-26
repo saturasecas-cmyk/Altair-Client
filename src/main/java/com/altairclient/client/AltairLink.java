@@ -47,7 +47,7 @@ public final class AltairLink {
         if (!isMarker(text)) {
             return;
         }
-        UUID sender = event.getSenderUUID();
+        UUID sender = event.getSender();
         if (sender == null || (sender.getMostSignificantBits() == 0L && sender.getLeastSignificantBits() == 0L)) {
             sender = findSender(text);
         }

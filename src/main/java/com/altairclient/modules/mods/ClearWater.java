@@ -31,6 +31,8 @@ public final class ClearWater {
 
     /** Cancela el filtro azul de estar sumergido. */
     private static void onOverlay(RenderBlockScreenEffectEvent event) {
-        return enabled && String.valueOf(event.getOverlayType()).contains("WATER");
+        if (enabled && String.valueOf(event.getOverlayType()).contains("WATER")) {
+            event.setCanceled(true);
+        }
     }
 }

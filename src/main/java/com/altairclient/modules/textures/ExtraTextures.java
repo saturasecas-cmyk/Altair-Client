@@ -103,21 +103,6 @@ public final class ExtraTextures {
             bg.set(savedChatBackground);
             savedChatBackground = null;
         }
-
-        OptionInstance<Integer> blur = mc.options.menuBackgroundBlurriness();
-        if (com.altairclient.client.AltairScreen.blurActive) {
-            // el menu de Altair mantiene su propio desenfoque
-        } else if (INVENTORY.isEnabled()) {
-            if (savedBlur == null) {
-                savedBlur = blur.get();
-            }
-            if (blur.get() != 0) {
-                blur.set(0);
-            }
-        } else if (savedBlur != null) {
-            blur.set(savedBlur);
-            savedBlur = null;
-        }
     }
 
     // ==================== Smooth GUI Transitions ====================
@@ -157,7 +142,7 @@ public final class ExtraTextures {
         List<String> names = new ArrayList<>();
         for (PlayerInfo info : connection.getListedOnlinePlayers()) {
             Component display = info.getTabListDisplayName();
-            names.add(display != null ? display.getString() : info.getProfile().name());
+            names.add(display != null ? display.getString() : info.getProfile().getName());
         }
         if (names.isEmpty()) {
             return;
@@ -220,7 +205,7 @@ public final class ExtraTextures {
 
     public static void render(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.gui.hud.isHidden()) {
+        if (mc.player == null || mc.options.hideGui) {
             return;
         }
         int w = mc.getWindow().getGuiScaledWidth();

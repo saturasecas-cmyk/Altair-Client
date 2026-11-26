@@ -138,10 +138,10 @@ public class ComboCounter {
 
         float pivotX = x - 5;
         float pivotY = y + 5;
-        graphics.pose().pushMatrix();
-        graphics.pose().translate(pivotX, pivotY);
-        graphics.pose().scale(scale, scale);
-        graphics.pose().translate(-pivotX, -pivotY);
+        graphics.pose().pushPose();
+        graphics.pose().translate(pivotX, pivotY, 0.0F);
+        graphics.pose().scale(scale, scale, 1.0F);
+        graphics.pose().translate(-pivotX, -pivotY, 0.0F);
 
         // Fondo del indicador
         graphics.fill(
@@ -171,7 +171,7 @@ public class ComboCounter {
                 false
         );
 
-        graphics.pose().popMatrix();
+        graphics.pose().popPose();
     }
 
     @SubscribeEvent

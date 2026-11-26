@@ -116,7 +116,7 @@ public final class AltairConfig {
         }
         Minecraft mc = Minecraft.getInstance();
         if (!loaded) {
-            if (mc.isGameLoadFinished() && mc.options != null) {
+            if ((mc.getOverlay() == null) && mc.options != null) {
                 loaded = true;
                 load();
             }

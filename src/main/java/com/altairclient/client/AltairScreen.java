@@ -627,7 +627,7 @@ public final class AltairScreen extends Screen {
                 () -> {
                     ScreenshotModule.request();
                     if (net.minecraft.client.Minecraft.getInstance() != null) {
-                        net.minecraft.client.Minecraft.getInstance().gui.setScreen(null);
+                        net.minecraft.client.Minecraft.getInstance().setScreen(null);
                     }
                 },
                 () -> false
@@ -640,7 +640,7 @@ public final class AltairScreen extends Screen {
                 Category.APPS,
                 "\u2191",
                 () -> {
-                    net.minecraft.client.Minecraft.getInstance().gui.setScreen(null);
+                    net.minecraft.client.Minecraft.getInstance().setScreen(null);
                     ScreenshotUpload.upload();
                 },
                 () -> false
@@ -652,7 +652,7 @@ public final class AltairScreen extends Screen {
                 "A small note-taking window you can use inside Minecraft, like a tiny Word. Bold, italic, underline, strikethrough, 8 text colors, bullet lists, numbered lists and task lists with check boxes, and a Coords button that writes your current X Y Z. Select text with the mouse or Shift + arrows and use the toolbar or Ctrl+B / Ctrl+I / Ctrl+U. Drag the title bar to move it and the bottom-right corner to resize it. Everything is saved automatically to config/altairclient-notes.json. Click the switch to open it.",
                 Category.APPS,
                 "\u270E",
-                () -> net.minecraft.client.Minecraft.getInstance().gui.setScreen(new NotesScreen(this)),
+                () -> net.minecraft.client.Minecraft.getInstance().setScreen(new NotesScreen(this)),
                 () -> false
         ));
 
@@ -2035,11 +2035,7 @@ public final class AltairScreen extends Screen {
         if (minecraft == null || blurActive) {
             return;
         }
-        net.minecraft.client.OptionInstance<Integer> blur = minecraft.options.menuBackgroundBlurriness();
-        savedBlur = blur.get();
-        blurTarget = Math.max(savedBlur, 8);
-        blurActive = true;
-        blur.set(0); // empieza sin desenfoque y sube con la animacion de apertura
+        blurActive = true; // el fondo desenfocado no existe en 1.20: solo se marca como activo
     }
 
     private static int blurTarget = 8;
@@ -2049,11 +2045,7 @@ public final class AltairScreen extends Screen {
         if (minecraft == null || !blurActive) {
             return;
         }
-        int level = Math.round(blurTarget * Math.max(0.0F, Math.min(1.0F, amount)));
-        net.minecraft.client.OptionInstance<Integer> blur = minecraft.options.menuBackgroundBlurriness();
-        if (blur.get() != level) {
-            blur.set(level);
-        }
+
     }
 
     // Cierre animado: el menu se funde y el fondo se enfoca de nuevo antes de cerrarse del todo
@@ -2074,9 +2066,6 @@ public final class AltairScreen extends Screen {
             return;
         }
         blurActive = false;
-        if (minecraft != null && savedBlur != null) {
-            minecraft.options.menuBackgroundBlurriness().set(savedBlur);
-        }
         savedBlur = null;
     }
 
@@ -2144,7 +2133,7 @@ public final class AltairScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (closing && (System.nanoTime() - closeStart) >= CLOSE_NANOS) {
             if (minecraft != null) {
-                minecraft.gui.setScreen(null);
+                minecraft.setScreen(null);
             }
             return;
         }
@@ -2165,10 +2154,10 @@ public final class AltairScreen extends Screen {
             float pivotX = panelX + panelWidth / 2.0F;
             float pivotY = panelY + panelHeight / 2.0F;
             float openScale = 0.94F + 0.06F * open;
-            graphics.pose().pushMatrix();
-            graphics.pose().translate(pivotX, pivotY);
-            graphics.pose().scale(openScale, openScale);
-            graphics.pose().translate(-pivotX, -pivotY);
+            graphics.pose().pushPose();
+            graphics.pose().translate(pivotX, pivotY, 0.0F);
+            graphics.pose().scale(openScale, openScale, 1.0F);
+            graphics.pose().translate(-pivotX, -pivotY, 0.0F);
         }
 
         // 2. Marco contenedor principal
@@ -2332,8 +2321,8 @@ public final class AltairScreen extends Screen {
         float selectT = Anim.easeOut((System.nanoTime() - selectStart) / 300_000_000.0F);
 
         if (selectedModule != null) {
-            graphics.pose().pushMatrix();
-            graphics.pose().translate((1.0F - selectT) * 10.0F, 0.0F);
+            graphics.pose().pushPose();
+            graphics.pose().translate((1.0F - selectT) * 10.0F, 0.0F, 0.0F);
             int iconBoxY = contentY + 16;
             graphics.drawString(font, selectedModule.icon, rightPanelX + 16, iconBoxY + 2, selectedModule.accent(), false);
             graphics.drawString(font, fit(selectedModule.name, rightPanelWidth - 34 - 14), rightPanelX + 34, iconBoxY + 2, WHITE, false);
@@ -2410,7 +2399,7 @@ public final class AltairScreen extends Screen {
             int knobX = pillX + 2 + Math.round(8.0F * pillT);
             graphics.fill(knobX, pillY + 2, knobX + 8, pillY + 10, WHITE);
 
-            graphics.pose().popMatrix();
+            graphics.pose().popPose();
             if (selectT < 1.0F) {
                 graphics.fill(rightPanelX + 1, contentY, panelX + panelWidth - 1, panelY + panelHeight - 1,
                         Anim.scaleAlpha(0xFF141B33, 1.0F - selectT));
@@ -2523,7 +2512,7 @@ public final class AltairScreen extends Screen {
         }
 
         if (opening) {
-            graphics.pose().popMatrix();
+            graphics.pose().popPose();
         }
 
         // 7. Overlays activos en pantalla (previsualización fiel)
@@ -2548,7 +2537,8 @@ public final class AltairScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollDelta) {
+        double scrollY = scrollDelta;
         // Rueda sobre la barra izquierda: desplaza las carpetas
         if (mouseX < panelX + SIDEBAR_WIDTH && sidebarMaxScroll > 0) {
             sidebarScroll = Math.max(0, Math.min(sidebarMaxScroll, sidebarScroll - (int) (scrollY * 16)));
@@ -2558,7 +2548,7 @@ public final class AltairScreen extends Screen {
             scrollTarget = Anim.clamp(scrollTarget - (float) (scrollY * 22), 0.0F, maxScroll);
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollDelta);
     }
 
     @Override
@@ -2619,7 +2609,7 @@ public final class AltairScreen extends Screen {
             int cbX = panelX + 8;
             if (mx >= cbX && mx <= cbX + 94 && my >= cbY && my <= cbY + 24) {
                 if (minecraft != null) {
-                    minecraft.gui.setScreen(new ConfigsScreen(this));
+                    minecraft.setScreen(new ConfigsScreen(this));
                 }
                 return true;
             }
@@ -2633,7 +2623,7 @@ public final class AltairScreen extends Screen {
         int hudBtnH = 24;
         if (mx >= hudBtnX && mx <= hudBtnX + hudBtnW && my >= hudBtnY && my <= hudBtnY + hudBtnH) {
             if (minecraft != null) {
-                minecraft.gui.setScreen(new AltairHudEditorScreen(this));
+                minecraft.setScreen(new AltairHudEditorScreen(this));
             }
             return true;
         }

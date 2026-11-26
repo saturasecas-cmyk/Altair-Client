@@ -227,7 +227,7 @@ public final class Hacks {
     }
 
     private static void click(Minecraft mc, LocalPlayer p, int menuSlot, int button, ClickType type) {
-        mc.gameMode.handleClickType(p.inventoryMenu.containerId, menuSlot, button, type, p);
+        mc.gameMode.handleInventoryMouseClick(p.inventoryMenu.containerId, menuSlot, button, type, p);
     }
 
     private static void onTick(TickEvent.ClientTickEvent event) {

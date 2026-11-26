@@ -105,7 +105,7 @@ public class WorldInfo {
 
         // Hora del mundo
         long dayTime = (mc.level != null)
-                ? mc.level.getDefaultClockTime() % 24000
+                ? mc.level.getDayTime() % 24000
                 : 0;
 
         long hours = (dayTime / 1000 + 6) % 24;

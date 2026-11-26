@@ -45,7 +45,7 @@ public final class HudTextures {
     public static void render(GuiGraphics graphics) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
-        if (p == null || mc.gui.hud.isHidden()) {
+        if (p == null || mc.options.hideGui) {
             return;
         }
         int w = mc.getWindow().getGuiScaledWidth();
@@ -80,8 +80,8 @@ public final class HudTextures {
             if (!stack.isEmpty()) {
                 int ix = x0 + 3 + i * 20;
                 int iy = y0 + 3;
-                graphics.item(stack, ix, iy);
-                graphics.itemDecorations(mc.font, stack, ix, iy);
+                graphics.renderItem(stack, ix, iy);
+                graphics.renderItemDecorations(mc.font, stack, ix, iy);
             }
         }
         outline(graphics, x0 + selected * 20, y0, 22, 22, color);

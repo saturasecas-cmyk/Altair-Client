@@ -137,7 +137,7 @@ public final class ExtraHacks {
         // ===== Combat =====
         if (MACE_AURA.enabled && noScreen && tick % 3 == 0) {
             LivingEntity t = KillAura.findNearest(mc, MACE_AURA.a, 2);
-            if (t != null && WorldHacks.selectItem(p, s -> s.is(Items.MACE))) {
+            if (t != null && WorldHacks.selectItem(p, s -> false)) {
                 if (!p.onGround() && p.fallDistance > 1.5) {
                     attack(mc, p, t);
                 } else if (p.onGround() && MACE_AURA.b == 1) {
@@ -286,7 +286,7 @@ public final class ExtraHacks {
             int chestSlots = menu.slots.size() - 36;
             for (int i = 0; i < chestSlots; i++) {
                 if (menu.slots.get(i).hasItem()) {
-                    mc.gameMode.handleClickType(menu.containerId, i, 0, ClickType.QUICK_MOVE, p);
+                    mc.gameMode.handleInventoryMouseClick(menu.containerId, i, 0, ClickType.QUICK_MOVE, p);
                     break;
                 }
             }
@@ -308,7 +308,7 @@ public final class ExtraHacks {
         if (AUTO_SHEAR.enabled && noScreen && tick % 10 == 0) {
             for (Entity e : mc.level.getEntities(p, p.getBoundingBox().inflate(AUTO_SHEAR.a), x -> x instanceof Shearable)) {
                 if (e instanceof Shearable s && s.readyForShearing() && WorldHacks.selectItem(p, st -> st.is(Items.SHEARS))) {
-                    mc.gameMode.interact(p, e, new EntityHitResult(e), InteractionHand.MAIN_HAND);
+                    mc.gameMode.interact(p, e, InteractionHand.MAIN_HAND);
                     break;
                 }
             }

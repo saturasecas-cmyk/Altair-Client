@@ -24,7 +24,7 @@ public final class RoundedButtons {
         boolean hot = w.isHoveredOrFocused() && w.active;
         int edge = !w.active ? EDGE_OFF : hot ? EDGE_HOVER : EDGE;
         int fill = !w.active ? FILL_OFF : hot ? FILL_HOVER : FILL;
-        float a = w.getAlpha();
+        float a = w.alpha;
         if (a < 1.0F) {
             edge = Anim.scaleAlpha(edge, a);
             fill = Anim.scaleAlpha(fill, a);

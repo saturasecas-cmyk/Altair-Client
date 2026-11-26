@@ -44,12 +44,12 @@ public class DirectionHud extends HudElement {
     @Override
     protected void draw(GuiGraphics graphics, boolean preview) {
         float k = sizePercent / 100.0F;
-        graphics.pose().pushMatrix();
-        graphics.pose().translate((float) getX(), (float) getY());
-        graphics.pose().scale(k, k);
-        graphics.pose().translate((float) -getX(), (float) -getY());
+        graphics.pose().pushPose();
+        graphics.pose().translate((float) getX(), (float) getY(), 0.0F);
+        graphics.pose().scale(k, k, 1.0F);
+        graphics.pose().translate((float) -getX(), (float) -getY(), 0.0F);
         drawCompass(graphics, preview);
-        graphics.pose().popMatrix();
+        graphics.pose().popPose();
     }
 
     private void drawCompass(GuiGraphics graphics, boolean preview) {

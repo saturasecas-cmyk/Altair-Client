@@ -90,12 +90,12 @@ public final class FastGame {
     /** Cancela el dibujado de entidades tapadas por bloques. Devuelve true para cancelar. */
     private static void onRenderLiving(RenderLivingEvent.Pre<?, ?> event) {
         if (!enabled) {
-            return false;
+            return;
         }
         Minecraft mc = Minecraft.getInstance();
         Entity viewer = mc.getCameraEntity();
         if (mc.level == null || viewer == null) {
-            return false;
+            return;
         }
 
         double x = event.getEntity().getX();

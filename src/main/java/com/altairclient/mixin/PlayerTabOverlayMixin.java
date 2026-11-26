@@ -23,7 +23,7 @@ public abstract class PlayerTabOverlayMixin {
         if (!AltairConfig.isTabFleur() || info == null || info.getProfile() == null) {
             return;
         }
-        if (AltairUsers.isUser(info.getProfile().id())) {
+        if (AltairUsers.isUser(info.getProfile().getId())) {
             Component mark = Component.literal("⚜ ").withStyle(ChatFormatting.LIGHT_PURPLE);
             cir.setReturnValue(Component.empty().append(mark).append(cir.getReturnValue()));
         }

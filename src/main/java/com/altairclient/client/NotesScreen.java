@@ -238,7 +238,7 @@ public class NotesScreen extends Screen {
     public void onClose() {
         saveNow();
         if (minecraft != null) {
-            minecraft.gui.setScreen(parent);
+            minecraft.setScreen(parent);
         }
     }
 
@@ -964,7 +964,7 @@ public class NotesScreen extends Screen {
         KeyEvent event = new KeyEvent(key0, scan0, mods0);
         int key = event.key();
         boolean ctrl = event.hasControlDown();
-        boolean shift = event.hasShiftDown();
+        boolean shift = net.minecraft.client.gui.screens.Screen.hasShiftDown();
 
         if (key == 256) { // Esc
             onClose();
@@ -1094,12 +1094,13 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollDelta) {
+        double scrollY = scrollDelta;
         if (mouseX >= wx && mouseX < wx + ww && mouseY >= wy && mouseY < wy + wh) {
             scroll -= (int) (scrollY * 22);
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollDelta);
     }
 
     @Override
@@ -1150,8 +1151,8 @@ public class NotesScreen extends Screen {
                 edited = true;
                 return true;
             }
-            moveCursor(r.line, colAt(r, localX), event.hasShiftDown());
-            if (!event.hasShiftDown()) {
+            moveCursor(r.line, colAt(r, localX), net.minecraft.client.gui.screens.Screen.hasShiftDown());
+            if (!net.minecraft.client.gui.screens.Screen.hasShiftDown()) {
                 al = cl;
                 ac = cc;
                 anchorSet = true; // el arrastre extiende desde aqui

@@ -170,8 +170,7 @@ public final class PvpTextures {
             return ThreadLocalRandom.current().nextFloat() < 0.5F;
         }
         if (REDUCED_DUST.isEnabled()
-                && (type == ParticleTypes.FALLING_DUST || type == ParticleTypes.BLOCK_CRUMBLE
-                || type == ParticleTypes.DUST_PILLAR || type == ParticleTypes.DUST_PLUME)) {
+                && type == ParticleTypes.FALLING_DUST) {
             return ThreadLocalRandom.current().nextFloat() < 0.6F;
         }
         if (HIT_PARTICLES.isEnabled()

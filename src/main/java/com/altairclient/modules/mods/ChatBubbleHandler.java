@@ -53,7 +53,7 @@ public final class ChatBubbleHandler {
 
     /** Guarda el mensaje del jugador. Devuelve false para no cancelar el chat. */
     private static void onChat(ClientChatReceivedEvent event) {
-        if (!enabled || event.isSystem() || event.getSenderUUID() == null) {
+        if (!enabled || event.isSystem() || event.getSender() == null) {
             return;
         }
         String text = event.getMessage().getString();
@@ -68,7 +68,7 @@ public final class ChatBubbleHandler {
         if (text.length() > MAX_CHARS) {
             text = text.substring(0, MAX_CHARS - 1) + "…";
         }
-        BUBBLES.put(event.getSenderUUID(), new Bubble(text, System.currentTimeMillis() + DURATION_MS));
+        BUBBLES.put(event.getSender(), new Bubble(text, System.currentTimeMillis() + DURATION_MS));
     }
 
     /** Pone el mensaje como segunda línea del nombre del jugador que lo escribió. */
