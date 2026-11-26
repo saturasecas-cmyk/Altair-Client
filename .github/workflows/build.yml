@@ -44,15 +44,16 @@ jobs:
         if-no-files-found: error
 
     - name: Publish release (solo en main)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/port/')
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         jar=$(ls build/libs/*.jar | head -n1)
         version=$(grep '^mod_version=' gradle.properties | cut -d= -f2)
-        tag="v${version}"
+        mcv="${GITHUB_REF_NAME#port/}"
+        tag="v${version}-${mcv}"
         gh release delete "$tag" --cleanup-tag --yes || true
         gh release create "$tag" "$jar" \
           --target "$GITHUB_SHA" \
-          --title "Altair Client ${version}" \
-          --notes "Ultimo build de main (${GITHUB_SHA::7}). Descarga el .jar y ponlo en la carpeta mods de Forge 26.2."
+          --title "Altair Client ${version} (Forge ${mcv})" \
+          --notes "Port a Forge ${mcv} (${GITHUB_SHA::7}). Sin probar en el juego. Descarga el .jar y ponlo en la carpeta mods de Forge ${mcv}."
