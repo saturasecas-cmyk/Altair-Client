@@ -85,7 +85,7 @@ public final class ExtraHacks2 {
         if (ANTI_BLIND.enabled) {
             p.removeEffect(MobEffects.BLINDNESS);
             p.removeEffect(MobEffects.DARKNESS);
-            p.removeEffect(MobEffects.CONFUSION);
+            p.removeEffect(MobEffects.NAUSEA);
         }
 
         if (FAST_EAT.enabled && p.isUsingItem() && p.getUseItem().has(net.minecraft.core.component.DataComponents.FOOD)) {

@@ -54,7 +54,7 @@ public final class HudTextures {
         if (MIN_HOTBAR.isEnabled()) {
             renderMinimalHotbar(graphics, mc, p, w, h);
         } else if (HIGHLIGHT.isEnabled()) {
-            outline(graphics, w / 2 - 91 + p.getInventory().selected * 20, h - 22, 22, 22,
+            outline(graphics, w / 2 - 91 + p.getInventory().getSelectedSlot() * 20, h - 22, 22, 22,
                     Palette.color(HIGHLIGHT.getColorIndex()));
         }
         if (SIMPLE_XP.isEnabled()) {
@@ -70,7 +70,7 @@ public final class HudTextures {
         int y0 = h - 22;
         graphics.fill(x0, y0, x0 + 182, y0 + 22, 0x990A0E1C);
         Inventory inv = p.getInventory();
-        int selected = inv.selected;
+        int selected = inv.getSelectedSlot();
         int color = Palette.color(MIN_HOTBAR.getColorIndex());
         for (int i = 0; i < 9; i++) {
             if (i == selected) {

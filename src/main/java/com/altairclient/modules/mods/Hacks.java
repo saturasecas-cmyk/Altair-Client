@@ -388,7 +388,7 @@ public final class Hacks {
             boolean healthy = p.getHealth() > AUTO_GAPPLE.a;
             if ((gappleTicks > 4 && !p.isUsingItem()) || healthy || gappleTicks > 60) {
                 mc.options.keyUse.setDown(false);
-                p.getInventory().selected = gappleSaved;
+                p.getInventory().setSelectedSlot(gappleSaved);
                 gappleSaved = -1;
             }
             return;
@@ -399,9 +399,9 @@ public final class Hacks {
         for (int i = 0; i < 9; i++) {
             ItemStack st = p.getInventory().getItem(i);
             if (st.is(Items.GOLDEN_APPLE) || st.is(Items.ENCHANTED_GOLDEN_APPLE)) {
-                gappleSaved = p.getInventory().selected;
+                gappleSaved = p.getInventory().getSelectedSlot();
                 gappleTicks = 0;
-                p.getInventory().selected = i;
+                p.getInventory().setSelectedSlot(i);
                 mc.options.keyUse.setDown(true);
                 return;
             }
@@ -428,7 +428,7 @@ public final class Hacks {
             boolean found = false;
             for (int i = 0; i < 9; i++) {
                 if (p.getInventory().getItem(i).is(Items.END_CRYSTAL)) {
-                    p.getInventory().selected = i;
+                    p.getInventory().setSelectedSlot(i);
                     found = true;
                     break;
                 }

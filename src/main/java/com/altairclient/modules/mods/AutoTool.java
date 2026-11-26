@@ -46,7 +46,7 @@ public final class AutoTool {
                 return;
             }
 
-            int current = inv.selected;
+            int current = inv.getSelectedSlot();
             int best = current;
             float bestSpeed = inv.getItem(current).getDestroySpeed(state);
             for (int i = 0; i < 9; i++) {
@@ -61,7 +61,7 @@ public final class AutoTool {
                 if (previousSlot < 0) {
                     previousSlot = current;
                 }
-                inv.selected = best;
+                inv.setSelectedSlot(best);
             }
         } else {
             restore(mc);
@@ -70,7 +70,7 @@ public final class AutoTool {
 
     private static void restore(Minecraft mc) {
         if (previousSlot >= 0 && mc.player != null) {
-            mc.player.getInventory().selected = previousSlot;
+            mc.player.getInventory().setSelectedSlot(previousSlot);
         }
         previousSlot = -1;
     }

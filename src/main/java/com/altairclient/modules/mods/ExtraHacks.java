@@ -162,8 +162,8 @@ public final class ExtraHacks {
                     }
                 }
             }
-            if (best >= 0 && best != p.getInventory().selected) {
-                p.getInventory().selected = best;
+            if (best >= 0 && best != p.getInventory().getSelectedSlot()) {
+                p.getInventory().setSelectedSlot(best);
             }
         }
         if (AUTO_CLICKER.enabled && noScreen && mc.options.keyAttack.isDown()
@@ -267,7 +267,7 @@ public final class ExtraHacks {
         }
         if (AUTO_TOOL.enabled && noScreen && mc.options.keyAttack.isDown() && mc.hitResult instanceof BlockHitResult bhr) {
             BlockState st = mc.level.getBlockState(bhr.getBlockPos());
-            int best = p.getInventory().selected;
+            int best = p.getInventory().getSelectedSlot();
             float bestSpeed = p.getInventory().getItem(best).getDestroySpeed(st);
             for (int i = 0; i < 9; i++) {
                 float sp = p.getInventory().getItem(i).getDestroySpeed(st);
@@ -276,8 +276,8 @@ public final class ExtraHacks {
                     best = i;
                 }
             }
-            if (best != p.getInventory().selected) {
-                p.getInventory().selected = best;
+            if (best != p.getInventory().getSelectedSlot()) {
+                p.getInventory().setSelectedSlot(best);
             }
         }
         if (CHEST_STEALER.enabled && mc.screen instanceof ContainerScreen && tick % 2 == 0
@@ -352,7 +352,7 @@ public final class ExtraHacks {
             eatTicks++;
             if ((eatTicks > 4 && !p.isUsingItem()) || p.getFoodData().getFoodLevel() >= 20 || eatTicks > 80) {
                 mc.options.keyUse.setDown(false);
-                p.getInventory().selected = eatSaved;
+                p.getInventory().setSelectedSlot(eatSaved);
                 eatSaved = -1;
             }
             return;
@@ -364,9 +364,9 @@ public final class ExtraHacks {
             ItemStack st = p.getInventory().getItem(i);
             if (!st.isEmpty() && st.has(net.minecraft.core.component.DataComponents.FOOD) && !st.is(Items.ENCHANTED_GOLDEN_APPLE)
                     && !st.is(Items.GOLDEN_APPLE) && !st.is(Items.ROTTEN_FLESH)) {
-                eatSaved = p.getInventory().selected;
+                eatSaved = p.getInventory().getSelectedSlot();
                 eatTicks = 0;
-                p.getInventory().selected = i;
+                p.getInventory().setSelectedSlot(i);
                 mc.options.keyUse.setDown(true);
                 return;
             }

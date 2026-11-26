@@ -69,7 +69,7 @@ public final class WorldHacks {
         }
         for (int i = 0; i < 9; i++) {
             if (wanted.test(p.getInventory().getItem(i))) {
-                p.getInventory().selected = i;
+                p.getInventory().setSelectedSlot(i);
                 return true;
             }
         }
