@@ -262,14 +262,14 @@ public final class AltairKeyHandler {
         // La captura se hace aunque el menú acabe de cerrarse (espera a que no haya pantalla abierta).
         ScreenshotModule.tick(minecraft);
 
-        if (minecraft.player == null || minecraft.gui.screen() != null) {
+        if (minecraft.player == null || minecraft.screen != null) {
             ZoomHandler.setZoomKeyDown(false);
             PerspectiveHandler.setKeyDown(false);
             return;
         }
 
         while (MENU_KEY.consumeClick()) {
-            minecraft.gui.setScreen(new AltairScreen());
+            minecraft.setScreen(new AltairScreen());
         }
 
         while (FREECAM_KEY.consumeClick()) {

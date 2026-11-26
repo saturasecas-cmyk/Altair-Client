@@ -58,18 +58,6 @@ public final class BlockOutline {
         if (!enabled) {
             return false;
         }
-        event.setCustomRenderer((collector, stack, state) -> {
-            if (state.blockOutlineRenderState == null) {
-                return;
-            }
-            BlockPos pos = state.blockOutlineRenderState.pos();
-            Vec3 cam = state.cameraRenderState.pos;
-            stack.pushPose();
-            stack.translate(pos.getX() - cam.x, pos.getY() - cam.y, pos.getZ() - cam.z);
-            collector.submitShapeOutline(stack, state.blockOutlineRenderState.shape(),
-                    RenderTypes.lines(), Palette.color(colorIndex), (float) width, false);
-            stack.popPose();
-        });
-        return false;
+        // 26.1: el contorno personalizado no esta portado todavia (vanilla).
     }
 }

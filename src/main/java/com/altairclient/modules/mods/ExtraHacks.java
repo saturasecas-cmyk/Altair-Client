@@ -128,7 +128,7 @@ public final class ExtraHacks {
             return;
         }
         tick++;
-        boolean noScreen = mc.gui.screen() == null;
+        boolean noScreen = mc.screen == null;
         Vec3 dm = p.getDeltaMovement();
         boolean jumpKey = mc.options.keyJump.isDown();
 
@@ -278,7 +278,7 @@ public final class ExtraHacks {
                 p.getInventory().setSelectedSlot(best);
             }
         }
-        if (CHEST_STEALER.enabled && mc.gui.screen() instanceof ContainerScreen && tick % 2 == 0
+        if (CHEST_STEALER.enabled && mc.screen instanceof ContainerScreen && tick % 2 == 0
                 && p.containerMenu != p.inventoryMenu) {
             AbstractContainerMenu menu = p.containerMenu;
             int chestSlots = menu.slots.size() - 36;

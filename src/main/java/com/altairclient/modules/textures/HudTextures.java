@@ -45,7 +45,7 @@ public final class HudTextures {
     public static void render(GuiGraphicsExtractor graphics) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
-        if (p == null || mc.gui.hud.isHidden()) {
+        if (p == null || mc.options.hideGui) {
             return;
         }
         int w = mc.getWindow().getGuiScaledWidth();

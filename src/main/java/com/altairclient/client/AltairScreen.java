@@ -627,7 +627,7 @@ public final class AltairScreen extends Screen {
                 () -> {
                     ScreenshotModule.request();
                     if (net.minecraft.client.Minecraft.getInstance() != null) {
-                        net.minecraft.client.Minecraft.getInstance().gui.setScreen(null);
+                        net.minecraft.client.Minecraft.getInstance().setScreen(null);
                     }
                 },
                 () -> false
@@ -640,7 +640,7 @@ public final class AltairScreen extends Screen {
                 Category.APPS,
                 "\u2191",
                 () -> {
-                    net.minecraft.client.Minecraft.getInstance().gui.setScreen(null);
+                    net.minecraft.client.Minecraft.getInstance().setScreen(null);
                     ScreenshotUpload.upload();
                 },
                 () -> false
@@ -652,7 +652,7 @@ public final class AltairScreen extends Screen {
                 "A small note-taking window you can use inside Minecraft, like a tiny Word. Bold, italic, underline, strikethrough, 8 text colors, bullet lists, numbered lists and task lists with check boxes, and a Coords button that writes your current X Y Z. Select text with the mouse or Shift + arrows and use the toolbar or Ctrl+B / Ctrl+I / Ctrl+U. Drag the title bar to move it and the bottom-right corner to resize it. Everything is saved automatically to config/altairclient-notes.json. Click the switch to open it.",
                 Category.APPS,
                 "\u270E",
-                () -> net.minecraft.client.Minecraft.getInstance().gui.setScreen(new NotesScreen(this)),
+                () -> net.minecraft.client.Minecraft.getInstance().setScreen(new NotesScreen(this)),
                 () -> false
         ));
 
@@ -2149,7 +2149,7 @@ public final class AltairScreen extends Screen {
     ) {
         if (closing && (System.nanoTime() - closeStart) >= CLOSE_NANOS) {
             if (minecraft != null) {
-                minecraft.gui.setScreen(null);
+                minecraft.setScreen(null);
             }
             return;
         }
@@ -2622,7 +2622,7 @@ public final class AltairScreen extends Screen {
             int cbX = panelX + 8;
             if (mx >= cbX && mx <= cbX + 94 && my >= cbY && my <= cbY + 24) {
                 if (minecraft != null) {
-                    minecraft.gui.setScreen(new ConfigsScreen(this));
+                    minecraft.setScreen(new ConfigsScreen(this));
                 }
                 return true;
             }
@@ -2636,7 +2636,7 @@ public final class AltairScreen extends Screen {
         int hudBtnH = 24;
         if (mx >= hudBtnX && mx <= hudBtnX + hudBtnW && my >= hudBtnY && my <= hudBtnY + hudBtnH) {
             if (minecraft != null) {
-                minecraft.gui.setScreen(new AltairHudEditorScreen(this));
+                minecraft.setScreen(new AltairHudEditorScreen(this));
             }
             return true;
         }
