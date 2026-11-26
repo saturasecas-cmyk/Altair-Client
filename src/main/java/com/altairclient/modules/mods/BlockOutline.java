@@ -59,5 +59,6 @@ public final class BlockOutline {
             return false;
         }
         // 26.1: el contorno personalizado no esta portado todavia (vanilla).
+        return false;
     }
 }
