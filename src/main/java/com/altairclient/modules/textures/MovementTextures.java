@@ -73,16 +73,13 @@ public final class MovementTextures {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(MovementTextures::onTick);
+            TickEvent.ClientTickEvent.Post.BUS.addListener(MovementTextures::onTick);
         }
     }
 
     // ==================== Tick ====================
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         updateBobbing(mc);
 

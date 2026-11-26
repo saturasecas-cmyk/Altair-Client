@@ -61,7 +61,7 @@ public final class DynamicIsland {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(DynamicIsland::onClick);
+        ScreenEvent.MouseButtonPressed.Pre.BUS.addListener(DynamicIsland::onClick);
         Runtime.getRuntime().addShutdownHook(new Thread(DynamicIsland::stop, "altair-island-stop"));
     }
 
@@ -371,34 +371,30 @@ public final class DynamicIsland {
     }
 
     /** Clic con un menú abierto: botones de la isla expandida o abrir/cerrar la isla. */
-    private static void onClick(ScreenEvent.MouseButtonPressed.Pre event) {
+    private static boolean onClick(ScreenEvent.MouseButtonPressed.Pre event) {
         if (!enabled || !hasMedia || Minecraft.getInstance().level == null) {
-            return;
+            return false;
         }
         double mx = event.getMouseX();
         double my = event.getMouseY();
         if (!inside(mx, my, boxX, boxY, boxW, boxH)) {
-            return;
+            return false;
         }
         if (expanded && boxH >= 40) {
             if (inside(mx, my, prevX, buttonY, BUTTON_W, BUTTON_H)) {
                 previous();
-                event.setCanceled(true);
-        return;
+                return true;
             }
             if (inside(mx, my, toggleX, buttonY, BUTTON_W, BUTTON_H)) {
                 playPause();
-                event.setCanceled(true);
-        return;
+                return true;
             }
             if (inside(mx, my, nextX, buttonY, BUTTON_W, BUTTON_H)) {
                 next();
-                event.setCanceled(true);
-        return;
+                return true;
             }
         }
         expanded = !expanded;
-        event.setCanceled(true);
-        return;
+        return true;
     }
 }

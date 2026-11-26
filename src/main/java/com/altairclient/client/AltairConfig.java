@@ -49,7 +49,7 @@ public final class AltairConfig {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairConfig::onTick);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(AltairConfig::onTick);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 autoSaveNow();
@@ -110,10 +110,7 @@ public final class AltairConfig {
         return Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve(FILE_NAME);
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (!loaded) {
             if ((mc.getOverlay() == null) && mc.options != null) {

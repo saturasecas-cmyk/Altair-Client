@@ -24,7 +24,7 @@ public final class BlockOutline {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(BlockOutline::onHighlight);
+            RenderHighlightEvent.Block.BUS.addListener(BlockOutline::onHighlight);
         }
     }
 
@@ -53,15 +53,15 @@ public final class BlockOutline {
     }
 
     /** Sustituye el contorno de vanilla por el nuestro. Devuelve false para no cancelar el evento. */
-    private static void onHighlight(RenderHighlightEvent.Block event) {
+    private static boolean onHighlight(RenderHighlightEvent.Block event) {
         if (!enabled) {
-            return;
+            return false;
         }
         net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
         if (mc.level == null) {
-            return;
+            return false;
         }
-        event.setCanceled(true);
+        return true;
         BlockPos pos = event.getTarget().getBlockPos();
         net.minecraft.world.phys.shapes.VoxelShape shape = mc.level.getBlockState(pos)
                 .getShape(mc.level, pos, net.minecraft.world.phys.shapes.CollisionContext.of(event.getCamera().getEntity()));
@@ -77,5 +77,6 @@ public final class BlockOutline {
         shape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> net.minecraft.client.renderer.ShapeRenderer.renderLineBox(
                 ps, vc, x1 + pos.getX() - cam.x, y1 + pos.getY() - cam.y, z1 + pos.getZ() - cam.z,
                 x2 + pos.getX() - cam.x, y2 + pos.getY() - cam.y, z2 + pos.getZ() - cam.z, r, g, b, 1.0F));
+        return false;
     }
 }

@@ -35,8 +35,8 @@ public final class ChatBubbleHandler {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatBubbleHandler::onChat);
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatBubbleHandler::onNameTag);
+            ClientChatReceivedEvent.BUS.addListener(ChatBubbleHandler::onChat);
+            RenderNameTagEvent.BUS.addListener(ChatBubbleHandler::onNameTag);
         }
     }
 

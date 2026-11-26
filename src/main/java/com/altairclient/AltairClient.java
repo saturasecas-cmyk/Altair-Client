@@ -32,7 +32,7 @@ public class AltairClient {
     public static final Logger LOGGER =
             LogManager.getLogger("AltairClient");
 
-    public AltairClient() {
+    public AltairClient(FMLJavaModLoadingContext context) {
 
         LOGGER.info("Initializing Altair Client for Forge...");
 
@@ -67,7 +67,7 @@ public class AltairClient {
         com.altairclient.modules.textures.AltairRain.register();
         ExtraTextures.register();
 
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
+        FMLClientSetupEvent.getBus(context.getModBusGroup()).addListener(this::onClientSetup);
     }
 
     private void onClientSetup(final FMLClientSetupEvent event) {

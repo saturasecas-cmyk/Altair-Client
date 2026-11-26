@@ -68,7 +68,7 @@ public final class BuildTextures {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(BuildTextures::onTick);
+            TickEvent.ClientTickEvent.Post.BUS.addListener(BuildTextures::onTick);
         }
     }
 
@@ -164,10 +164,7 @@ public final class BuildTextures {
         return sb.toString();
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (busy || !(mc.getOverlay() == null)) {
             return;

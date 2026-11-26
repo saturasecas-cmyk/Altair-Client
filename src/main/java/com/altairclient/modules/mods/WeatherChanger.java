@@ -19,7 +19,7 @@ public final class WeatherChanger {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(WeatherChanger::onTick);
+            TickEvent.ClientTickEvent.Post.BUS.addListener(WeatherChanger::onTick);
         }
     }
 
@@ -39,10 +39,7 @@ public final class WeatherChanger {
         mode = Math.max(0, Math.min(MODE_NAMES.length - 1, v));
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         if (!enabled) {
             return;
         }

@@ -183,11 +183,11 @@ public final class AltairKeyHandler {
 
     /** Registra el evento de teclas, el tick del cliente, el FOV (zoom) y la cámara (freecam). */
     public static void register() {
-        net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus().addListener(AltairKeyHandler::registerKeys);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onClientTickPre);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onClientTick);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onComputeFov);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onComputeCameraAngles);
+        RegisterKeyMappingsEvent.BUS.addListener(AltairKeyHandler::registerKeys);
+        TickEvent.ClientTickEvent.Pre.BUS.addListener(AltairKeyHandler::onClientTickPre);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(AltairKeyHandler::onClientTick);
+        ViewportEvent.ComputeFov.BUS.addListener(AltairKeyHandler::onComputeFov);
+        ViewportEvent.ComputeCameraAngles.BUS.addListener(AltairKeyHandler::onComputeCameraAngles);
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {
@@ -213,10 +213,7 @@ public final class AltairKeyHandler {
     }
 
     /** Antes de cada tick: el giro del ratón pasa a la cámara y la cámara se mueve con WASD. */
-    private static void onClientTickPre(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.START) {
-            return;
-        }
+    private static void onClientTickPre(TickEvent.ClientTickEvent.Pre event) {
         Minecraft mc = Minecraft.getInstance();
 
         NoHurtCamera.apply(mc);
@@ -250,10 +247,7 @@ public final class AltairKeyHandler {
         event.setFOV(ZoomHandler.applyZoom(FovHandler.apply((float) event.getFOV())));
     }
 
-    private static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
 
         // Cuenta los clics también a nivel de tick (además de en cada frame del HUD).

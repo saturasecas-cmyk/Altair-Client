@@ -29,7 +29,7 @@ public final class AutoGG {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AutoGG::onChat);
+            ClientChatReceivedEvent.BUS.addListener(AutoGG::onChat);
         }
     }
 

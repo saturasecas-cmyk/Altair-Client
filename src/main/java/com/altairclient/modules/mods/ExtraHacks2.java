@@ -33,13 +33,10 @@ public final class ExtraHacks2 {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraHacks2::onTick);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(ExtraHacks2::onTick);
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.level == null || mc.gameMode == null || !p.isAlive()) {

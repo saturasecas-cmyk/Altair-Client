@@ -85,7 +85,7 @@ public final class ExtraHacks {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraHacks::onTick);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(ExtraHacks::onTick);
     }
 
     private static boolean has(LocalPlayer p, java.util.function.Predicate<ItemStack> pred) {
@@ -113,10 +113,7 @@ public final class ExtraHacks {
         return p.onGround() && mc.level.getBlockState(ahead).getCollisionShape(mc.level, ahead).isEmpty();
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.level == null || mc.gameMode == null) {

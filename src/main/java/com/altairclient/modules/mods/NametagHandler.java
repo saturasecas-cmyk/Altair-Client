@@ -24,7 +24,7 @@ public final class NametagHandler {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(NametagHandler::onNameTag);
+            RenderNameTagEvent.BUS.addListener(NametagHandler::onNameTag);
         }
     }
 

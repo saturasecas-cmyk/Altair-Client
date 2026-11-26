@@ -93,7 +93,7 @@ public final class TitleBackground {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(TitleBackground::onBackground);
+            ScreenEvent.BackgroundRendered.BUS.addListener(TitleBackground::onBackground);
         }
     }
 

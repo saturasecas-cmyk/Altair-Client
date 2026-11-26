@@ -38,7 +38,7 @@ public final class KillAura {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(KillAura::onTick);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(KillAura::onTick);
     }
 
     public static boolean isEnabled() {
@@ -74,10 +74,7 @@ public final class KillAura {
         interval = Math.max(MIN_INTERVAL, Math.min(MAX_INTERVAL, v));
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         if (!enabled) {
             return;
         }

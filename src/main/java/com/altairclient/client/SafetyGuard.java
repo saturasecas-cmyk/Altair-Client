@@ -34,7 +34,7 @@ public final class SafetyGuard {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(SafetyGuard::onTick);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(SafetyGuard::onTick);
         // Sale limpio: se marca la sesión como cerrada con normalidad.
         Runtime.getRuntime().addShutdownHook(new Thread(() -> writeMarker("clean"), "altair-safety-marker"));
     }
@@ -90,10 +90,7 @@ public final class SafetyGuard {
         pendingNotice = "[Altair] " + reason + " " + n + " modules were turned off.";
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (!AltairConfig.isLoaded()) {
             return;

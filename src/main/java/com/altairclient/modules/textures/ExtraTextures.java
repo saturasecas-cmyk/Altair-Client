@@ -47,11 +47,11 @@ public final class ExtraTextures {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onNameTag);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onInventoryEffects);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onScreenOpening);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onScreenRendered);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ExtraTextures::onTick);
+        RenderNameTagEvent.BUS.addListener(ExtraTextures::onNameTag);
+        ScreenEvent.RenderInventoryMobEffects.BUS.addListener(ExtraTextures::onInventoryEffects);
+        ScreenEvent.Opening.BUS.addListener(ExtraTextures::onScreenOpening);
+        ScreenEvent.Render.Post.BUS.addListener(ExtraTextures::onScreenRendered);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(ExtraTextures::onTick);
     }
 
     // ==================== Minimal Nametag ====================
@@ -75,18 +75,16 @@ public final class ExtraTextures {
     }
 
     /** Oculta el panel de efectos de poción del inventario. */
-    private static void onInventoryEffects(ScreenEvent.RenderInventoryMobEffects event) {
+    private static boolean onInventoryEffects(ScreenEvent.RenderInventoryMobEffects event) {
         if (INVENTORY.isEnabled()) {
-            event.setCanceled(true);
+            return true;
         }
+        return false;
     }
 
     // ==================== Chat sin fondo / inventario sin desenfoque ====================
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.options == null) {
             return;

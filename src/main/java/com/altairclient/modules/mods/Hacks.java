@@ -107,7 +107,7 @@ public final class Hacks {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(Hacks::onTick);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(Hacks::onTick);
     }
 
     // ==================== Hooks used by mixins and Kill Aura ====================
@@ -230,10 +230,7 @@ public final class Hacks {
         mc.gameMode.handleInventoryMouseClick(p.inventoryMenu.containerId, menuSlot, button, type, p);
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.level == null || mc.gameMode == null || !p.isAlive()) {

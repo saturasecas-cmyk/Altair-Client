@@ -30,7 +30,7 @@ public final class AltairRain {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairRain::onTick);
+            TickEvent.ClientTickEvent.Post.BUS.addListener(AltairRain::onTick);
         }
     }
 
@@ -43,10 +43,7 @@ public final class AltairRain {
         return Palette.color(RAIN.getColorIndex());
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         if (!RAIN.isEnabled()) {
             return;
         }

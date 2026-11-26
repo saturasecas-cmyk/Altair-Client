@@ -25,7 +25,7 @@ public final class TimeChanger {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(TimeChanger::onTick);
+            TickEvent.ClientTickEvent.Post.BUS.addListener(TimeChanger::onTick);
         }
     }
 
@@ -45,10 +45,7 @@ public final class TimeChanger {
         mode = Math.max(0, Math.min(MODE_NAMES.length - 1, v));
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         if (!enabled) {
             return;
         }

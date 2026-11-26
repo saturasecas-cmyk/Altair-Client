@@ -17,7 +17,7 @@ public final class ClearWater {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ClearWater::onOverlay);
+            RenderBlockScreenEffectEvent.BUS.addListener(ClearWater::onOverlay);
         }
     }
 
@@ -30,9 +30,10 @@ public final class ClearWater {
     }
 
     /** Cancela el filtro azul de estar sumergido. */
-    private static void onOverlay(RenderBlockScreenEffectEvent event) {
+    private static boolean onOverlay(RenderBlockScreenEffectEvent event) {
         if (enabled && String.valueOf(event.getOverlayType()).contains("WATER")) {
-            event.setCanceled(true);
+            return true;
         }
+        return false;
     }
 }

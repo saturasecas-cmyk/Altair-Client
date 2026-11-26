@@ -36,23 +36,23 @@ public final class AltairLink {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onTick);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onChat);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(AltairLink::onTick);
+        ClientChatReceivedEvent.BUS.addListener(AltairLink::onChat);
     }
 
     // ==================== Recepcion ====================
 
-    private static void onChat(ClientChatReceivedEvent event) {
+    private static boolean onChat(ClientChatReceivedEvent event) {
         String text = event.getMessage().getString();
         if (!isMarker(text)) {
-            return;
+            return false;
         }
         UUID sender = event.getSender();
         if (sender == null || (sender.getMostSignificantBits() == 0L && sender.getLeastSignificantBits() == 0L)) {
             sender = findSender(text);
         }
         handle(sender, text.contains(HELLO));
-        event.setCanceled(true);
+        return true;
     }
 
     private static boolean isMarker(String text) {
@@ -97,10 +97,7 @@ public final class AltairLink {
 
     // ==================== Envio ====================
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         ticks++;
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.getConnection() == null) {

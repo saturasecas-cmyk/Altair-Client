@@ -40,7 +40,7 @@ public final class FastGame {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(FastGame::onRenderLiving);
+            RenderLivingEvent.Pre.BUS.addListener(FastGame::onRenderLiving);
         }
     }
 
@@ -88,14 +88,14 @@ public final class FastGame {
     }
 
     /** Cancela el dibujado de entidades tapadas por bloques. Devuelve true para cancelar. */
-    private static void onRenderLiving(RenderLivingEvent.Pre<?, ?, ?> event) {
+    private static boolean onRenderLiving(RenderLivingEvent.Pre<?, ?, ?> event) {
         if (!enabled) {
-            return;
+            return false;
         }
         Minecraft mc = Minecraft.getInstance();
         Entity viewer = mc.getCameraEntity();
         if (mc.level == null || viewer == null) {
-            return;
+            return false;
         }
 
         double x = event.getState().x;
@@ -107,7 +107,7 @@ public final class FastGame {
         double dy = y - eye.y;
         double dz = z - eye.z;
         if (dx * dx + dy * dy + dz * dz < MIN_CULL_DISTANCE_SQ) {
-            return; // lo cercano siempre se dibuja
+            return false; // lo cercano siempre se dibuja
         }
 
         long now = System.currentTimeMillis();
@@ -126,8 +126,9 @@ public final class FastGame {
             CACHE.put(key, cached);
         }
         if (!cached.visible()) {
-            event.setCanceled(true);
+            return true;
         }
+        return false;
     }
 
     /** Hay línea de visión a los pies, al centro o a la cabeza de la entidad. */

@@ -56,7 +56,7 @@ public final class PvpTextures {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(PvpTextures::onScreenEffect);
+            RenderBlockScreenEffectEvent.BUS.addListener(PvpTextures::onScreenEffect);
         }
     }
 
@@ -80,18 +80,16 @@ public final class PvpTextures {
     // ==================== Fuego (Low Fire / Transparent Fire) ====================
 
     /** Cancela el fuego de vanilla en pantalla y apunta que hay que pintar el de Altair. */
-    private static void onScreenEffect(RenderBlockScreenEffectEvent event) {
+    private static boolean onScreenEffect(RenderBlockScreenEffectEvent event) {
         if (com.altairclient.modules.mods.NoAnimation.isEnabled() && String.valueOf(event.getOverlayType()).contains("FIRE")) {
-            event.setCanceled(true);
-        return; // No Animation: sin fuego en pantalla
+            return true; // No Animation: sin fuego en pantalla
         }
         if ((LOW_FIRE.isEnabled() || TRANSPARENT_FIRE.isEnabled())
                 && String.valueOf(event.getOverlayType()).contains("FIRE")) {
             fireSeenAt = System.currentTimeMillis();
-            event.setCanceled(true);
-        return;
+            return true;
         }
-        return;
+        return false;
     }
 
     /** Fuego bajo y/o semitransparente con la paleta del cliente, desde abajo de la pantalla. */

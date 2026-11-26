@@ -21,7 +21,7 @@ public final class ChatTimestamps {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatTimestamps::onChat);
+            ClientChatReceivedEvent.BUS.addListener(ChatTimestamps::onChat);
                 }
     }
 

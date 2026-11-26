@@ -70,7 +70,7 @@ public final class RenderHacks {
             return;
         }
         registered = true;
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(RenderHacks::onTick);
+        TickEvent.ClientTickEvent.Post.BUS.addListener(RenderHacks::onTick);
     }
 
     // ==================== Xray ====================
@@ -173,10 +173,7 @@ public final class RenderHacks {
         savedTilt = null;
     }
 
-    private static void onTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onTick(TickEvent.ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null || mc.player == null || mc.options == null) {
             return;
