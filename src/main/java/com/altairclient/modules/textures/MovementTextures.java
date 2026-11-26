@@ -402,7 +402,4 @@ public final class MovementTextures {
         }
     }
 
-    private static org.joml.Vector3f (int rgb) {
-        return new org.joml.Vector3f(((rgb >> 16) & 255) / 255.0F, ((rgb >> 8) & 255) / 255.0F, (rgb & 255) / 255.0F);
-    }
 }
