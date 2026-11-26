@@ -24,13 +24,4 @@ public abstract class BlockFaceMixin {
             cir.setReturnValue(RenderHacks.xrayShows(state));
         }
     }
-
-    @Inject(method = "shouldRenderFace(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/Direction;)Z",
-            at = @At("HEAD"), cancellable = true, require = 0)
-    private static void altair$xray5(BlockGetter level, BlockPos pos, BlockState state, BlockState neighbor, Direction dir,
-                                     CallbackInfoReturnable<Boolean> cir) {
-        if (RenderHacks.XRAY.enabled) {
-            cir.setReturnValue(RenderHacks.xrayShows(state));
-        }
-    }
 }
