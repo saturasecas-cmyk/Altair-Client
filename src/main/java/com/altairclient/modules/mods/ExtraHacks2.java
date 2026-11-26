@@ -42,7 +42,7 @@ public final class ExtraHacks2 {
         if (p == null || mc.level == null || mc.gameMode == null || !p.isAlive()) {
             return;
         }
-        boolean noScreen = mc.gui.screen() == null;
+        boolean noScreen = mc.screen == null;
         Vec3 dm = p.getDeltaMovement();
 
         if (sprintBack) {

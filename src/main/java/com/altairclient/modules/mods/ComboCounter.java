@@ -185,7 +185,7 @@ public class ComboCounter {
     @SubscribeEvent
     public static void onRenderChatOverlay(CustomizeGuiOverlayEvent.Chat event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.gui.screen() == null) {
+        if (mc.screen == null) {
             INSTANCE.render(event.getGuiGraphics());
         }
     }

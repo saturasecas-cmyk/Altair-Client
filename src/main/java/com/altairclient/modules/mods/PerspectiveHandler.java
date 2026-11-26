@@ -101,7 +101,7 @@ public final class PerspectiveHandler {
         LocalPlayer player = mc.player;
 
         boolean wanted = player != null && enabled && keyDown
-                && mc.gui.screen() == null && !FreecamHandler.isActive();
+                && mc.screen == null && !FreecamHandler.isActive();
 
         if (!wanted) {
             if (active) {

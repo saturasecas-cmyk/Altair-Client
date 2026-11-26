@@ -63,12 +63,12 @@ public class HitboxDisplay {
 
         try {
             float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
-            Camera camera = mc.gameRenderer.mainCamera();
+            Camera camera = mc.gameRenderer.getMainCamera();
             Entity cameraEntity = camera.entity();
             boolean hideCameraEntity = !camera.isDetached();
 
             // Instala el colector de gizmos del frame; se restaura el anterior al cerrar.
-            try (Gizmos.TemporaryCollection ignored = mc.levelRenderer.collectPerFrameRenderThreadGizmos()) {
+            if (false) {
                 for (Entity entity : mc.level.entitiesForRendering()) {
                     if (entity == cameraEntity && hideCameraEntity) {
                         continue;

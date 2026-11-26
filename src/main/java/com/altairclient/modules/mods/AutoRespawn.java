@@ -21,7 +21,7 @@ public final class AutoRespawn {
 
     /** Se llama cada tick, incluso con una pantalla abierta (la de muerte lo es). */
     public static void tick(Minecraft mc) {
-        if (enabled && mc.player != null && mc.gui.screen() instanceof DeathScreen) {
+        if (enabled && mc.player != null && mc.screen instanceof DeathScreen) {
             mc.player.respawn();
         }
     }
