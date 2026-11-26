@@ -67,9 +67,8 @@ public final class LoadingScreenArt {
             return;
         }
         int color = (Math.max(0, Math.min(255, Math.round(alpha * 255.0F))) << 24) | 0xFFFFFF;
-        com.mojang.blaze3d.systems.RenderSystem.enableBlend();
-        g.setColor(1.0F, 1.0F, 1.0F, alpha);
-        g.blit(texture, cx - dw / 2, cy - dh / 2, dw, dh, 0.0F, 0.0F, texW, texH, texW, texH);
-        g.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        int color = (Math.max(0, Math.min(255, Math.round(alpha * 255.0F))) << 24) | 0xFFFFFF;
+        g.blit(net.minecraft.client.renderer.RenderType::guiTextured, texture, cx - dw / 2, cy - dh / 2, 0.0F, 0.0F, dw, dh,
+                texW, texH, texW, texH, color);
     }
 }

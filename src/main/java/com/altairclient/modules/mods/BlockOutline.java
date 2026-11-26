@@ -74,7 +74,7 @@ public final class BlockOutline {
         float b = (c & 255) / 255.0F;
         com.mojang.blaze3d.systems.RenderSystem.lineWidth((float) width);
         PoseStack ps = event.getPoseStack();
-        shape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> net.minecraft.client.renderer.LevelRenderer.renderLineBox(
+        shape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> net.minecraft.client.renderer.ShapeRenderer.renderLineBox(
                 ps, vc, x1 + pos.getX() - cam.x, y1 + pos.getY() - cam.y, z1 + pos.getZ() - cam.z,
                 x2 + pos.getX() - cam.x, y2 + pos.getY() - cam.y, z2 + pos.getZ() - cam.z, r, g, b, 1.0F));
     }

@@ -459,7 +459,7 @@ public final class RenderHacks {
             } else {
                 havePrev = false;
             }
-            if (hit || entityHit || next.y < mc.level.getMinBuildHeight()) {
+            if (hit || entityHit || next.y < mc.level.getMinY()) {
                 end = next;
                 break;
             }

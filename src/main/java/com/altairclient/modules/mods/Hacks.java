@@ -368,7 +368,7 @@ public final class Hacks {
 
         // ---- Player ----
         if (NO_FALL.enabled && p.fallDistance > 2.0F && mc.getConnection() != null) {
-            mc.getConnection().send(new ServerboundMovePlayerPacket.StatusOnly(true));
+            mc.getConnection().send(new ServerboundMovePlayerPacket.StatusOnly(true, p.horizontalCollision));
             p.resetFallDistance();
         }
         if (NO_SLOW.enabled && p.isUsingItem() && !p.isPassenger() && moving(mc)) {

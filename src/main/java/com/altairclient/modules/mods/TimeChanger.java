@@ -59,6 +59,6 @@ public final class TimeChanger {
         }
         long total = level.getDayTime();
         long target = total - Math.floorMod(total, DAY) + TICKS[mode];
-        level.setDayTime(target);
+        level.setTimeFromServer(level.getGameTime(), target, false);
     }
 }

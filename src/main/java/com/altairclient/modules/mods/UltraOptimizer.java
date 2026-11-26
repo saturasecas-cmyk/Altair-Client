@@ -3,7 +3,7 @@ package com.altairclient.modules.mods;
 import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
-import net.minecraft.client.ParticleStatus;
+import net.minecraft.server.level.ParticleStatus;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.TickEvent;
 
@@ -88,10 +88,10 @@ public final class UltraOptimizer {
             return false;
         }
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || event.getEntity() == null) {
+        if (mc.player == null || event.getState() == null) {
             return false;
         }
-        double entityY = event.getEntity().getY();
+        double entityY = event.getState().y;
         return entityY < mc.player.getEyeY() - BELOW_CULL[level];
     }
 
