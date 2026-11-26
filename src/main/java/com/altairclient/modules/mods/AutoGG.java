@@ -2,7 +2,6 @@ package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.SystemMessageReceivedEvent;
 
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +29,6 @@ public final class AutoGG {
     public static void register() {
         if (!registered) {
             registered = true;
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AutoGG::onSystem);
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AutoGG::onChat);
         }
     }
@@ -43,18 +41,10 @@ public final class AutoGG {
         enabled = !enabled;
     }
 
-    private static boolean onSystem(SystemMessageReceivedEvent event) {
-        if (!event.isOverlay()) {
+    private static void onChat(ClientChatReceivedEvent event) {
+        if (event.isSystem()) {
             check(event.getMessage().getString());
         }
-        return false;
-    }
-
-    private static boolean onChat(ClientChatReceivedEvent event) {
-        if (!(event instanceof ClientChatReceivedEvent.Player)) {
-            check(event.getMessage().getString());
-        }
-        return false;
     }
 
     private static void check(String message) {

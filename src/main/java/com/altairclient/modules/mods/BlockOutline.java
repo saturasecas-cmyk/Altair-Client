@@ -54,9 +54,9 @@ public final class BlockOutline {
     }
 
     /** Sustituye el contorno de vanilla por el nuestro. Devuelve false para no cancelar el evento. */
-    private static boolean onHighlight(RenderHighlightEvent.Block event) {
+    private static void onHighlight(RenderHighlightEvent.Block event) {
         if (!enabled) {
-            return false;
+            return;
         }
         event.setCustomRenderer((collector, stack, state) -> {
             if (state.blockOutlineRenderState == null) {
@@ -70,6 +70,6 @@ public final class BlockOutline {
                     RenderTypes.lines(), Palette.color(colorIndex), (float) width, false);
             stack.popPose();
         });
-        return false;
+        return;
     }
 }

@@ -26,7 +26,6 @@ import com.altairclient.modules.mods.ZoomHandler;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
@@ -35,9 +34,7 @@ import org.lwjgl.glfw.GLFW;
 public final class AltairKeyHandler {
 
     // Se traduce con la clave "key.category.altairclient.altair_client" del archivo de idioma.
-    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
-            ResourceLocation.fromNamespaceAndPath(AltairClient.MOD_ID, "altair_client")
-    );
+    public static final String CATEGORY = "key.categories.altairclient";
 
     public static final KeyMapping ZOOM_KEY = new KeyMapping(
             "key.altairclient.zoom",
@@ -186,7 +183,7 @@ public final class AltairKeyHandler {
 
     /** Registra el evento de teclas, el tick del cliente, el FOV (zoom) y la cámara (freecam). */
     public static void register() {
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::registerKeys);
+        net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus().addListener(AltairKeyHandler::registerKeys);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onClientTickPre);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onClientTick);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairKeyHandler::onComputeFov);
@@ -250,7 +247,7 @@ public final class AltairKeyHandler {
 
     /** Aplica el FOV personalizado/dinámico y el zoom (mientras se mantiene pulsada la tecla de zoom). */
     private static void onComputeFov(ViewportEvent.ComputeFov event) {
-        event.setFOV(ZoomHandler.applyZoom(FovHandler.apply(event.getFOV())));
+        event.setFOV(ZoomHandler.applyZoom(FovHandler.apply((float) event.getFOV())));
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -268,14 +265,14 @@ public final class AltairKeyHandler {
         // La captura se hace aunque el menú acabe de cerrarse (espera a que no haya pantalla abierta).
         ScreenshotModule.tick(minecraft);
 
-        if (minecraft.player == null || minecraft.gui.screen() != null) {
+        if (minecraft.player == null || minecraft.screen != null) {
             ZoomHandler.setZoomKeyDown(false);
             PerspectiveHandler.setKeyDown(false);
             return;
         }
 
         while (MENU_KEY.consumeClick()) {
-            minecraft.gui.setScreen(new AltairScreen());
+            minecraft.setScreen(new AltairScreen());
         }
 
         while (FREECAM_KEY.consumeClick()) {

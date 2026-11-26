@@ -45,13 +45,13 @@ public final class NametagHandler {
     }
 
     /** Devuelve false para no cancelar el dibujado del nombre. */
-    private static boolean onNameTag(RenderNameTagEvent event) {
+    private static void onNameTag(RenderNameTagEvent event) {
         if (!enabled) {
-            return false;
+            return;
         }
         Component original = event.getContent();
         if (original == null) {
-            return false;
+            return;
         }
 
         MutableComponent styled;
@@ -65,6 +65,6 @@ public final class NametagHandler {
                     .append(original.copy().withStyle(ChatFormatting.AQUA));
         }
         event.setContent(styled);
-        return false;
+        return;
     }
 }

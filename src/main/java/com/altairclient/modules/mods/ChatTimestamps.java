@@ -3,7 +3,6 @@ package com.altairclient.modules.mods;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.SystemMessageReceivedEvent;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -23,9 +22,7 @@ public final class ChatTimestamps {
         if (!registered) {
             registered = true;
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatTimestamps::onChat);
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatTimestamps::onPlayerChat);
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(ChatTimestamps::onSystem);
-        }
+                }
     }
 
     public static boolean isEnabled() {
@@ -46,24 +43,9 @@ public final class ChatTimestamps {
                 .append(message);
     }
 
-    private static boolean onChat(ClientChatReceivedEvent event) {
+    private static void onChat(ClientChatReceivedEvent event) {
         if (enabled) {
             event.setMessage(stamp(event.getMessage()));
         }
-        return false;
-    }
-
-    private static boolean onPlayerChat(ClientChatReceivedEvent.Player event) {
-        if (enabled) {
-            event.setMessage(stamp(event.getMessage()));
-        }
-        return false;
-    }
-
-    private static boolean onSystem(SystemMessageReceivedEvent event) {
-        if (enabled && !event.isOverlay()) {
-            event.setMessage(stamp(event.getMessage()));
-        }
-        return false;
     }
 }

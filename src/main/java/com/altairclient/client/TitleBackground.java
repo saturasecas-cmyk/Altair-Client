@@ -33,7 +33,7 @@ public final class TitleBackground {
     private static final float[] BY = new float[BIG_STARS];
     private static final float[] BPHASE = new float[BIG_STARS];
 
-    private static final ResourceLocation LOGO = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/title/altair_logo.png");
+    private static final ResourceLocation LOGO = new ResourceLocation("altairclient", "textures/gui/title/altair_logo.png");
     private static final int LOGO_TEX_W = 768;
     private static final int LOGO_TEX_H = 172;
     private static final int LOGO_DRAW_W = 232;

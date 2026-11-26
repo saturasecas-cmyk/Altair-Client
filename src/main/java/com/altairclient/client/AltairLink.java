@@ -7,7 +7,6 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.client.event.SystemMessageReceivedEvent;
 
 /**
  * Altair Link: los clientes con Altair Client se reconocen entre si por el chat del servidor.
@@ -38,43 +37,22 @@ public final class AltairLink {
         }
         registered = true;
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onTick);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onPlayerChat);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onChat);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.addListener(AltairLink::onSystem);
     }
 
     // ==================== Recepcion ====================
 
-    private static boolean onPlayerChat(ClientChatReceivedEvent.Player event) {
-        String text = event.getMessage().getString();
-        String signed = event.getPlayerChatMessage().signedContent();
-        if (!isMarker(text) && !isMarker(signed)) {
-            return false;
-        }
-        boolean hello = text.contains(HELLO) || (signed != null && signed.contains(HELLO));
-        handle(event.getSender(), hello);
-        return true; // se oculta
-    }
-
-    private static boolean onChat(ClientChatReceivedEvent event) {
+    private static void onChat(ClientChatReceivedEvent event) {
         String text = event.getMessage().getString();
         if (!isMarker(text)) {
-            return false;
+            return;
         }
-        handle(findSender(text), text.contains(HELLO));
-        return true;
-    }
-
-    private static boolean onSystem(SystemMessageReceivedEvent event) {
-        if (event.isOverlay()) {
-            return false;
+        UUID sender = event.getSenderUUID();
+        if (sender == null || (sender.getMostSignificantBits() == 0L && sender.getLeastSignificantBits() == 0L)) {
+            sender = findSender(text);
         }
-        String text = event.getMessage().getString();
-        if (!isMarker(text)) {
-            return false;
-        }
-        handle(findSender(text), text.contains(HELLO));
-        return true;
+        handle(sender, text.contains(HELLO));
+        event.setCanceled(true);
     }
 
     private static boolean isMarker(String text) {
@@ -108,9 +86,9 @@ public final class AltairLink {
         UUID best = null;
         int bestLen = 0;
         for (PlayerInfo info : connection.getListedOnlinePlayers()) {
-            String name = info.getProfile().name();
+            String name = info.getProfile().getName();
             if (name != null && name.length() > bestLen && head.contains(name)) {
-                best = info.getProfile().id();
+                best = info.getProfile().getId();
                 bestLen = name.length();
             }
         }

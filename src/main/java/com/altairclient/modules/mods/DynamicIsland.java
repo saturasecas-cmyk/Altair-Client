@@ -371,30 +371,34 @@ public final class DynamicIsland {
     }
 
     /** Clic con un menú abierto: botones de la isla expandida o abrir/cerrar la isla. */
-    private static boolean onClick(ScreenEvent.MouseButtonPressed.Pre event) {
+    private static void onClick(ScreenEvent.MouseButtonPressed.Pre event) {
         if (!enabled || !hasMedia || Minecraft.getInstance().level == null) {
-            return false;
+            return;
         }
         double mx = event.getMouseX();
         double my = event.getMouseY();
         if (!inside(mx, my, boxX, boxY, boxW, boxH)) {
-            return false;
+            return;
         }
         if (expanded && boxH >= 40) {
             if (inside(mx, my, prevX, buttonY, BUTTON_W, BUTTON_H)) {
                 previous();
-                return true;
+                event.setCanceled(true);
+        return;
             }
             if (inside(mx, my, toggleX, buttonY, BUTTON_W, BUTTON_H)) {
                 playPause();
-                return true;
+                event.setCanceled(true);
+        return;
             }
             if (inside(mx, my, nextX, buttonY, BUTTON_W, BUTTON_H)) {
                 next();
-                return true;
+                event.setCanceled(true);
+        return;
             }
         }
         expanded = !expanded;
-        return true;
+        event.setCanceled(true);
+        return;
     }
 }

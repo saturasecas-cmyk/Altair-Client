@@ -60,7 +60,7 @@ public final class ExtraTextures {
         if (!NAMETAG.isEnabled()) {
             return;
         }
-        Component original = event.getOriginalContent();
+        Component original = event.getContent();
         if (original != null) {
             // Solo el nombre en texto plano, sin colores de equipo ni adornos, y un poco más pequeño
             event.setContent(Component.literal(original.getString()));
@@ -75,8 +75,10 @@ public final class ExtraTextures {
     }
 
     /** Oculta el panel de efectos de poción del inventario. */
-    private static boolean onInventoryEffects(ScreenEvent.RenderInventoryMobEffects event) {
-        return INVENTORY.isEnabled();
+    private static void onInventoryEffects(ScreenEvent.RenderInventoryMobEffects event) {
+        if (INVENTORY.isEnabled()) {
+            event.setCanceled(true);
+        }
     }
 
     // ==================== Chat sin fondo / inventario sin desenfoque ====================
@@ -120,9 +122,9 @@ public final class ExtraTextures {
 
     // ==================== Smooth GUI Transitions ====================
 
-    private static boolean onScreenOpening(ScreenEvent.Opening event) {
+    private static void onScreenOpening(ScreenEvent.Opening event) {
         screenOpenedAt = System.currentTimeMillis();
-        return false;
+        return;
     }
 
     private static void onScreenRendered(ScreenEvent.Render.Post event) {

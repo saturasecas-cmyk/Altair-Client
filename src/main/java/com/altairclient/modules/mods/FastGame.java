@@ -88,7 +88,7 @@ public final class FastGame {
     }
 
     /** Cancela el dibujado de entidades tapadas por bloques. Devuelve true para cancelar. */
-    private static boolean onRenderLiving(RenderLivingEvent.Pre<?, ?, ?> event) {
+    private static void onRenderLiving(RenderLivingEvent.Pre<?, ?> event) {
         if (!enabled) {
             return false;
         }
@@ -98,16 +98,16 @@ public final class FastGame {
             return false;
         }
 
-        double x = event.getState().x;
-        double y = event.getState().y;
-        double z = event.getState().z;
+        double x = event.getEntity().getX();
+        double y = event.getEntity().getY();
+        double z = event.getEntity().getZ();
         Vec3 eye = viewer.getEyePosition();
 
         double dx = x - eye.x;
         double dy = y - eye.y;
         double dz = z - eye.z;
         if (dx * dx + dy * dy + dz * dz < MIN_CULL_DISTANCE_SQ) {
-            return false; // lo cercano siempre se dibuja
+            return; // lo cercano siempre se dibuja
         }
 
         long now = System.currentTimeMillis();
@@ -125,7 +125,9 @@ public final class FastGame {
             cached = new Visibility(visible, now);
             CACHE.put(key, cached);
         }
-        return !cached.visible();
+        if (!cached.visible()) {
+            event.setCanceled(true);
+        }
     }
 
     /** Hay línea de visión a los pies, al centro o a la cabeza de la entidad. */

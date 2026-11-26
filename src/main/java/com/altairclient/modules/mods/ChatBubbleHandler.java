@@ -52,31 +52,34 @@ public final class ChatBubbleHandler {
     }
 
     /** Guarda el mensaje del jugador. Devuelve false para no cancelar el chat. */
-    private static boolean onChat(ClientChatReceivedEvent.Player event) {
-        if (!enabled) {
-            return false;
+    private static void onChat(ClientChatReceivedEvent event) {
+        if (!enabled || event.isSystem() || event.getSenderUUID() == null) {
+            return;
         }
-        String text = event.getPlayerChatMessage().signedContent();
+        String text = event.getMessage().getString();
+        int gt = text.indexOf("> ");
+        if (text.startsWith("<") && gt > 0) {
+            text = text.substring(gt + 2);
+        }
         if (text == null || text.isBlank()) {
-            return false;
+            return;
         }
         text = text.strip();
         if (text.length() > MAX_CHARS) {
             text = text.substring(0, MAX_CHARS - 1) + "…";
         }
-        BUBBLES.put(event.getSender(), new Bubble(text, System.currentTimeMillis() + DURATION_MS));
-        return false;
+        BUBBLES.put(event.getSenderUUID(), new Bubble(text, System.currentTimeMillis() + DURATION_MS));
     }
 
     /** Pone el mensaje como segunda línea del nombre del jugador que lo escribió. */
-    private static boolean onNameTag(RenderNameTagEvent event) {
+    private static void onNameTag(RenderNameTagEvent event) {
         if (!enabled || BUBBLES.isEmpty()) {
-            return false;
+            return;
         }
         Minecraft mc = Minecraft.getInstance();
-        Component name = event.getOriginalContent();
+        Component name = event.getContent();
         if (mc.level == null || name == null) {
-            return false;
+            return;
         }
 
         long now = System.currentTimeMillis();
@@ -91,11 +94,11 @@ public final class ChatBubbleHandler {
             }
             Player player = mc.level.getPlayerByUUID(entry.getKey());
             if (player != null && shown.contains(player.getName().getString())) {
-                event.setScoreContent(Component.literal("💬 " + entry.getValue().text())
-                        .withStyle(ChatFormatting.YELLOW));
+                event.setContent(name.copy().append(Component.literal("  💬 " + entry.getValue().text())
+                        .withStyle(ChatFormatting.YELLOW)));
                 break;
             }
         }
-        return false;
+        return;
     }
 }
