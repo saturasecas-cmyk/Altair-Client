@@ -88,12 +88,11 @@ public final class ExtraHacks2 {
             p.removeEffect(MobEffects.NAUSEA);
         }
 
-        if (FAST_EAT.enabled && p.isUsingItem() && p.getUseItem().has(net.minecraft.core.component.DataComponents.FOOD)) {
+        if (FAST_EAT.enabled && p.isUsingItem() && p.getUseItem().isEdible()) {
             try {
                 if (!useLookedUp) {
                     useLookedUp = true;
-                    useRemaining = LivingEntity.class.getDeclaredField("useItemRemaining");
-                    useRemaining.setAccessible(true);
+                    useRemaining = net.minecraftforge.fml.util.ObfuscationReflectionHelper.findField(LivingEntity.class, "useItemRemaining");
                 }
                 if (useRemaining != null) {
                     int v = useRemaining.getInt(p);

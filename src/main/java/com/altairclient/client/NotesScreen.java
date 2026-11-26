@@ -10,9 +10,9 @@ import java.util.Map;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
+import com.altairclient.compat.CharacterEvent;
+import com.altairclient.compat.KeyEvent;
+import com.altairclient.compat.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
@@ -261,7 +261,10 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public void extractBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void renderBackground(GuiGraphics graphics) {
+        int mouseX = 0;
+        int mouseY = 0;
+        float partialTick = 0.0F;
         // Sin desenfoque: solo un velo suave para que se lea la ventana
         graphics.fill(0, 0, width, height, 0x40000000);
     }
@@ -758,8 +761,8 @@ public class NotesScreen extends Screen {
     // ==================== Dibujo ====================
 
     @Override
-    public void extractRenderState(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        super.extractRenderState(g, mouseX, mouseY, partialTick);
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        super.render(g, mouseX, mouseY, partialTick);
         clampWindow();
         if (dirty || lastTextW != contentW() - 8) {
             rebuild();
@@ -946,17 +949,19 @@ public class NotesScreen extends Screen {
     // ==================== Entrada ====================
 
     @Override
-    public boolean charTyped(CharacterEvent event) {
+    public boolean charTyped(char chr0, int mods0) {
+        CharacterEvent event = new CharacterEvent(chr0);
         if (event.isAllowedChatCharacter()) {
             insertText(event.codepointAsString());
             wantedX = -1;
             return true;
         }
-        return super.charTyped(event);
+        return super.charTyped(event.chr(), 0);
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
+    public boolean keyPressed(int key0, int scan0, int mods0) {
+        KeyEvent event = new KeyEvent(key0, scan0, mods0);
         int key = event.key();
         boolean ctrl = event.hasControlDown();
         boolean shift = event.hasShiftDown();
@@ -1071,7 +1076,7 @@ public class NotesScreen extends Screen {
             default:
                 break;
         }
-        return super.keyPressed(event);
+        return super.keyPressed(event.key(), event.scan(), event.modifiers());
     }
 
     private void moveVertical(int dir, boolean shift) {
@@ -1098,15 +1103,17 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(double mx0, double my0, int btn0) {
+        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+        boolean doubleClick = false;
         double mx = event.x();
         double my = event.y();
         if (event.button() != 0) {
-            return super.mouseClicked(event, doubleClick);
+            return super.mouseClicked(event.x(), event.y(), event.button());
         }
         boolean inside = mx >= wx && mx < wx + ww && my >= wy && my < wy + wh;
         if (!inside) {
-            return super.mouseClicked(event, doubleClick);
+            return super.mouseClicked(event.x(), event.y(), event.button());
         }
         // Cerrar
         if (my < wy + TITLE_H) {
@@ -1156,7 +1163,8 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+    public boolean mouseDragged(double mx0, double my0, int btn0, double dx, double dy) {
+        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
         if (dragMode == DRAG_MOVE) {
             wx = (int) event.x() - dragOffX;
             wy = (int) event.y() - dragOffY;
@@ -1188,16 +1196,17 @@ public class NotesScreen extends Screen {
             }
             return true;
         }
-        return super.mouseDragged(event, dx, dy);
+        return super.mouseDragged(event.x(), event.y(), event.button(), dx, dy);
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
+    public boolean mouseReleased(double mx0, double my0, int btn0) {
+        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
         if (dragMode != DRAG_NONE) {
             dragMode = DRAG_NONE;
             storeGeometry();
             return true;
         }
-        return super.mouseReleased(event);
+        return super.mouseReleased(event.x(), event.y(), event.button());
     }
 }

@@ -117,10 +117,10 @@ public final class WorldHacks {
 
     private static Field find(Class<?> cls, String name) {
         try {
-            Field f = cls.getDeclaredField(name);
+            Field f = net.minecraftforge.fml.util.ObfuscationReflectionHelper.findField(cls, name);
             f.setAccessible(true);
             return f;
-        } catch (NoSuchFieldException | RuntimeException e) {
+        } catch (RuntimeException e) {
             return null;
         }
     }

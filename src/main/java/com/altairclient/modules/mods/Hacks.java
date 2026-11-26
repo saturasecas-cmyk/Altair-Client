@@ -11,10 +11,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -63,7 +62,7 @@ public final class Hacks {
     // Combat
     public static final Mod AUTO_CRIT = new Mod(0, 0, null);
     public static final Mod VELOCITY = new Mod(0, 100, null);          // a = % horizontal kept, b = % vertical kept
-    public static final Mod REACH = new Mod(5, 0, () -> setAttr(Attributes.ENTITY_INTERACTION_RANGE, 3.0));
+    public static final Mod REACH = new Mod(5, 0, () -> setAttr(net.minecraftforge.common.ForgeMod.ENTITY_REACH.get(), 3.0));
     public static final Mod HITBOXES = new Mod(3, 0, null);            // a = extra size in tenths of a block
     public static final Mod AUTO_TOTEM = new Mod(0, 0, null);
     public static final Mod AUTO_ARMOR = new Mod(0, 0, null);
@@ -80,7 +79,7 @@ public final class Hacks {
     });                                                                 // a = mode, b = speed
     public static final Mod SPEED = new Mod(2, 0, null);               // a = strength 1-5
     public static final Mod SPRINT = new Mod(0, 0, null);
-    public static final Mod STEP = new Mod(2, 0, () -> setAttr(Attributes.STEP_HEIGHT, 0.6)); // a = blocks
+    public static final Mod STEP = new Mod(2, 0, () -> resetStep()); // a = blocks
     public static final Mod JESUS = new Mod(0, 0, null);
     public static final Mod SPIDER = new Mod(0, 0, null);
     public static final Mod ELYTRA_FLY = new Mod(4, 0, null);          // a = speed
@@ -175,24 +174,26 @@ public final class Hacks {
     private static void applyTimer(Minecraft mc, float speed) {
         try {
             if (msPerTickField == null) {
-                java.lang.reflect.Field d = Minecraft.class.getDeclaredField("deltaTracker");
-                d.setAccessible(true);
+                java.lang.reflect.Field d = net.minecraftforge.fml.util.ObfuscationReflectionHelper.findField(Minecraft.class, "timer");
                 timerObject = d.get(mc);
-                msPerTickField = timerObject.getClass().getDeclaredField("msPerTick");
-                msPerTickField.setAccessible(true);
+                msPerTickField = net.minecraftforge.fml.util.ObfuscationReflectionHelper.findField(timerObject.getClass(), "msPerTick");
             }
             msPerTickField.setFloat(timerObject, 50.0F / speed);
         } catch (ReflectiveOperationException | RuntimeException ignored) {
             // field not available: only the tick rate changes
         }
-        if (mc.level != null) {
-            mc.level.tickRateManager().setTickRate(20.0F * speed);
-        }
     }
 
     // ==================== Tick ====================
 
-    private static void setAttr(net.minecraft.core.Holder<net.minecraft.world.entity.ai.attributes.Attribute> attr, double value) {
+    private static void resetStep() {
+        LocalPlayer p = Minecraft.getInstance().player;
+        if (p != null) {
+            p.setMaxUpStep(0.6F);
+        }
+    }
+
+    private static void setAttr(net.minecraft.world.entity.ai.attributes.Attribute attr, double value) {
         LocalPlayer p = Minecraft.getInstance().player;
         if (p != null && p.getAttribute(attr) != null) {
             p.getAttribute(attr).setBaseValue(value);
@@ -225,8 +226,8 @@ public final class Hacks {
         return invIndex < 9 ? 36 + invIndex : invIndex;
     }
 
-    private static void click(Minecraft mc, LocalPlayer p, int menuSlot, int button, ContainerInput type) {
-        mc.gameMode.handleContainerInput(p.inventoryMenu.containerId, menuSlot, button, type, p);
+    private static void click(Minecraft mc, LocalPlayer p, int menuSlot, int button, ClickType type) {
+        mc.gameMode.handleClickType(p.inventoryMenu.containerId, menuSlot, button, type, p);
     }
 
     private static void onTick(TickEvent.ClientTickEvent event) {
@@ -254,12 +255,12 @@ public final class Hacks {
             lastHurt = p.hurtTime;
         }
         if (REACH.enabled) {
-            setAttr(Attributes.ENTITY_INTERACTION_RANGE, REACH.a);
+            setAttr(net.minecraftforge.common.ForgeMod.ENTITY_REACH.get(), REACH.a);
         }
         if (AUTO_TOTEM.enabled && noScreen && tick % 2 == 0 && !p.getOffhandItem().is(Items.TOTEM_OF_UNDYING)) {
             for (int i = 0; i < 36; i++) {
                 if (p.getInventory().getItem(i).is(Items.TOTEM_OF_UNDYING)) {
-                    click(mc, p, menuSlot(i), 40, ContainerInput.SWAP);
+                    click(mc, p, menuSlot(i), 40, ClickType.SWAP);
                     break;
                 }
             }
@@ -274,7 +275,7 @@ public final class Hacks {
                 for (int i = 0; i < 36; i++) {
                     ItemStack st = p.getInventory().getItem(i);
                     if (!st.isEmpty() && p.getEquipmentSlotForItem(st) == slot) {
-                        click(mc, p, menuSlot(i), 0, ContainerInput.QUICK_MOVE);
+                        click(mc, p, menuSlot(i), 0, ClickType.QUICK_MOVE);
                         break outer;
                     }
                 }
@@ -329,7 +330,7 @@ public final class Hacks {
             p.setSprinting(true);
         }
         if (STEP.enabled) {
-            setAttr(Attributes.STEP_HEIGHT, STEP.a);
+            p.setMaxUpStep(STEP.a);
         }
         if (JESUS.enabled && !p.isShiftKeyDown() && !mc.options.keyJump.isDown()) {
             BlockPos feet = p.blockPosition();
@@ -367,7 +368,7 @@ public final class Hacks {
 
         // ---- Player ----
         if (NO_FALL.enabled && p.fallDistance > 2.0F && mc.getConnection() != null) {
-            mc.getConnection().send(new ServerboundMovePlayerPacket.StatusOnly(true, p.horizontalCollision));
+            mc.getConnection().send(new ServerboundMovePlayerPacket.StatusOnly(true));
             p.resetFallDistance();
         }
         if (NO_SLOW.enabled && p.isUsingItem() && !p.isPassenger() && moving(mc)) {

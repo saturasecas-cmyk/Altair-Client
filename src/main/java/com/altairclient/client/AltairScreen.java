@@ -54,7 +54,7 @@ import com.altairclient.modules.textures.TextureModules;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.MouseButtonEvent;
+import com.altairclient.compat.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -2141,19 +2141,14 @@ public final class AltairScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(
-            GuiGraphics graphics,
-            int mouseX,
-            int mouseY,
-            float partialTick
-    ) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         if (closing && (System.nanoTime() - closeStart) >= CLOSE_NANOS) {
             if (minecraft != null) {
                 minecraft.gui.setScreen(null);
             }
             return;
         }
-        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        super.render(graphics, mouseX, mouseY, partialTick);
 
         // 1. Fondo oscuro global
         // Animación de apertura: el fondo se oscurece y el panel crece desde el 94 %.
@@ -2209,7 +2204,7 @@ public final class AltairScreen extends Screen {
 
         graphics.drawString(font, "🔍", searchX + 8, searchY + 6, MUTED, false);
         if (searchBox != null) {
-            searchBox.extractRenderState(graphics, mouseX, mouseY, partialTick);
+            searchBox.render(graphics, mouseX, mouseY, partialTick);
         }
 
         // Botones de ventana (Derecha del Header)
@@ -2567,12 +2562,14 @@ public final class AltairScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+    public boolean mouseClicked(double mx0, double my0, int btn0) {
+        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+        boolean doubleClick = false;
         if (closing) {
             return true;
         }
         if (event.button() != 0) {
-            return super.mouseClicked(event, doubleClick);
+            return super.mouseClicked(event.x(), event.y(), event.button());
         }
 
         double mx = event.x();
@@ -2589,7 +2586,7 @@ public final class AltairScreen extends Screen {
                 // enfocar la caja también a nivel de pantalla, no solo en la caja.
                 setFocused(searchBox);
                 searchBox.setFocused(true);
-                searchBox.mouseClicked(event, doubleClick);
+                searchBox.mouseClicked(event.x(), event.y(), event.button());
                 return true;
             }
             if (getFocused() == searchBox) {
@@ -2754,7 +2751,7 @@ public final class AltairScreen extends Screen {
             }
         }
 
-        return super.mouseClicked(event, doubleClick);
+        return super.mouseClicked(event.x(), event.y(), event.button());
     }
 
     @Override

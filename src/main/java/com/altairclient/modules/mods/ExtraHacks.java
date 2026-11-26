@@ -5,7 +5,6 @@ import net.minecraft.client.gui.screens.inventory.ContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -13,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Shearable;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -287,7 +286,7 @@ public final class ExtraHacks {
             int chestSlots = menu.slots.size() - 36;
             for (int i = 0; i < chestSlots; i++) {
                 if (menu.slots.get(i).hasItem()) {
-                    mc.gameMode.handleContainerInput(menu.containerId, i, 0, ContainerInput.QUICK_MOVE, p);
+                    mc.gameMode.handleClickType(menu.containerId, i, 0, ClickType.QUICK_MOVE, p);
                     break;
                 }
             }
@@ -363,7 +362,7 @@ public final class ExtraHacks {
         }
         for (int i = 0; i < 9; i++) {
             ItemStack st = p.getInventory().getItem(i);
-            if (!st.isEmpty() && st.has(DataComponents.FOOD) && !st.is(Items.ENCHANTED_GOLDEN_APPLE)
+            if (!st.isEmpty() && st.isEdible() && !st.is(Items.ENCHANTED_GOLDEN_APPLE)
                     && !st.is(Items.GOLDEN_APPLE) && !st.is(Items.ROTTEN_FLESH)) {
                 eatSaved = p.getInventory().selected;
                 eatTicks = 0;

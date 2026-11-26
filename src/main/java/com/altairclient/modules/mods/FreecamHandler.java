@@ -2,7 +2,7 @@ package com.altairclient.modules.mods;
 
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.ClientInput;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Marker;
 import net.minecraft.world.phys.Vec3;
@@ -24,7 +24,7 @@ public class FreecamHandler {
 
     private static boolean active = false;
     private static Marker camera = null;
-    private static ClientInput savedInput = null;
+    private static Input savedInput = null;
     private static CameraType savedCameraType = null;
 
     private static float lockedYaw;
@@ -71,7 +71,7 @@ public class FreecamHandler {
 
         // Los controles del jugador real se anulan: se queda quieto.
         savedInput = player.input;
-        player.input = new ClientInput();
+        player.input = new Input();
 
         savedCameraType = mc.options.getCameraType();
         mc.options.setCameraType(CameraType.FIRST_PERSON);
