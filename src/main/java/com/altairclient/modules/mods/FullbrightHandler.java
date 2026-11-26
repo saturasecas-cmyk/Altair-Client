@@ -1,19 +1,17 @@
 package com.altairclient.modules.mods;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 
 /**
- * Fullbright: sube el brillo del juego al máximo para ver bien en cuevas y de noche.
- * Es un ajuste visual del cliente (el mismo que el brillo de las opciones de vídeo),
- * no añade efectos de poción ni envía nada al servidor.
+ * Fullbright: visión nocturna visual solo en tu cliente (un efecto local sin partículas ni icono).
+ * No envia nada al servidor; si el servidor te da visión nocturna de verdad, no se toca.
  */
 public final class FullbrightHandler {
 
-    private static final double FULL = 15.0D;
-
     private static boolean enabled = false;
-    private static Double savedGamma = null;
-    private static boolean hookAdded = false;
+    private static boolean added = false;
 
     private FullbrightHandler() {
     }
@@ -29,41 +27,22 @@ public final class FullbrightHandler {
         }
     }
 
-    /** Se llama cada tick: mantiene el brillo al máximo mientras esté activo. */
+    /** Se llama cada tick: mantiene la visión nocturna local mientras esté activo. */
     public static void tick(Minecraft mc) {
-        if (!enabled || mc.options == null) {
+        if (!enabled || mc.player == null) {
             return;
         }
-        if (savedGamma == null) {
-            savedGamma = mc.options.gamma().get();
-            addShutdownHook(mc);
-        }
-        if (mc.options.gamma().get() < FULL) {
-            mc.options.gamma().set(FULL);
+        MobEffectInstance current = mc.player.getEffect(MobEffects.NIGHT_VISION);
+        if (current == null || (added && current.getDuration() < 400)) {
+            mc.player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 100000, 0, false, false, false));
+            added = true;
         }
     }
 
     private static void restore(Minecraft mc) {
-        if (savedGamma != null && mc != null && mc.options != null) {
-            mc.options.gamma().set(savedGamma);
+        if (added && mc != null && mc.player != null) {
+            mc.player.removeEffectNoUpdate(MobEffects.NIGHT_VISION);
         }
-        savedGamma = null;
-    }
-
-    /** Si cierras el juego con Fullbright activo, se devuelve el brillo original para que no se quede guardado al máximo. */
-    private static void addShutdownHook(Minecraft mc) {
-        if (hookAdded) {
-            return;
-        }
-        hookAdded = true;
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                if (savedGamma != null) {
-                    mc.options.gamma().set(savedGamma);
-                    mc.options.save();
-                }
-            } catch (Throwable ignored) {
-            }
-        }, "Altair-FullbrightRestore"));
+        added = false;
     }
 }
