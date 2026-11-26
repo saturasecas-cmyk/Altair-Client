@@ -88,7 +88,7 @@ public final class FastGame {
     }
 
     /** Cancela el dibujado de entidades tapadas por bloques. Devuelve true para cancelar. */
-    private static void onRenderLiving(RenderLivingEvent.Pre<?, ?> event) {
+    private static void onRenderLiving(RenderLivingEvent.Pre<?, ?, ?> event) {
         if (!enabled) {
             return;
         }
@@ -98,9 +98,9 @@ public final class FastGame {
             return;
         }
 
-        double x = event.getEntity().getX();
-        double y = event.getEntity().getY();
-        double z = event.getEntity().getZ();
+        double x = event.getState().x;
+        double y = event.getState().y;
+        double z = event.getState().z;
         Vec3 eye = viewer.getEyePosition();
 
         double dx = x - eye.x;

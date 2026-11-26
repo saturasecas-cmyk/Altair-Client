@@ -108,7 +108,7 @@ public final class SafetyGuard {
             return;
         }
         if (pendingNotice != null && mc.player != null) {
-            mc.player.sendSystemMessage(Component.literal(pendingNotice));
+            mc.player.displayClientMessage(Component.literal(pendingNotice), false);
             pendingNotice = null;
         }
         // Vigilante de FPS: solo dentro de un mundo, con la ventana activa y sin menús

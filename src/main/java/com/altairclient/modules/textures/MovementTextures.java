@@ -217,7 +217,7 @@ public final class MovementTextures {
         double off = stepLeft ? 0.14 : -0.14;
         double x = p.getX() + Math.cos(yaw) * off;
         double z = p.getZ() + Math.sin(yaw) * off;
-        raw(level, new DustParticleOptions(dustColor(rgb), 0.8F), x, p.getY() + 0.02, z, 0.0, 0.0, 0.0);
+        raw(level, new DustParticleOptions((rgb), 0.8F), x, p.getY() + 0.02, z, 0.0, 0.0, 0.0);
     }
 
     // ==================== Cámara: balanceo ====================
@@ -384,7 +384,7 @@ public final class MovementTextures {
 
     /** Anillo plano de polvo de color (no necesita teñido: el color va en la propia partícula). */
     private static void dustRing(ClientLevel level, LocalPlayer p, int argb, double radius, int count, float scale) {
-        ParticleOptions dust = new DustParticleOptions(dustColor(argb & 0xFFFFFF), scale);
+        ParticleOptions dust = new DustParticleOptions((argb & 0xFFFFFF), scale);
         for (int i = 0; i < count; i++) {
             double a = i * (Math.PI * 2.0 / count);
             raw(level, dust, p.getX() + Math.cos(a) * radius, p.getY() + 0.03, p.getZ() + Math.sin(a) * radius, 0.0, 0.0, 0.0);
@@ -402,7 +402,7 @@ public final class MovementTextures {
         }
     }
 
-    private static org.joml.Vector3f dustColor(int rgb) {
+    private static org.joml.Vector3f (int rgb) {
         return new org.joml.Vector3f(((rgb >> 16) & 255) / 255.0F, ((rgb >> 8) & 255) / 255.0F, (rgb & 255) / 255.0F);
     }
 }
