@@ -237,12 +237,12 @@ public final class RenderHacks {
         double pitch;
         double fovDeg;
         if (cam != null && cam.isInitialized()) {
-            Vec3 pos = cam.getPosition();
+            Vec3 pos = cam.position();
             ex = pos.x;
             ey = pos.y;
             ez = pos.z;
-            yaw = Math.toRadians(cam.getYRot());
-            pitch = Math.toRadians(cam.getXRot());
+            yaw = Math.toRadians(cam.yRot());
+            pitch = Math.toRadians(cam.xRot());
             fovDeg = (double) Minecraft.getInstance().options.fov().get();
         } else {
             Vec3 eye = p.getEyePosition(partial);
