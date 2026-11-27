@@ -7,22 +7,29 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="stars"></div><div class="stars s2"></div>
   <div class="titlebar">
     <span class="drag"></span>
-    <button id="btn-min" class="wbtn" title="Minimize">&#8211;</button>
-    <button id="btn-close" class="wbtn close" title="Cerrar">&#10005;</button>
+    <button id="btn-min" class="wbtn" title="Minimize" aria-label="Minimize"><svg viewBox="0 0 10 10"><path d="M1 5h8"/></svg></button>
+    <button id="btn-close" class="wbtn close" title="Close" aria-label="Close"><svg viewBox="0 0 10 10"><path d="M1 1l8 8M9 1l-8 8"/></svg></button>
   </div>
 
   <aside class="side">
-    <img src="logo.png" class="logo" alt="Altair Client">
+    <div class="brand">
+      <img src="mark.webp" width="44" height="44" alt="">
+      <div><b>ALTAIR</b><small>LAUNCHER</small></div>
+    </div>
     <nav>
-      <button class="nav active" data-page="play">Play</button>
-      <button class="nav" data-page="settings">Settings</button>
-      <button class="nav" data-page="log">Log</button>
+      <button class="nav active" data-page="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play</button>
+      <button class="nav" data-page="settings"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Settings</button>
+      <button class="nav" data-page="log"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Log</button>
     </nav>
-    <div class="account" id="account">
-      <div class="who" id="who">Not signed in</div>
-      <button id="btn-login" class="ghost">Sign in with Microsoft</button>
+    <div class="account">
+      <div class="who-row">
+        <div class="avatar" id="avatar">?</div>
+        <div class="who" id="who">Not signed in</div>
+      </div>
+      <button id="btn-login" class="ghost wide-btn">Sign in with Microsoft</button>
       <button id="btn-offline" class="link">Play offline (no account)</button>
       <button id="btn-logout" class="link hidden">Sign out</button>
     </div>
@@ -30,50 +37,66 @@
 
   <main>
     <section id="page-play" class="page">
-      <img src="emblem.png" class="emblem" alt="">
-      <h1>Altair Client</h1>
-      <p class="sub">Pick a Minecraft version. The launcher installs Java, Forge and the client for you.</p>
+      <div class="play-grid">
+        <div class="left">
+          <h1>Ready to play</h1>
+          <p class="sub">Pick a version. Java, Forge and Altair Client are installed for you.</p>
 
-      <div class="row">
-        <label for="version">Version</label>
-        <select id="version"></select>
-        <span id="installed" class="badge"></span>
+          <div id="versions" class="versions"></div>
+          <div id="vinfo" class="vinfo"></div>
+
+          <button id="btn-play" class="play"><span id="play-label">PLAY</span></button>
+          <div class="progress hidden" id="progress"><div class="bar" id="bar"></div></div>
+          <div class="status" id="status">Ready.</div>
+        </div>
+        <div class="right">
+          <div class="hero"><img src="hero.webp" alt="Altair Client" width="420" height="420"></div>
+          <div class="notice" id="notice"></div>
+        </div>
       </div>
-
-      <button id="btn-play" class="play">PLAY</button>
-
-      <div class="progress hidden" id="progress"><div class="bar" id="bar"></div></div>
-      <div class="status" id="status">Ready.</div>
-      <div class="notice" id="notice"></div>
     </section>
 
     <section id="page-settings" class="page hidden">
       <h2>Settings</h2>
-      <div class="grid">
-        <label>Memory (MB)
-          <input id="set-ram" type="number" min="1024" max="32768" step="512">
-        </label>
-        <label>Resolution
-          <span class="inline"><input id="set-w" type="number" min="640"> &times; <input id="set-h" type="number" min="480"></span>
-        </label>
-        <label class="check"><input id="set-full" type="checkbox"> Fullscreen</label>
-        <label>Game folder (empty = default)
+      <div class="card">
+        <div class="field">
+          <label for="set-ram">Memory <b id="ram-out">4 GB</b></label>
+          <input id="set-ram" type="range" min="1024" max="16384" step="512">
+          <div class="hint" id="ram-hint"></div>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label>Resolution</label>
+            <span class="inline"><input id="set-w" type="number" min="640"> <i>&times;</i> <input id="set-h" type="number" min="480"></span>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <label class="check"><input id="set-full" type="checkbox"> Fullscreen</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Game folder <span class="hint">(empty = default)</span></label>
           <span class="inline"><input id="set-dir" type="text" readonly><button id="btn-dir" class="ghost small">Browse...</button><button id="btn-dir-clear" class="ghost small">Reset</button></span>
-        </label>
-        <label>Custom Java (empty = automatic)
+        </div>
+        <div class="field">
+          <label>Custom Java <span class="hint">(empty = automatic)</span></label>
           <input id="set-java" type="text" placeholder="C:\Program Files\Java\...\bin\java.exe">
-        </label>
-        <label>Offline name
-          <input id="set-offline" type="text" maxlength="16">
-        </label>
-        <label class="wide">JVM arguments
-          <input id="set-jvm" type="text" spellcheck="false">
-        </label>
-      </div>
-      <div class="row">
-        <button id="btn-save" class="ghost">Save</button>
-        <button id="btn-open" class="ghost">Open launcher folder</button>
-        <span id="saved" class="badge"></span>
+        </div>
+        <div class="two">
+          <div class="field">
+            <label>Offline name</label>
+            <input id="set-offline" type="text" maxlength="16">
+          </div>
+          <div class="field">
+            <label>JVM arguments</label>
+            <input id="set-jvm" type="text" spellcheck="false">
+          </div>
+        </div>
+        <div class="row">
+          <button id="btn-save" class="primary">Save</button>
+          <button id="btn-open" class="ghost">Open launcher folder</button>
+          <span id="saved" class="badge"></span>
+        </div>
       </div>
     </section>
 

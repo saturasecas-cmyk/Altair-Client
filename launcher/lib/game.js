@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const { p, ensure } = require('./paths');
 const { ensureJava } = require('./java');
@@ -23,13 +24,14 @@ async function play(entry, repo, settings, ui) {
   ui.status('Starting Minecraft ' + entry.mc + '...');
   const { Client } = require('minecraft-launcher-core'); // lazy: heavy and only needed here
   const launcher = new Client();
+  const javaw = java.replace(/java\.exe$/i, 'javaw.exe'); // no console window
   const ram = settings.ram;
   const extra = (settings.jvmArgs === undefined || settings.jvmArgs === null ? DEFAULT_JVM : settings.jvmArgs)
     .split(/\s+/).filter(Boolean);
   const opts = {
     authorization,
     root: ensure(p.root()),
-    javaPath: java,
+    javaPath: fs.existsSync(javaw) ? javaw : java,
     version: { number: entry.mc, type: 'release', custom: forgeId },
     memory: { max: ram + 'M', min: Math.round(ram / 2) + 'M' },
     customArgs: extra,

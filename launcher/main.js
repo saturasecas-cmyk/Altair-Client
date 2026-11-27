@@ -15,10 +15,17 @@ const send = (ch, data) => win && !win.isDestroyed() && win.webContents.send(ch,
 
 // Log lines are batched (one IPC message every 100 ms) so a chatty game cannot flood the UI.
 let logBuf = [];
+let logHistory = []; // survives the window being closed while the game runs
+let lastStatus = 'Ready.';
+let gameRunning = false;
 let logTimer = null;
 function flushLog() {
   logTimer = null;
-  if (logBuf.length) send('log', logBuf.join('\n'));
+  if (logBuf.length) {
+    send('log', logBuf.join('\n'));
+    logHistory.push(...logBuf);
+    if (logHistory.length > 2000) logHistory = logHistory.slice(-1000);
+  }
   logBuf = [];
 }
 // Parallel downloads are aggregated into a single progress bar (max ~10 updates per second).
@@ -43,7 +50,10 @@ const ui = {
     logBuf.push(String(m));
     if (!logTimer) logTimer = setTimeout(flushLog, 100);
   },
-  status: (m) => send('status', String(m)),
+  status: (m) => {
+    lastStatus = String(m);
+    send('status', lastStatus);
+  },
   progress: (label, done, total) => {
     tasks.set(label, { done: done || 0, total: total || 0 });
     emitProgress(false);
@@ -55,17 +65,19 @@ const ui = {
   launched: () => {
     tasks.clear();
     emitProgress(true);
-    if (win && !win.isDestroyed()) win.minimize(); // free the screen while playing
-    send('launched');
+    // Close the window while Minecraft runs: frees the whole renderer process. It is recreated when the game exits.
+    gameRunning = true;
+    if (win && !win.isDestroyed()) win.destroy();
+    win = null;
   }
 };
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 1040,
-    height: 640,
-    minWidth: 900,
-    minHeight: 560,
+    width: 1100,
+    height: 700,
+    minWidth: 960,
+    minHeight: 640,
     frame: false,
     show: false,
     backgroundColor: '#070b22',
@@ -75,7 +87,18 @@ function createWindow() {
   });
   win.removeMenu();
   win.once('ready-to-show', () => win.show());
+  win.webContents.once('did-finish-load', () => {
+    if (logHistory.length) send('log', logHistory.join('\n'));
+    send('status', lastStatus);
+    setTimeout(prewarm, 300);
+  });
   win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+}
+
+/** Runs after the window is visible so that pressing Play later is instant. */
+function prewarm() {
+  if (busy) return;
+  auth.getAuthorization().catch(() => {}); // refreshes and caches the Microsoft token
 }
 
 function stateFor() {
@@ -89,7 +112,8 @@ function stateFor() {
       const inst = settings.gameDir ? path.join(settings.gameDir, v.mc) : p.instance(v.mc);
       return Object.assign({}, v, { installed: forge.isInstalled(v, names) && !!mod.installedJar(inst) });
     }),
-    base: p.base()
+    base: p.base(),
+    sysRam: Math.floor(require('os').totalmem() / 1048576)
   };
 }
 
@@ -100,7 +124,9 @@ app.whenReady().then(() => {
   if (!app.requestSingleInstanceLock()) return app.quit();
   createWindow();
 });
-app.on('window-all-closed', () => app.quit());
+app.on('window-all-closed', () => {
+  if (!gameRunning) app.quit(); // keep the process alive while the game runs so we can reopen
+});
 
 ipcMain.handle('state', () => stateFor());
 ipcMain.handle('save-settings', (_e, patch) => {
@@ -156,7 +182,9 @@ ipcMain.handle('play', async (_e, mc) => {
     tasks.clear();
     flushLog();
     send('busy', false);
-    if (win && !win.isDestroyed()) {
+    gameRunning = false;
+    if (!win || win.isDestroyed()) createWindow(); // the game closed: bring the launcher back
+    else {
       win.show();
       win.restore();
     }
