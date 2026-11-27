@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[58,)"
+loaderVersion="[59,)"
 license="MIT"
 
 [[mods]]
@@ -14,13 +14,13 @@ Altair Client adaptado para Forge 1.21.1.
 [[dependencies.altairclient]]
 modId="forge"
 mandatory=true
-versionRange="[58,)"
+versionRange="[59,)"
 ordering="NONE"
 side="CLIENT"
 
 [[dependencies.altairclient]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.21.8]"
+versionRange="[1.21.9]"
 ordering="NONE"
 side="CLIENT"
