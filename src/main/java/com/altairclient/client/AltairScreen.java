@@ -54,7 +54,7 @@ import com.altairclient.modules.textures.TextureModules;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import com.altairclient.compat.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -2551,14 +2551,13 @@ public final class AltairScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mx0, double my0, int btn0) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
         boolean doubleClick = false;
         if (closing) {
             return true;
         }
         if (event.button() != 0) {
-            return super.mouseClicked(event.x(), event.y(), event.button());
+            return super.mouseClicked(event, isDouble);
         }
 
         double mx = event.x();
@@ -2740,7 +2739,7 @@ public final class AltairScreen extends Screen {
             }
         }
 
-        return super.mouseClicked(event.x(), event.y(), event.button());
+        return super.mouseClicked(event, isDouble);
     }
 
     @Override

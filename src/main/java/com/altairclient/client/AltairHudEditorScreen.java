@@ -21,7 +21,7 @@ import com.altairclient.modules.mods.WorldInfo;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import com.altairclient.compat.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
@@ -396,11 +396,10 @@ public final class AltairHudEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mx0, double my0, int btn0) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
         boolean doubleClick = false;
         if (event.button() != 0) {
-            return super.mouseClicked(event.x(), event.y(), event.button());
+            return super.mouseClicked(event, isDouble);
         }
 
         double mouseX = event.x();
@@ -426,12 +425,11 @@ public final class AltairHudEditorScreen extends Screen {
             }
         }
 
-        return super.mouseClicked(event.x(), event.y(), event.button());
+        return super.mouseClicked(event, isDouble);
     }
 
     @Override
-    public boolean mouseDragged(double mx0, double my0, int btn0, double dx, double dy) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
         if (draggedTarget != null) {
             int newX = (int) event.x() - dragOffsetX;
             int newY = (int) event.y() - dragOffsetY;
@@ -444,17 +442,16 @@ public final class AltairHudEditorScreen extends Screen {
             return true;
         }
 
-        return super.mouseDragged(event.x(), event.y(), event.button(), dx, dy);
+        return super.mouseDragged(event, dx, dy);
     }
 
     @Override
-    public boolean mouseReleased(double mx0, double my0, int btn0) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (draggedTarget != null) {
             draggedTarget = null;
             return true;
         }
-        return super.mouseReleased(event.x(), event.y(), event.button());
+        return super.mouseReleased(event);
     }
 
     @Override

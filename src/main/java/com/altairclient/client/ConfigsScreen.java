@@ -4,9 +4,9 @@ import java.util.List;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import com.altairclient.compat.CharacterEvent;
-import com.altairclient.compat.KeyEvent;
-import com.altairclient.compat.MouseButtonEvent;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -139,11 +139,10 @@ public class ConfigsScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mx0, double my0, int btn0) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
         boolean doubleClick = false;
         if (event.button() != 0) {
-            return super.mouseClicked(event.x(), event.y(), event.button());
+            return super.mouseClicked(event, isDouble);
         }
         double mx = event.x();
         double my = event.y();
@@ -210,36 +209,32 @@ public class ConfigsScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(double mx0, double my0, int btn0, double dx, double dy) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
         if (dragging) {
             wx = (int) event.x() - dragX;
             wy = (int) event.y() - dragY;
             return true;
         }
-        return super.mouseDragged(event.x(), event.y(), event.button(), dx, dy);
+        return super.mouseDragged(event, dx, dy);
     }
 
     @Override
-    public boolean mouseReleased(double mx0, double my0, int btn0) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseReleased(MouseButtonEvent event) {
         dragging = false;
-        return super.mouseReleased(event.x(), event.y(), event.button());
+        return super.mouseReleased(event);
     }
 
     @Override
-    public boolean charTyped(char chr0, int mods0) {
-        CharacterEvent event = new CharacterEvent(chr0);
+    public boolean charTyped(CharacterEvent event) {
         if (adding && event.isAllowedChatCharacter() && nameInput.length() < MAX_NAME) {
             nameInput.append(event.codepointAsString());
             return true;
         }
-        return super.charTyped(event.chr(), 0);
+        return super.charTyped(event);
     }
 
     @Override
-    public boolean keyPressed(int key0, int scan0, int mods0) {
-        KeyEvent event = new KeyEvent(key0, scan0, mods0);
+    public boolean keyPressed(KeyEvent event) {
         int key = event.key();
         if (key == 256) { // Esc: cancel the name box first, then close
             if (adding) {
@@ -260,6 +255,6 @@ public class ConfigsScreen extends Screen {
             }
             return true;
         }
-        return super.keyPressed(event.key(), event.scan(), event.modifiers());
+        return super.keyPressed(event);
     }
 }

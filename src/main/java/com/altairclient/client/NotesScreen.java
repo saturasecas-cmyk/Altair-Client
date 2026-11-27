@@ -10,9 +10,9 @@ import java.util.Map;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import com.altairclient.compat.CharacterEvent;
-import com.altairclient.compat.KeyEvent;
-import com.altairclient.compat.MouseButtonEvent;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
@@ -946,22 +946,20 @@ public class NotesScreen extends Screen {
     // ==================== Entrada ====================
 
     @Override
-    public boolean charTyped(char chr0, int mods0) {
-        CharacterEvent event = new CharacterEvent(chr0);
+    public boolean charTyped(CharacterEvent event) {
         if (event.isAllowedChatCharacter()) {
             insertText(event.codepointAsString());
             wantedX = -1;
             return true;
         }
-        return super.charTyped(event.chr(), 0);
+        return super.charTyped(event);
     }
 
     @Override
-    public boolean keyPressed(int key0, int scan0, int mods0) {
-        KeyEvent event = new KeyEvent(key0, scan0, mods0);
+    public boolean keyPressed(KeyEvent event) {
         int key = event.key();
         boolean ctrl = event.hasControlDown();
-        boolean shift = net.minecraft.client.gui.screens.Screen.hasShiftDown();
+        boolean shift = event.hasShiftDown();
 
         if (key == 256) { // Esc
             onClose();
@@ -1073,7 +1071,7 @@ public class NotesScreen extends Screen {
             default:
                 break;
         }
-        return super.keyPressed(event.key(), event.scan(), event.modifiers());
+        return super.keyPressed(event);
     }
 
     private void moveVertical(int dir, boolean shift) {
@@ -1100,17 +1098,16 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mx0, double my0, int btn0) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDouble) {
         boolean doubleClick = false;
         double mx = event.x();
         double my = event.y();
         if (event.button() != 0) {
-            return super.mouseClicked(event.x(), event.y(), event.button());
+            return super.mouseClicked(event, isDouble);
         }
         boolean inside = mx >= wx && mx < wx + ww && my >= wy && my < wy + wh;
         if (!inside) {
-            return super.mouseClicked(event.x(), event.y(), event.button());
+            return super.mouseClicked(event, isDouble);
         }
         // Cerrar
         if (my < wy + TITLE_H) {
@@ -1147,8 +1144,8 @@ public class NotesScreen extends Screen {
                 edited = true;
                 return true;
             }
-            moveCursor(r.line, colAt(r, localX), net.minecraft.client.gui.screens.Screen.hasShiftDown());
-            if (!net.minecraft.client.gui.screens.Screen.hasShiftDown()) {
+            moveCursor(r.line, colAt(r, localX), event.hasShiftDown());
+            if (!event.hasShiftDown()) {
                 al = cl;
                 ac = cc;
                 anchorSet = true; // el arrastre extiende desde aqui
@@ -1160,8 +1157,7 @@ public class NotesScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(double mx0, double my0, int btn0, double dx, double dy) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
         if (dragMode == DRAG_MOVE) {
             wx = (int) event.x() - dragOffX;
             wy = (int) event.y() - dragOffY;
@@ -1193,17 +1189,16 @@ public class NotesScreen extends Screen {
             }
             return true;
         }
-        return super.mouseDragged(event.x(), event.y(), event.button(), dx, dy);
+        return super.mouseDragged(event, dx, dy);
     }
 
     @Override
-    public boolean mouseReleased(double mx0, double my0, int btn0) {
-        MouseButtonEvent event = new MouseButtonEvent(mx0, my0, btn0);
+    public boolean mouseReleased(MouseButtonEvent event) {
         if (dragMode != DRAG_NONE) {
             dragMode = DRAG_NONE;
             storeGeometry();
             return true;
         }
-        return super.mouseReleased(event.x(), event.y(), event.button());
+        return super.mouseReleased(event);
     }
 }
