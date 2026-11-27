@@ -1,3 +1,7 @@
+@font-face { font-family: "Pixelify Sans"; font-weight: 400; font-style: normal; font-display: block;
+  src: url("../node_modules/@fontsource/pixelify-sans/files/pixelify-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Pixelify Sans"; font-weight: 700; font-style: normal; font-display: block;
+  src: url("../node_modules/@fontsource/pixelify-sans/files/pixelify-sans-latin-700-normal.woff2") format("woff2"); }
 :root {
   --bg: #070b22;
   --panel: #0d1333;
@@ -11,7 +15,7 @@
   --err: #ff6b8a;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, sans-serif; overflow: hidden; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: "Pixelify Sans", "Segoe UI", system-ui, sans-serif; font-size: 15px; overflow: hidden; }
 body {
   display: grid; grid-template-columns: 250px 1fr; grid-template-rows: 100%;
   background: radial-gradient(1200px 600px at 70% -10%, #1b1f66 0%, transparent 60%), radial-gradient(800px 500px at 0% 110%, #2e165e 0%, transparent 60%), var(--bg);
@@ -35,13 +39,14 @@ nav { display: flex; flex-direction: column; gap: 6px; }
 main { padding: 52px 40px 24px; overflow-y: auto; position: relative; }
 .page.hidden, .hidden { display: none !important; }
 .emblem { position: absolute; right: 30px; top: 40px; width: 230px; opacity: .9; filter: drop-shadow(0 0 30px #8b7cff55); pointer-events: none; }
-h1 { margin: 0 0 6px; font-size: 40px; letter-spacing: .5px; }
+h1 { margin: 0 0 6px; font-size: 40px; letter-spacing: 1px; }
 h2 { margin: 0 0 18px; font-size: 26px; }
 .sub { margin: 0 0 30px; color: var(--muted); max-width: 520px; }
 .row { display: flex; align-items: center; gap: 12px; margin: 14px 0; flex-wrap: wrap; }
 label { color: var(--muted); font-size: 13px; display: flex; flex-direction: column; gap: 6px; }
 label.check { flex-direction: row; align-items: center; gap: 8px; color: var(--text); }
 
+button, select, input { font-family: inherit; }
 select, input[type=text], input[type=number] {
   background: var(--panel); border: 1px solid var(--edge); color: var(--text); border-radius: 9px; padding: 10px 12px; font-size: 14px; min-width: 150px; outline: none;
 }

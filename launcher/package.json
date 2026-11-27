@@ -12,7 +12,8 @@
   "dependencies": {
     "extract-zip": "^2.0.1",
     "minecraft-launcher-core": "^3.18.2",
-    "msmc": "^5.0.5"
+    "msmc": "^5.0.5",
+    "@fontsource/pixelify-sans": "^5.1.0"
   },
   "devDependencies": {
     "electron": "^33.2.0",

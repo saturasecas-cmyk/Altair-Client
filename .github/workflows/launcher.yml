@@ -22,6 +22,11 @@ jobs:
           node-version: '22'
       - name: Install
         run: npm install --no-audit --no-fund
+      - name: Check font files
+        run: |
+          ls node_modules/@fontsource/pixelify-sans/files | grep -E 'latin-(400|700)-normal.woff2'
+          test -f node_modules/@fontsource/pixelify-sans/files/pixelify-sans-latin-400-normal.woff2
+          test -f node_modules/@fontsource/pixelify-sans/files/pixelify-sans-latin-700-normal.woff2
       - name: Syntax check
         run: |
           for f in main.js preload.js renderer/app.js lib/*.js; do node --check "$f"; done
