@@ -39,7 +39,7 @@ jobs:
     - name: Upload mod JAR
       uses: actions/upload-artifact@v4
       with:
-        name: altairclient-forge-1.21.9
+        name: altairclient-forge-1.21.10
         path: build/libs/*.jar
         if-no-files-found: error
 
