@@ -5,18 +5,24 @@ const { p, ensure } = require('./paths');
 const { downloadFile } = require('./download');
 const { getMeta, saveMeta } = require('./store');
 
-function findForgeId(root, entry) {
-  const dir = path.join(root, 'versions');
-  if (!fs.existsSync(dir)) return null;
-  const names = fs.readdirSync(dir).filter((n) => /forge/i.test(n) && n.includes(entry.forge));
-  for (const n of names) {
-    if (fs.existsSync(path.join(dir, n, n + '.json'))) return n;
+function listVersions(root) {
+  try {
+    return fs.readdirSync(path.join(root, 'versions'));
+  } catch (e) {
+    return [];
+  }
+}
+
+function findForgeId(root, entry, names) {
+  const list = names || listVersions(root);
+  for (const n of list) {
+    if (/forge/i.test(n) && n.includes(entry.forge) && fs.existsSync(path.join(root, 'versions', n, n + '.json'))) return n;
   }
   return null;
 }
 
-function isInstalled(entry) {
-  return !!findForgeId(p.root(), entry);
+function isInstalled(entry, names) {
+  return !!findForgeId(p.root(), entry, names);
 }
 
 function run(java, args, ui) {
@@ -34,12 +40,15 @@ function run(java, args, ui) {
     pipeLines(child.stdout);
     pipeLines(child.stderr);
     child.on('error', reject);
-    child.on('close', (code) => (code === 0 ? resolve() : reject(new Error('El instalador de Forge terminó con código ' + code))));
+    child.on('close', (code) => (code === 0 ? resolve() : reject(new Error('The Forge installer exited with code ' + code))));
   });
 }
 
-/** Instala Forge (con el instalador oficial) si no está ya. Devuelve el id de versión. */
-async function ensureForge(entry, java, ui) {
+/**
+ * Installs Forge with the official installer if it is not there yet. Returns the version id.
+ * The installer jar is downloaded while Java may still be downloading (javaPromise).
+ */
+async function ensureForge(entry, javaPromise, ui) {
   const root = ensure(p.root());
   let id = findForgeId(root, entry);
   if (id) return id;
@@ -50,18 +59,21 @@ async function ensureForge(entry, java, ui) {
   const full = entry.mc + '-' + entry.forge;
   const url = 'https://maven.minecraftforge.net/net/minecraftforge/forge/' + full + '/forge-' + full + '-installer.jar';
   const jar = path.join(ensure(p.cache()), 'forge-' + full + '-installer.jar');
-  ui.status('Descargando Forge ' + entry.forge + '…');
-  await downloadFile(url, jar, (d, t) => ui.progress('Forge ' + entry.forge, d, t));
+  const jarReady = fs.existsSync(jar)
+    ? Promise.resolve()
+    : downloadFile(url, jar, (d, t) => ui.progress('Forge ' + entry.forge, d, t)).then(() => ui.done('Forge ' + entry.forge));
+  const [java] = await Promise.all([javaPromise, jarReady]);
 
-  ui.status('Instalando Forge ' + entry.forge + ' (puede tardar unos minutos)…');
+  ui.status('Installing Forge ' + entry.forge + ' (this can take a few minutes the first time)...');
   await run(java, ['-jar', jar, '--installClient', root], ui);
 
   id = findForgeId(root, entry);
-  if (!id) throw new Error('Forge se instaló pero no encuentro la versión en ' + path.join(root, 'versions'));
+  if (!id) throw new Error('Forge installed but its version was not found in ' + path.join(root, 'versions'));
+  fs.rmSync(jar, { force: true });
   const meta = getMeta();
   meta['forge-' + entry.mc] = id;
   saveMeta(meta);
   return id;
 }
 
-module.exports = { ensureForge, isInstalled, findForgeId };
+module.exports = { ensureForge, isInstalled, listVersions };

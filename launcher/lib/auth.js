@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { safeStorage } = require('electron');
-const { Auth } = require('msmc');
-const { Authenticator } = require('minecraft-launcher-core');
+const Auth = (...a) => new (require('msmc').Auth)(...a);
+const offlineAuth = (name) => require('minecraft-launcher-core').Authenticator.getAuth(name);
 const { p } = require('./paths');
 const { readJson, writeJson } = require('./store');
 
@@ -30,7 +30,7 @@ async function finish(xbox) {
 }
 
 async function loginMicrosoft() {
-  const manager = new Auth('select_account');
+  const manager = Auth('select_account');
   const xbox = await manager.launch('electron');
   return finish(xbox);
 }
@@ -38,7 +38,7 @@ async function loginMicrosoft() {
 function loginOffline(name) {
   const clean = String(name || 'Altair').replace(/[^A-Za-z0-9_]/g, '').slice(0, 16) || 'Altair';
   writeJson(p.account(), { type: 'offline', name: clean });
-  cached = { auth: Authenticator.getAuth(clean), name: clean, type: 'offline', at: Date.now() };
+  cached = { auth: offlineAuth(clean), name: clean, type: 'offline', at: Date.now() };
   return { name: clean, type: 'offline' };
 }
 
@@ -52,15 +52,15 @@ function current() {
   return a ? { name: a.name, type: a.type } : null;
 }
 
-/** Devuelve el objeto de autorización de MCLC, renovando el token de Microsoft si hace falta. */
+/** Returns the MCLC authorization object, refreshing the Microsoft token when needed. */
 async function getAuthorization() {
   const a = readJson(p.account(), null);
-  if (!a) throw new Error('Inicia sesión primero (Microsoft u offline).');
-  if (a.type === 'offline') return Authenticator.getAuth(a.name);
+  if (!a) throw new Error('Sign in first (Microsoft or offline).');
+  if (a.type === 'offline') return offlineAuth(a.name);
   if (cached && cached.type === 'microsoft' && Date.now() - cached.at < 45 * 60 * 1000) return cached.auth;
   const token = unseal(a.token);
-  if (!token) throw new Error('La sesión de Microsoft caducó. Vuelve a iniciar sesión.');
-  const manager = new Auth('select_account');
+  if (!token) throw new Error('Your Microsoft session expired. Please sign in again.');
+  const manager = Auth('select_account');
   const xbox = await manager.refresh(token);
   await finish(xbox);
   return cached.auth;

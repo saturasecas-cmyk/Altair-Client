@@ -44,6 +44,12 @@
     },
     "portable": {
       "artifactName": "AltairLauncher-Portable-${version}.${ext}"
-    }
+    },
+    "compression": "maximum",
+    "npmRebuild": false,
+    "asar": true,
+    "electronLanguages": [
+      "en-US"
+    ]
   }
 }

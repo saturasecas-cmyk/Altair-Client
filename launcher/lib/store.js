@@ -9,7 +9,8 @@ const DEFAULTS = {
   fullscreen: false,
   gameDir: '',
   javaPath: '',
-  offlineName: 'Altair'
+  offlineName: 'Altair',
+  jvmArgs: '-XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:+UseStringDeduplication'
 };
 
 function readJson(file, fallback) {

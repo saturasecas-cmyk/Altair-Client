@@ -7,8 +7,9 @@
   const MAX_LOG = 4000;
   const logEl = $('log');
   let logLines = 0;
-  function addLog(line) {
-    logEl.textContent += line + '\n';
+  function addLog(chunk) {
+    logEl.textContent += chunk + '\n';
+    logLines += chunk.split('\n').length - 1;
     if (++logLines > MAX_LOG) {
       logEl.textContent = logEl.textContent.split('\n').slice(-MAX_LOG / 2).join('\n');
       logLines = MAX_LOG / 2;
@@ -24,12 +25,12 @@
   function render() {
     // cuenta
     const acc = state.account;
-    $('who').innerHTML = acc ? '' : 'Sin sesión';
+    $('who').innerHTML = acc ? '' : 'Not signed in';
     if (acc) {
       const n = document.createElement('span');
       n.textContent = acc.name;
       const s = document.createElement('small');
-      s.textContent = acc.type === 'microsoft' ? 'Cuenta Microsoft' : 'Modo offline';
+      s.textContent = acc.type === 'microsoft' ? 'Microsoft account' : 'Offline mode';
       $('who').append(n, s);
     }
     $('btn-login').classList.toggle('hidden', !!acc && acc.type === 'microsoft');
@@ -47,7 +48,7 @@
       state.versions.filter(test).reverse().forEach((v) => {
         const o = document.createElement('option');
         o.value = v.mc;
-        o.textContent = v.mc + (v.installed ? '  ✓' : '');
+        o.textContent = v.mc + (v.installed ? '  \u2713' : '');
         og.appendChild(o);
       });
       sel.appendChild(og);
@@ -64,21 +65,22 @@
     $('set-dir').value = s.gameDir || '';
     $('set-java').value = s.javaPath || '';
     $('set-offline').value = s.offlineName || 'Altair';
-    $('notice').textContent = 'Carpeta del launcher: ' + state.base;
+    $('set-jvm').value = s.jvmArgs === undefined ? '' : s.jvmArgs;
+    $('notice').textContent = 'Launcher folder: ' + state.base;
   }
 
   function updateBadge() {
     const v = state.versions.find((x) => x.mc === $('version').value);
     const b = $('installed');
     if (!v) return;
-    b.textContent = v.installed ? 'Instalada' : 'Se descargará al jugar (Java ' + v.java + ')';
+    b.textContent = v.installed ? 'Installed' : 'Downloads on first play (Java ' + v.java + ')';
     b.classList.toggle('ok', v.installed);
   }
 
   function setBusy(v) {
     busy = v;
     $('btn-play').disabled = v;
-    $('btn-play').textContent = v ? 'EN CURSO…' : 'JUGAR';
+    $('btn-play').textContent = v ? 'WORKING...' : 'PLAY';
     $('version').disabled = v;
     if (!v) $('progress').classList.add('hidden');
   }
@@ -93,23 +95,23 @@
   $('btn-close').addEventListener('click', () => A.win('close'));
 
   $('btn-login').addEventListener('click', async () => {
-    setStatus('Abriendo el inicio de sesión de Microsoft…');
+    setStatus('Opening Microsoft sign-in...');
     const r = await A.loginMicrosoft();
-    if (r.ok) { state = r.state; render(); setStatus('Sesión iniciada como ' + state.account.name + '.'); }
-    else setStatus('No se pudo iniciar sesión: ' + r.error, true);
+    if (r.ok) { state = r.state; render(); setStatus('Signed in as ' + state.account.name + '.'); }
+    else setStatus('Sign-in failed: ' + r.error, true);
   });
   $('btn-offline').addEventListener('click', async () => {
     state = await A.loginOffline($('set-offline').value || state.settings.offlineName);
     render();
-    setStatus('Modo offline: no podrás entrar a servidores con autenticación.');
+    setStatus('Offline mode: you cannot join servers that require authentication.');
   });
-  $('btn-logout').addEventListener('click', async () => { state = await A.logout(); render(); setStatus('Sesión cerrada.'); });
+  $('btn-logout').addEventListener('click', async () => { state = await A.logout(); render(); setStatus('Signed out.'); });
 
   $('btn-play').addEventListener('click', async () => {
     if (busy) return;
-    if (!state.account) { setStatus('Inicia sesión primero (Microsoft u offline).', true); return; }
+    if (!state.account) { setStatus('Sign in first (Microsoft or offline).', true); return; }
     setBusy(true);
-    setStatus('Preparando…');
+    setStatus('Preparing...');
     const r = await A.play($('version').value);
     setBusy(false);
     if (r.ok) { state = r.state; render(); }
@@ -127,10 +129,11 @@
       fullscreen: $('set-full').checked,
       gameDir: $('set-dir').value,
       javaPath: $('set-java').value.trim(),
-      offlineName: $('set-offline').value.trim() || 'Altair'
+      offlineName: $('set-offline').value.trim() || 'Altair',
+      jvmArgs: $('set-jvm').value.trim()
     });
     render();
-    $('saved').textContent = 'Guardado';
+    $('saved').textContent = 'Saved';
     $('saved').classList.add('ok');
     setTimeout(() => { $('saved').textContent = ''; }, 2000);
   });
@@ -139,7 +142,8 @@
   A.onStatus((m) => setStatus(m, /^Error/.test(m)));
   A.onBusy(setBusy);
   A.onLaunched(() => { $('progress').classList.add('hidden'); });
-  A.onProgress(({ label, done, total }) => {
+  A.onProgress(({ label, done, total, active }) => {
+    if (!active) { $('progress').classList.add('hidden'); return; }
     $('progress').classList.remove('hidden');
     const pct = total ? Math.min(100, Math.round((done / total) * 100)) : 0;
     $('bar').style.width = pct + '%';

@@ -73,7 +73,8 @@ select { min-width: 190px; }
 .inline { display: flex; align-items: center; gap: 8px; }
 .inline input[type=number] { width: 100px; min-width: 0; }
 .inline input[type=text] { flex: 1; min-width: 0; }
-#set-java, #set-offline { width: 100%; }
+#set-java, #set-offline, #set-jvm { width: 100%; }
+.wide { grid-column: 1 / -1; }
 pre#log { background: var(--panel); border: 1px solid var(--edge); border-radius: 12px; padding: 14px; height: calc(100vh - 150px); overflow: auto; font: 12px/1.45 Consolas, monospace; color: #c9d0ff; white-space: pre-wrap; margin: 0; }
 ::-webkit-scrollbar { width: 10px; } ::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 6px; } ::-webkit-scrollbar-track { background: transparent; }
 @media (max-width: 1000px) { .emblem { display: none; } .grid { grid-template-columns: 1fr; } }
