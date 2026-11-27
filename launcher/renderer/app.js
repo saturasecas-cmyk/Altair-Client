@@ -59,13 +59,27 @@
     selected = b.dataset.mc;
     document.querySelectorAll('.chip').forEach((c) => c.classList.toggle('sel', c.dataset.mc === selected));
     renderInfo();
+    closeModal();
   });
+
+  function openModal() {
+    if (busy) return;
+    $('modal').classList.remove('hidden');
+    const sel = document.querySelector('.chip.sel');
+    if (sel) sel.focus();
+  }
+  function closeModal() { $('modal').classList.add('hidden'); }
+  $('btn-version').addEventListener('click', openModal);
+  $('modal-close').addEventListener('click', closeModal);
+  $('modal').addEventListener('mousedown', (e) => { if (e.target === $('modal')) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
   function renderInfo() {
     const v = state.versions.find((x) => x.mc === selected);
     const box = $('vinfo');
     box.textContent = '';
     if (!v) return;
+    $('vname').textContent = v.mc;
     box.append(
       pill('Minecraft ' + v.mc),
       pill('Forge ' + v.forge),
@@ -122,6 +136,7 @@
   function setBusy(v) {
     busy = v;
     $('btn-play').disabled = v;
+    $('btn-version').disabled = v;
     $('play-label').textContent = v ? 'WORKING...' : 'PLAY';
     if (!v) $('progress').classList.add('hidden');
   }

@@ -37,22 +37,18 @@
 
   <main>
     <section id="page-play" class="page">
-      <div class="play-grid">
-        <div class="left">
-          <h1>Ready to play</h1>
-          <p class="sub">Pick a version. Java, Forge and Altair Client are installed for you.</p>
-
-          <div id="versions" class="versions"></div>
-          <div id="vinfo" class="vinfo"></div>
-
-          <button id="btn-play" class="play"><span id="play-label">PLAY</span></button>
-          <div class="progress hidden" id="progress"><div class="bar" id="bar"></div></div>
-          <div class="status" id="status">Ready.</div>
-        </div>
-        <div class="right">
-          <div class="hero"><img src="hero.webp" alt="Altair Client" width="420" height="420"></div>
-          <div class="notice" id="notice"></div>
-        </div>
+      <div class="play-center">
+        <button id="btn-version" class="vbtn" aria-haspopup="dialog">
+          <span class="vlabel">VERSION</span>
+          <span class="vname" id="vname">1.21.1</span>
+          <svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>
+        </button>
+        <div class="hero"><img src="hero.webp" alt="Altair Client" width="420" height="420"></div>
+        <div id="vinfo" class="vinfo"></div>
+        <button id="btn-play" class="play"><span id="play-label">PLAY</span></button>
+        <div class="progress hidden" id="progress"><div class="bar" id="bar"></div></div>
+        <div class="status" id="status">Ready.</div>
+        <div class="notice" id="notice"></div>
       </div>
     </section>
 
@@ -105,6 +101,17 @@
       <pre id="log"></pre>
     </section>
   </main>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Select version">
+    <div class="sheet">
+      <div class="sheet-head">
+        <h3>Select version</h3>
+        <button id="modal-close" class="wbtn x" aria-label="Close"><svg viewBox="0 0 10 10"><path d="M1 1l8 8M9 1l-8 8"/></svg></button>
+      </div>
+      <div id="versions" class="versions"></div>
+      <div class="legend"><i></i> Installed &nbsp;&middot;&nbsp; others download on first play</div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>
