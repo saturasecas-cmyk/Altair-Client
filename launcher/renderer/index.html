@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self' data:; script-src 'self'">
+  <title>Altair Launcher</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="titlebar">
+    <span class="drag"></span>
+    <button id="btn-min" class="wbtn" title="Minimizar">&#8211;</button>
+    <button id="btn-close" class="wbtn close" title="Cerrar">&#10005;</button>
+  </div>
+
+  <aside class="side">
+    <img src="logo.png" class="logo" alt="Altair Client">
+    <nav>
+      <button class="nav active" data-page="play">Jugar</button>
+      <button class="nav" data-page="settings">Ajustes</button>
+      <button class="nav" data-page="log">Registro</button>
+    </nav>
+    <div class="account" id="account">
+      <div class="who" id="who">Sin sesión</div>
+      <button id="btn-login" class="ghost">Iniciar sesión con Microsoft</button>
+      <button id="btn-offline" class="link">Jugar sin cuenta (offline)</button>
+      <button id="btn-logout" class="link hidden">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main>
+    <section id="page-play" class="page">
+      <img src="emblem.png" class="emblem" alt="">
+      <h1>Altair Client</h1>
+      <p class="sub">Elige la versión de Minecraft. El launcher instala Java, Forge y el cliente por ti.</p>
+
+      <div class="row">
+        <label for="version">Versión</label>
+        <select id="version"></select>
+        <span id="installed" class="badge"></span>
+      </div>
+
+      <button id="btn-play" class="play">JUGAR</button>
+
+      <div class="progress hidden" id="progress"><div class="bar" id="bar"></div></div>
+      <div class="status" id="status">Listo.</div>
+      <div class="notice" id="notice"></div>
+    </section>
+
+    <section id="page-settings" class="page hidden">
+      <h2>Ajustes</h2>
+      <div class="grid">
+        <label>Memoria RAM (MB)
+          <input id="set-ram" type="number" min="1024" max="32768" step="512">
+        </label>
+        <label>Resolución
+          <span class="inline"><input id="set-w" type="number" min="640"> &times; <input id="set-h" type="number" min="480"></span>
+        </label>
+        <label class="check"><input id="set-full" type="checkbox"> Pantalla completa</label>
+        <label>Carpeta de juego (vacío = por defecto)
+          <span class="inline"><input id="set-dir" type="text" readonly><button id="btn-dir" class="ghost small">Elegir…</button><button id="btn-dir-clear" class="ghost small">Quitar</button></span>
+        </label>
+        <label>Java personalizado (vacío = automático)
+          <input id="set-java" type="text" placeholder="C:\Program Files\Java\...\bin\java.exe">
+        </label>
+        <label>Nombre offline
+          <input id="set-offline" type="text" maxlength="16">
+        </label>
+      </div>
+      <div class="row">
+        <button id="btn-save" class="ghost">Guardar</button>
+        <button id="btn-open" class="ghost">Abrir carpeta del launcher</button>
+        <span id="saved" class="badge"></span>
+      </div>
+    </section>
+
+    <section id="page-log" class="page hidden">
+      <h2>Registro</h2>
+      <pre id="log"></pre>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
