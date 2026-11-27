@@ -140,7 +140,7 @@ public final class ExtraTextures {
         List<String> names = new ArrayList<>();
         for (PlayerInfo info : connection.getListedOnlinePlayers()) {
             Component display = info.getTabListDisplayName();
-            names.add(display != null ? display.getString() : info.getProfile().getName());
+            names.add(display != null ? display.getString() : info.getProfile().name());
         }
         if (names.isEmpty()) {
             return;

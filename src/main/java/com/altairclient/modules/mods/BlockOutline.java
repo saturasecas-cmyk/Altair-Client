@@ -54,28 +54,6 @@ public final class BlockOutline {
 
     /** Sustituye el contorno de vanilla por el nuestro. Devuelve false para no cancelar el evento. */
     private static boolean onHighlight(RenderHighlightEvent.Block event) {
-        if (!enabled) {
-            return false;
-        }
-        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
-        if (mc.level == null) {
-            return false;
-        }
-        BlockPos pos = event.getTarget().getBlockPos();
-        net.minecraft.world.phys.shapes.VoxelShape shape = mc.level.getBlockState(pos)
-                .getShape(mc.level, pos, net.minecraft.world.phys.shapes.CollisionContext.of(event.getCamera().getEntity()));
-        Vec3 cam = event.getCamera().getPosition();
-        com.mojang.blaze3d.vertex.VertexConsumer vc = event.getMultiBufferSource()
-                .getBuffer(net.minecraft.client.renderer.RenderType.lines());
-        int c = Palette.color(colorIndex);
-        float r = ((c >> 16) & 255) / 255.0F;
-        float g = ((c >> 8) & 255) / 255.0F;
-        float b = (c & 255) / 255.0F;
-        com.mojang.blaze3d.systems.RenderSystem.lineWidth((float) width);
-        PoseStack ps = event.getPoseStack();
-        shape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> net.minecraft.client.renderer.ShapeRenderer.renderLineBox(
-                ps, vc, x1 + pos.getX() - cam.x, y1 + pos.getY() - cam.y, z1 + pos.getZ() - cam.z,
-                x2 + pos.getX() - cam.x, y2 + pos.getY() - cam.y, z2 + pos.getZ() - cam.z, r, g, b, 1.0F));
-        return true;
+        return false;
     }
 }

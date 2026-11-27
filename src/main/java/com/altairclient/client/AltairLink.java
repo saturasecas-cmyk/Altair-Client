@@ -86,9 +86,9 @@ public final class AltairLink {
         UUID best = null;
         int bestLen = 0;
         for (PlayerInfo info : connection.getListedOnlinePlayers()) {
-            String name = info.getProfile().getName();
+            String name = info.getProfile().name();
             if (name != null && name.length() > bestLen && head.contains(name)) {
-                best = info.getProfile().getId();
+                best = info.getProfile().id();
                 bestLen = name.length();
             }
         }

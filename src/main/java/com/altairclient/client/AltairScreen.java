@@ -2574,7 +2574,7 @@ public final class AltairScreen extends Screen {
                 // enfocar la caja también a nivel de pantalla, no solo en la caja.
                 setFocused(searchBox);
                 searchBox.setFocused(true);
-                searchBox.mouseClicked(event.x(), event.y(), event.button());
+                searchBox.mouseClicked(event, false);
                 return true;
             }
             if (getFocused() == searchBox) {
