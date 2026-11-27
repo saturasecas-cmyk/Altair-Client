@@ -25,7 +25,7 @@ import com.altairclient.modules.textures.MovementTextures;
 import com.altairclient.modules.textures.PvpTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** Dibuja los módulos del HUD encima del juego. */
 public final class AltairHud {

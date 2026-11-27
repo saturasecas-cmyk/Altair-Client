@@ -9,7 +9,7 @@ import com.mojang.logging.LogUtils;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.VanillaPackResources;
 import net.minecraft.server.packs.repository.PackRepository;

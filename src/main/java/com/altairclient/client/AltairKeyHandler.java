@@ -35,7 +35,7 @@ public final class AltairKeyHandler {
 
     // Se traduce con la clave "key.category.altairclient.altair_client" del archivo de idioma.
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
-            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(AltairClient.MOD_ID, "altair_client"));
+            net.minecraft.resources.Identifier.fromNamespaceAndPath(AltairClient.MOD_ID, "altair_client"));
 
     public static final KeyMapping ZOOM_KEY = new KeyMapping(
             "key.altairclient.zoom",

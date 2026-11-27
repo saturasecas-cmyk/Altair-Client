@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraftforge.client.event.ScreenEvent;
 
 import java.util.Random;
@@ -31,7 +31,7 @@ public final class TitleBackground {
     private static final float[] BY = new float[BIG_STARS];
     private static final float[] BPHASE = new float[BIG_STARS];
 
-    private static final ResourceLocation LOGO = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/title/altair_logo.png");
+    private static final Identifier LOGO = Identifier.fromNamespaceAndPath("altairclient", "textures/gui/title/altair_logo.png");
     private static final int LOGO_TEX_W = 768;
     private static final int LOGO_TEX_H = 172;
     private static final int LOGO_DRAW_W = 232;

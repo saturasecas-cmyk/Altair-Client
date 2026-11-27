@@ -2,7 +2,7 @@ package com.altairclient.client;
 
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Pantalla de carga de Altair: cielo estrellado, el emblema azul brillante que da una vuelta cada 4 segundos
@@ -10,8 +10,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class LoadingScreenArt {
 
-    private static final ResourceLocation EMBLEM = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem.png");
-    private static final ResourceLocation GLOW = ResourceLocation.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem_glow.png");
+    private static final Identifier EMBLEM = Identifier.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem.png");
+    private static final Identifier GLOW = Identifier.fromNamespaceAndPath("altairclient", "textures/gui/loading/emblem_glow.png");
     private static final int EMBLEM_W = 408;
     private static final int EMBLEM_H = 488;
     private static final int GLOW_W = 520;
@@ -59,7 +59,7 @@ public final class LoadingScreenArt {
         }
     }
 
-    private static void drawTexture(GuiGraphics g, ResourceLocation texture, int cx, int cy,
+    private static void drawTexture(GuiGraphics g, Identifier texture, int cx, int cy,
                                     int texW, int texH, float k, float squash, float alpha) {
         int dw = Math.round(texW * k * squash);
         int dh = Math.round(texH * k);
