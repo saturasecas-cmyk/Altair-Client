@@ -287,6 +287,8 @@ public final class AltairScreen extends Screen {
         }
     }
 
+    /** Modulos que no funcionan en esta version de Minecraft: no salen en el menu. */
+    private static final java.util.Set<String> UNSUPPORTED = java.util.Set.of("Hitbox Display");
     private final List<ModuleEntry> allModules = new ArrayList<>();
     private Category currentCategory = Category.COMBAT;
     private ModuleEntry selectedModule = null;
@@ -1810,6 +1812,7 @@ public final class AltairScreen extends Screen {
                 "Turns off every module and texture that is currently on. Your saved file is only changed by the next save. Click the switch to run it.",
                 () -> "Disabled " + disableAll() + " modules"));
 
+        allModules.removeIf(m -> UNSUPPORTED.contains(m.name));
         if (!allModules.isEmpty()) {
             selectedModule = allModules.get(0);
         }
@@ -1982,11 +1985,6 @@ public final class AltairScreen extends Screen {
                 ? tex.description
                 : tex.description + " It has no effect in the game yet: for now it only exists in the menu.";
         ModuleEntry entry = new ModuleEntry(tex.name, tex.description, full, cat, cat.icon, toggle, enabled);
-        if (TextureModules.ID_ALTAIR_SKY.equals(tex.id)) {
-            entry.withSetting("Stars", 0, AltairSky.DENSITY_NAMES.length - 1, 1,
-                    AltairSky::getDensity, AltairSky::setDensity)
-                    .withSettingNames(AltairSky.DENSITY_NAMES);
-        }
         if (tex.hasColor()) {
             entry.withSetting("Color", 0, Palette.MAX_INDEX, 1, colorGet, colorSet)
                     .withSettingNames(Palette.NAMES)
