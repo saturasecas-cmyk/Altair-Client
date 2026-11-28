@@ -135,7 +135,7 @@ input[type=checkbox] { accent-color: var(--purple); width: 16px; height: 16px; }
 .badge:empty { display: none; }
 .badge.ok { color: var(--ok); border-color: #2b6a52; }
 
-pre#log { background: rgba(8, 11, 36, .85); border: 1px solid var(--edge); border-radius: 14px; padding: 14px; height: calc(100vh - 150px); overflow: auto; font: 12px/1.5 Consolas, monospace; color: #c9d0ff; white-space: pre-wrap; margin: 0; user-select: text; }
+pre#log { margin-top: 14px !important; background: rgba(8, 11, 36, .85); border: 1px solid var(--edge); border-radius: 14px; padding: 14px; height: calc(100vh - 150px); overflow: auto; font: 12px/1.5 Consolas, monospace; color: #c9d0ff; white-space: pre-wrap; margin: 0; user-select: text; }
 ::-webkit-scrollbar { width: 10px; } ::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 6px; } ::-webkit-scrollbar-track { background: transparent; }
 @media (max-width: 1020px) { .two { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { *, *::before { animation: none !important; transition: none !important; } }

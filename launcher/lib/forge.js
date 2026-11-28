@@ -28,19 +28,25 @@ function isInstalled(entry, names) {
 function run(java, args, ui) {
   return new Promise((resolve, reject) => {
     const child = spawn(java, args, { windowsHide: true });
+    const tail = [];
     const pipeLines = (stream) => {
       let buf = '';
       stream.on('data', (d) => {
         buf += d.toString();
         const lines = buf.split(/\r?\n/);
         buf = lines.pop();
-        lines.forEach((l) => l.trim() && ui.log('[forge] ' + l.trim()));
+        lines.forEach((l) => {
+          if (!l.trim()) return;
+          ui.log('[forge] ' + l.trim());
+          tail.push(l.trim());
+          if (tail.length > 6) tail.shift();
+        });
       });
     };
     pipeLines(child.stdout);
     pipeLines(child.stderr);
     child.on('error', reject);
-    child.on('close', (code) => (code === 0 ? resolve() : reject(new Error('The Forge installer exited with code ' + code))));
+    child.on('close', (code) => (code === 0 ? resolve() : reject(new Error('The Forge installer exited with code ' + code + (tail.length ? ' - ' + tail.slice(-3).join(' | ') : '')))));
   });
 }
 

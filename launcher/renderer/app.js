@@ -198,6 +198,12 @@
     setTimeout(() => { $('saved').textContent = ''; }, 2000);
   });
 
+  $('btn-copylog').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(logEl.textContent); $('copied').textContent = 'Copied'; $('copied').classList.add('ok'); }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(logEl); getSelection().removeAllRanges(); getSelection().addRange(r); $('copied').textContent = 'Selected: press Ctrl+C'; }
+    setTimeout(() => { $('copied').textContent = ''; }, 2500);
+  });
+
   // ---- events from the main process ----
   A.onLog(addLog);
   A.onStatus((m) => setStatus(m, /^Error/.test(m)));

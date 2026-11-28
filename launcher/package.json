@@ -1,6 +1,6 @@
 {
   "name": "altair-launcher",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Launcher de Minecraft para Altair Client",
   "main": "main.js",
   "author": "Altair Client",
