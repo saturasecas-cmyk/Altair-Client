@@ -113,6 +113,7 @@ function stateFor() {
       return Object.assign({}, v, { installed: forge.isInstalled(v, names) && !!mod.installedJar(inst) });
     }),
     base: p.base(),
+    version: app.getVersion(),
     sysRam: Math.floor(require('os').totalmem() / 1048576)
   };
 }

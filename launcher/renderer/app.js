@@ -124,6 +124,7 @@
     $('set-java').value = s.javaPath || '';
     $('set-offline').value = s.offlineName || 'Altair';
     $('set-jvm').value = s.jvmArgs === undefined ? '' : s.jvmArgs;
+    $('lver').textContent = 'v' + state.version;
     $('notice').textContent = 'Launcher folder: ' + state.base;
   }
 

@@ -160,3 +160,5 @@ pre#log { background: rgba(8, 11, 36, .85); border: 1px solid var(--edge); borde
 .vgroup > span { width: 62px; }
 .legend { margin-top: 16px; color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 6px; }
 .legend i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); display: inline-block; }
+
+.brand small span { color: var(--muted); letter-spacing: 1px; margin-left: 4px; }
