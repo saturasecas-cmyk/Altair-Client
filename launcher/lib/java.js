@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 const { p, ensure } = require('./paths');
 const { downloadFile } = require('./download');
 
@@ -12,6 +13,24 @@ function findJava(dir) {
     if (fs.existsSync(candidate)) return candidate;
   }
   return null;
+}
+
+/** Windows 10+ ships bsdtar, which unzips natively (fast). Falls back to extract-zip. */
+function unzip(zip, dir, ui) {
+  return new Promise((resolve, reject) => {
+    const child = spawn('tar', ['-xf', zip, '-C', dir], { windowsHide: true });
+    let err = '';
+    child.stderr.on('data', (d) => { err += d; });
+    child.on('error', () => resolve(false));
+    child.on('close', (code) => resolve(code === 0));
+    child.on('exit', () => {});
+  }).then(async (ok) => {
+    if (ok) return;
+    ui.log('tar could not extract the archive, trying the built-in extractor...');
+    fs.rmSync(dir, { recursive: true, force: true });
+    ensure(dir);
+    await require('extract-zip')(zip, { dir });
+  });
 }
 
 /** Returns the path to java.exe for the given major version, downloading a Temurin JRE if needed. */
@@ -30,10 +49,9 @@ async function ensureJava(major, override, ui) {
   const zip = path.join(ensure(p.cache()), 'temurin-jre-' + major + '.zip');
   await downloadFile(url, zip, (d, t) => ui.progress('Java ' + major, d, t));
   ui.status('Extracting Java ' + major + '...');
-  const extract = require('extract-zip'); // lazy: only loaded when Java is missing
   fs.rmSync(dir, { recursive: true, force: true });
   ensure(dir);
-  await extract(zip, { dir });
+  await unzip(zip, dir, ui);
   fs.rmSync(zip, { force: true });
   ui.done('Java ' + major);
   const java = findJava(dir);

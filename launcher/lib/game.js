@@ -13,12 +13,18 @@ async function play(entry, repo, settings, ui) {
   const instance = ensure(settings.gameDir ? path.join(settings.gameDir, entry.mc) : p.instance(entry.mc));
 
   // Everything independent runs at the same time: login refresh, Java, Forge installer download, mod download.
-  const javaPromise = ensureJava(entry.java, settings.javaPath, ui);
+  // Each step is labelled so an error says exactly where it happened.
+  const step = (name, promise) => promise.catch((e) => {
+    ui.log('[' + name + '] ' + (e && e.stack ? e.stack : e));
+    throw new Error(name + ': ' + (e && e.message ? e.message : e));
+  });
+  const javaPromise = step('Java', ensureJava(entry.java, settings.javaPath, ui));
+  javaPromise.catch(() => {});
   const [authorization, java, forgeId] = await Promise.all([
-    auth.getAuthorization(),
+    step('Login', auth.getAuthorization()),
     javaPromise,
-    ensureForge(entry, javaPromise, ui),
-    ensureMod(entry, repo, instance, ui)
+    step('Forge', ensureForge(entry, javaPromise, ui)),
+    step('Mod', ensureMod(entry, repo, instance, ui))
   ]).then((r) => [r[0], r[1], r[2]]);
 
   ui.status('Starting Minecraft ' + entry.mc + '...');
