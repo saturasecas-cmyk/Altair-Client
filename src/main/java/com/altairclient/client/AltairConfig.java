@@ -106,15 +106,34 @@ public final class AltairConfig {
         }
     }
 
+    /**
+     * The state lives in one place shared by every Minecraft version: the launcher passes -Daltair.configDir.
+     * Without the launcher it falls back to {@code <game folder>/config}.
+     */
     private static Path file() {
+        String dir = System.getProperty("altair.configDir");
+        if (dir != null && !dir.isBlank()) {
+            return Path.of(dir).resolve(FILE_NAME);
+        }
+        return legacyFile();
+    }
+
+    private static Path legacyFile() {
         return Minecraft.getInstance().gameDirectory.toPath().resolve("config").resolve(FILE_NAME);
     }
+
+    private static boolean wasInWorld = false;
 
     private static void onTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
+        boolean inWorld = mc.level != null;
+        if (loaded && wasInWorld && !inWorld) {
+            autoSaveNow(); // the world was just closed
+        }
+        wasInWorld = inWorld;
         if (!loaded) {
             if ((mc.getOverlay() == null) && mc.options != null) {
                 loaded = true;
@@ -183,6 +202,9 @@ public final class AltairConfig {
     /** @return number of modules that changed, or -1 if the file could not be read. */
     private static int load() {
         Path path = file();
+        if (!Files.exists(path) && Files.exists(legacyFile())) {
+            path = legacyFile(); // first run with the shared config: import the per-version one
+        }
         if (!Files.exists(path)) {
             return 0;
         }
