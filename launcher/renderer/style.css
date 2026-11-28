@@ -162,3 +162,20 @@ pre#log { margin-top: 14px !important; background: rgba(8, 11, 36, .85); border:
 .legend i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); display: inline-block; }
 
 .brand small span { color: var(--muted); letter-spacing: 1px; margin-left: 4px; }
+
+.friends-head { margin-bottom: 16px; }
+.fsearch { max-width: 220px; margin-left: auto; }
+.flist { display: flex; flex-direction: column; gap: 8px; max-width: 760px; padding-bottom: 16px; }
+.frow { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-radius: 14px; background: var(--panel); border: 1px solid var(--edge); }
+.frow:hover { border-color: var(--edge2); }
+.fpic { position: relative; width: 44px; height: 44px; border-radius: 12px; background: var(--panel2) center / cover; flex: none; }
+.fpic img { width: 100%; height: 100%; border-radius: 12px; display: block; }
+.fdot { position: absolute; right: -3px; bottom: -3px; width: 13px; height: 13px; border-radius: 50%; background: #5b638f; border: 2px solid #0c1136; }
+.fdot.on { background: var(--ok); box-shadow: 0 0 8px #5be3a1aa; }
+.finfo { min-width: 0; }
+.fname { font-weight: 700; font-size: 16px; }
+.fname small { color: var(--muted); font-weight: 400; margin-left: 8px; font-size: 12px; }
+.fstatus { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fstatus.on { color: var(--ok); }
+.fempty { color: var(--muted); line-height: 1.5; max-width: 520px; }
+.fempty.err { color: var(--err); }

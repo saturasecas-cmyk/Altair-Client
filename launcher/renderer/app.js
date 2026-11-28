@@ -101,6 +101,7 @@
     } else {
       $('who').textContent = 'Not signed in';
     }
+    if (!acc || acc.type !== 'microsoft') friends = null;
     $('avatar').textContent = acc ? acc.name.charAt(0).toUpperCase() : '?';
     $('btn-login').classList.toggle('hidden', !!acc && acc.type === 'microsoft');
     $('btn-offline').classList.toggle('hidden', !!acc);
@@ -145,7 +146,8 @@
   // ---- navigation ----
   document.querySelectorAll('.nav').forEach((b) => b.addEventListener('click', () => {
     document.querySelectorAll('.nav').forEach((x) => x.classList.toggle('active', x === b));
-    ['play', 'settings', 'log'].forEach((p) => $('page-' + p).classList.toggle('hidden', p !== b.dataset.page));
+    ['play', 'friends', 'settings', 'log'].forEach((p) => $('page-' + p).classList.toggle('hidden', p !== b.dataset.page));
+    if (b.dataset.page === 'friends') loadFriends(false);
   }));
   $('btn-min').addEventListener('click', () => A.win('min'));
   $('btn-close').addEventListener('click', () => A.win('close'));
@@ -176,6 +178,83 @@
     if (r && r.ok) { state = r.state; render(); }
     else if (r) setStatus('Error: ' + r.error, true);
   });
+
+  // ---- friends ----
+  let friends = null;
+  let friendsLoading = false;
+  function drawFriends() {
+    const box = $('flist');
+    box.textContent = '';
+    const q = $('fsearch').value.trim().toLowerCase();
+    const list = (friends || []).filter((f) => !q || f.name.toLowerCase().includes(q) || f.realName.toLowerCase().includes(q));
+    $('fcount').textContent = friends ? friends.filter((f) => f.online).length + ' online / ' + friends.length : '';
+    if (friends && !list.length) {
+      const e = document.createElement('div');
+      e.className = 'fempty';
+      e.textContent = friends.length ? 'No friends match your search.' : 'Your friends list is empty.';
+      box.appendChild(e);
+    }
+    for (const f of list) {
+      const row = document.createElement('div');
+      row.className = 'frow';
+      const pic = document.createElement('div');
+      pic.className = 'fpic';
+      if (f.pic) {
+        const img = document.createElement('img');
+        img.src = f.pic;
+        img.alt = '';
+        img.referrerPolicy = 'no-referrer';
+        img.loading = 'lazy';
+        img.onerror = () => img.remove();
+        pic.appendChild(img);
+      }
+      const dot = document.createElement('i');
+      dot.className = 'fdot' + (f.online ? ' on' : '');
+      pic.appendChild(dot);
+      const info = document.createElement('div');
+      info.className = 'finfo';
+      const name = document.createElement('div');
+      name.className = 'fname';
+      name.textContent = (f.favorite ? '\u2605 ' : '') + f.name;
+      if (f.realName) {
+        const s = document.createElement('small');
+        s.textContent = f.realName;
+        name.appendChild(s);
+      }
+      const st = document.createElement('div');
+      st.className = 'fstatus' + (f.online ? ' on' : '');
+      st.textContent = f.status;
+      info.append(name, st);
+      row.append(pic, info);
+      box.appendChild(row);
+    }
+  }
+  function friendsMessage(text, err) {
+    const box = $('flist');
+    box.textContent = '';
+    const e = document.createElement('div');
+    e.className = 'fempty' + (err ? ' err' : '');
+    e.textContent = text;
+    box.appendChild(e);
+  }
+  async function loadFriends(force) {
+    if (friendsLoading) return;
+    if (!state || !state.account || state.account.type !== 'microsoft') {
+      friends = null;
+      $('fcount').textContent = '';
+      friendsMessage('Sign in with your Microsoft account (bottom left) to see your Xbox friends.');
+      return;
+    }
+    if (friends && !force) { drawFriends(); return; }
+    friendsLoading = true;
+    friendsMessage('Loading friends...');
+    const r = await A.friends(!!force);
+    friendsLoading = false;
+    if (r.ok) { friends = r.friends; drawFriends(); }
+    else friendsMessage('Could not load your friends: ' + r.error, true);
+  }
+  $('btn-frefresh').addEventListener('click', () => loadFriends(true));
+  $('fsearch').addEventListener('input', () => { if (friends) drawFriends(); });
 
   // ---- settings ----
   $('btn-dir').addEventListener('click', async () => { const d = await A.pickFolder(); if (d) $('set-dir').value = d; });

@@ -146,6 +146,13 @@ ipcMain.handle('login-offline', (_e, name) => {
   auth.loginOffline(name);
   return stateFor();
 });
+ipcMain.handle('friends', async (_e, force) => {
+  try {
+    return { ok: true, friends: await require('./lib/friends').getFriends(!!force) };
+  } catch (e) {
+    return { ok: false, error: String((e && e.message) || e) };
+  }
+});
 ipcMain.handle('logout', () => {
   auth.logout();
   return stateFor();

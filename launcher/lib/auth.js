@@ -5,7 +5,8 @@ const offlineAuth = (name) => require('minecraft-launcher-core').Authenticator.g
 const { p } = require('./paths');
 const { readJson, writeJson } = require('./store');
 
-let cached = null; // { auth, name, type, at }
+let cached = null;
+let lastXbox = null; // { auth, name, type, at }
 
 function seal(text) {
   if (safeStorage.isEncryptionAvailable()) return { enc: true, v: safeStorage.encryptString(text).toString('base64') };
@@ -21,6 +22,7 @@ function unseal(o) {
 }
 
 async function finish(xbox) {
+  lastXbox = xbox;
   const mc = await xbox.getMinecraft();
   const auth = mc.mclc();
   const name = (mc.profile && mc.profile.name) || auth.name;
@@ -66,4 +68,14 @@ async function getAuthorization() {
   return cached.auth;
 }
 
-module.exports = { loginMicrosoft, loginOffline, logout, current, getAuthorization };
+/** The msmc Xbox session (used for the friends list); refreshes it from the saved token if needed. */
+async function getXbox() {
+  if (lastXbox) return lastXbox;
+  const a = readJson(p.account(), null);
+  if (!a || a.type !== 'microsoft') throw new Error('Sign in with a Microsoft account to see your friends.');
+  await getAuthorization();
+  if (!lastXbox) throw new Error('Could not open your Xbox session.');
+  return lastXbox;
+}
+
+module.exports = { getXbox, loginMicrosoft, loginOffline, logout, current, getAuthorization };

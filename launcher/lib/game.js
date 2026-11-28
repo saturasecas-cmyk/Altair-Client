@@ -32,8 +32,9 @@ async function play(entry, repo, settings, ui) {
   const launcher = new Client();
   const javaw = java.replace(/java\.exe$/i, 'javaw.exe'); // no console window
   const ram = settings.ram;
-  const extra = (settings.jvmArgs === undefined || settings.jvmArgs === null ? DEFAULT_JVM : settings.jvmArgs)
-    .split(/\s+/).filter(Boolean);
+  const configDir = ensure(path.join(p.base(), 'config')); // shared by every version: modules you enable stay on
+  const extra = ['-Daltair.configDir=' + configDir].concat((settings.jvmArgs === undefined || settings.jvmArgs === null ? DEFAULT_JVM : settings.jvmArgs)
+    .split(/\s+/).filter(Boolean));
   const opts = {
     authorization,
     root: ensure(p.root()),

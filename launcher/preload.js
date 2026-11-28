@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('altair', {
   loginMicrosoft: () => ipcRenderer.invoke('login-microsoft'),
   loginOffline: (name) => ipcRenderer.invoke('login-offline', name),
   logout: () => ipcRenderer.invoke('logout'),
+  friends: (force) => ipcRenderer.invoke('friends', force),
   pickFolder: () => ipcRenderer.invoke('pick-folder'),
   openFolder: (which) => ipcRenderer.invoke('open-folder', which),
   play: (mc) => ipcRenderer.invoke('play', mc),

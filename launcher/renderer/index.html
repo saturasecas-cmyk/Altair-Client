@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self' data:; script-src 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self' data: https:; script-src 'self'">
   <title>Altair Launcher</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -21,6 +21,7 @@
     </div>
     <nav>
       <button class="nav active" data-page="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Play</button>
+      <button class="nav" data-page="friends"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.4"/><path d="M17 14c2.5 0 4.5 2 4.5 4.5"/></svg>Friends</button>
       <button class="nav" data-page="settings"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>Settings</button>
       <button class="nav" data-page="log"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Log</button>
     </nav>
@@ -50,6 +51,16 @@
         <div class="status" id="status">Ready.</div>
         <div class="notice" id="notice"></div>
       </div>
+    </section>
+
+    <section id="page-friends" class="page hidden">
+      <div class="row friends-head">
+        <h2 style="margin:0">Friends</h2>
+        <span id="fcount" class="badge"></span>
+        <input id="fsearch" type="text" placeholder="Search..." class="fsearch">
+        <button id="btn-frefresh" class="ghost small">Refresh</button>
+      </div>
+      <div id="flist" class="flist"></div>
     </section>
 
     <section id="page-settings" class="page hidden">
